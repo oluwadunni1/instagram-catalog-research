@@ -586,8 +586,8 @@ Golden sets and raw dumps are committed, so a clone can score against the same h
 **Setup.** Install [uv](https://docs.astral.sh/uv/) once, then:
 
 ```bash
-git clone https://github.com/oluwadunni1/Instagram.git
-cd Instagram
+git clone https://github.com/oluwadunni1/instagram-catalog-research.git
+cd instagram-catalog-research
 uv sync                       # fetches Python 3.14 (.python-version) and installs into .venv
 cp .env.example .env          # add one provider key, e.g. GEMINI_API_KEY
 uv run pytest -q              # offline sanity check - no key, no network
