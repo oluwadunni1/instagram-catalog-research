@@ -25,6 +25,7 @@ Logging goes to stdout so `uv run` output is easy to follow.
 from __future__ import annotations
 
 import csv
+import io
 import json
 import logging
 import os
@@ -41,6 +42,7 @@ import litellm
 from pydantic import BaseModel, ValidationError
 
 import pipeline.settings  # noqa: F401 - import side effect: load_dotenv() before the env reads below
+from pipeline.exceptions import BudgetExceededError
 
 # Suppress litellm's noisy "Provider List: https://..." startup banners and
 # debug output - these add nothing to eval runs and drown real log lines.
@@ -92,6 +94,29 @@ def _read_call_interval() -> float:
 
 
 MIN_CALL_INTERVAL_SECONDS = _read_call_interval()
+
+# Round 2's spend cap: OpenRouter spend recorded in the v2 token log, which
+# holds round 2 and nothing else. Checked before every paid call; at or over
+# the cap, BudgetExceededError stops the run. "off" disables it. The default is
+# the $5 the round was given on 2026-10-14. It is a log-side cap: a call made
+# without a run_id is never logged and so never counted, and the cap can be
+# overshot by at most the one call in flight per process.
+DEFAULT_ROUND_BUDGET_USD = 5.0
+
+
+def round_budget_usd() -> float | None:
+    """ROUND_BUDGET_USD as a float, the default when unset or blank, None when "off"."""
+    raw = (os.environ.get("ROUND_BUDGET_USD") or "").strip().lower()
+    if not raw:
+        return DEFAULT_ROUND_BUDGET_USD
+    if raw == "off":
+        return None
+    try:
+        return float(raw)
+    except ValueError:
+        raise ValueError(
+            f"ROUND_BUDGET_USD must be dollars or 'off' (got {raw!r})."
+        ) from None
 
 _last_call_started_at = 0.0
 _throttle_lock = threading.Lock()
@@ -321,7 +346,109 @@ TOKEN_LOG_FIELDNAMES = [
     # or litellm's provider label for a direct call ("gemini"). September's Qwen
     # failures came from a routing nobody could see, because this was missing.
     "provider",
+    # What OpenRouter charged for the call (its usage.cost), as opposed to
+    # estimated_cost_usd, which is tokens x the listed rate in MODEL_RATES.
+    # The two differ when a prompt is served from cache or a provider is
+    # cheaper than the listed price. Empty for any other route, and for rows
+    # written before 2026-10-15 evening, when the column was added.
+    "billed_cost_usd",
 ]
+
+
+def billed_cost(response) -> float | None:
+    """What OpenRouter charged for a litellm response, or None when the
+    response carries no charge (any non-OpenRouter route)."""
+    usage = getattr(response, "usage", None)
+    cost = getattr(usage, "cost", None)
+    try:
+        return float(cost) if cost is not None else None
+    except (TypeError, ValueError):
+        return None
+
+
+def extend_token_log_header(path: Path) -> bool:
+    """Extend an existing log's header to TOKEN_LOG_FIELDNAMES, in place.
+
+    Only when the old header is a strict prefix of the current one: columns
+    are only ever appended, so every existing row stays aligned and simply has
+    no value for the new columns. Any other mismatch raises. Returns whether
+    the header changed. log_token_usage() refuses to write under a stale
+    header; this is the sanctioned way past that.
+    """
+    raw = io.open(path, encoding="utf-8", newline="").read()
+    newline = "\r\n" if raw.split("\n", 1)[0].endswith("\r") else "\n"
+    first, _, rest = raw.partition(newline)
+    header = first.split(",")
+    if header == TOKEN_LOG_FIELDNAMES:
+        return False
+    if TOKEN_LOG_FIELDNAMES[:len(header)] != header:
+        raise RuntimeError(f"{path} header {header} is not a prefix of {TOKEN_LOG_FIELDNAMES}")
+    io.open(path, "w", encoding="utf-8", newline="").write(
+        ",".join(TOKEN_LOG_FIELDNAMES) + newline + rest)
+    return True
+
+
+def _row_spend(row: dict) -> float:
+    """One row's OpenRouter spend: the billed charge when recorded, else the
+    listed-rate estimate written with the row, else the row's tokens at the
+    rate on file now. Zero for any other route.
+
+    The last fallback exists because a row written before its model had a rate
+    carries 0.0, and a cap that read it at face value would count those calls
+    as free - the round-2 Qwen runs were exactly that. It re-prices only what
+    the cap counts; the row itself is never rewritten.
+    """
+    model = row.get("model") or ""
+    if not model.startswith("openrouter/"):
+        return 0.0
+    for key in ("billed_cost_usd", "estimated_cost_usd"):
+        try:
+            value = float(row.get(key) or 0.0)
+        except ValueError:
+            continue
+        if value > 0.0:
+            return value
+    try:
+        prompt, completion = int(row.get("prompt_tokens") or 0), int(row.get("completion_tokens") or 0)
+    except ValueError:
+        return 0.0
+    rate = MODEL_RATES.get(model)
+    return (prompt * rate[0] + completion * rate[1]) / 1_000_000 if rate else 0.0
+
+
+# Running total of the v2 log's OpenRouter spend, read from disk once per log
+# path and then advanced by every row this process writes, so the check before
+# each call costs nothing.
+_spend_cache: dict = {"path": None, "usd": 0.0}
+
+
+def round_spend_usd() -> float:
+    """OpenRouter spend recorded in the current token log."""
+    if _spend_cache["path"] != TOKEN_LOG_PATH:
+        total = 0.0
+        if TOKEN_LOG_PATH.exists():
+            with TOKEN_LOG_PATH.open(encoding="utf-8", newline="") as f:
+                total = sum(_row_spend(row) for row in csv.DictReader(f))
+        _spend_cache.update(path=TOKEN_LOG_PATH, usd=total)
+    return _spend_cache["usd"]
+
+
+def check_budget(model: str) -> None:
+    """Raise BudgetExceededError before a paid call once the round is spent.
+
+    Only OpenRouter calls are paid from the round's credit; a free-tier or Jev
+    call is never stopped by it.
+    """
+    cap = round_budget_usd()
+    if cap is None or not model.startswith("openrouter/"):
+        return
+    spent = round_spend_usd()
+    if spent >= cap:
+        raise BudgetExceededError(
+            f"Round budget reached: ${spent:.4f} of OpenRouter spend in {TOKEN_LOG_PATH} "
+            f"against ROUND_BUDGET_USD=${cap:.2f}. No further call was made. Raise the cap "
+            "deliberately, or set ROUND_BUDGET_USD=off, to continue."
+        )
 
 
 def served_by(response) -> str:
@@ -367,6 +494,7 @@ def log_token_usage(
     attempt: int = 1,
     outcome: str = "ok",
     provider: str = "",
+    billed_cost_usd: float | None = None,
 ) -> None:
     """Append one row to the v2 token log, writing the header first if the file doesn't exist yet.
 
@@ -397,7 +525,8 @@ def log_token_usage(
         if header != TOKEN_LOG_FIELDNAMES:
             raise RuntimeError(
                 f"{TOKEN_LOG_PATH} has columns {header}, but rows are written with "
-                f"{TOKEN_LOG_FIELDNAMES}. Migrate the header before logging to it."
+                f"{TOKEN_LOG_FIELDNAMES}. Extend it with extend_token_log_header() "
+                "before logging to it."
             )
 
     row = {
@@ -417,6 +546,7 @@ def log_token_usage(
         "attempt": attempt,
         "outcome": outcome,
         "provider": provider,
+        "billed_cost_usd": "" if billed_cost_usd is None else billed_cost_usd,
     }
 
     with TOKEN_LOG_PATH.open("a", newline="", encoding="utf-8") as f:
@@ -424,6 +554,8 @@ def log_token_usage(
         if write_header:
             writer.writeheader()
         writer.writerow(row)
+    if _spend_cache["path"] == TOKEN_LOG_PATH:
+        _spend_cache["usd"] += _row_spend(row)
 
 
 def read_run_usage(run_id: str, log_path: Path | None = None) -> dict:
@@ -446,6 +578,7 @@ def read_run_usage(run_id: str, log_path: Path | None = None) -> dict:
     path = log_path or find_run_log(run_id) or TOKEN_LOG_PATH
     empty = {"calls": 0, "invalid_attempts": 0, "prompt_tokens": 0, "completion_tokens": 0,
              "total_tokens": 0, "fallbacks": 0, "cost_usd": 0.0, "priced_calls": 0,
+             "billed_usd": 0.0, "billed_calls": 0,
              "latency_ms": 0.0, "timed_calls": 0, "by_stage": {}, "models": [],
              "providers": [], "log": path}
     if not path.exists():
@@ -469,6 +602,8 @@ def read_run_usage(run_id: str, log_path: Path | None = None) -> dict:
     # over calls, because v1 rows and fallback rows carry no time at all.
     latency_ms = 0.0
     timed_calls = 0
+    billed_usd = 0.0
+    billed_calls = 0
 
     with path.open(encoding="utf-8", newline="") as f:
         for row in csv.DictReader(f):
@@ -504,6 +639,12 @@ def read_run_usage(run_id: str, log_path: Path | None = None) -> dict:
             cost_usd += row_cost
             if row_cost > 0.0:
                 priced_calls += 1
+            if row.get("billed_cost_usd") not in (None, ""):
+                try:
+                    billed_usd += float(row["billed_cost_usd"])
+                    billed_calls += 1
+                except ValueError:
+                    pass
             try:
                 row_latency = float(row.get("latency_ms") or "")
             except ValueError:
@@ -523,6 +664,7 @@ def read_run_usage(run_id: str, log_path: Path | None = None) -> dict:
 
     return {**totals, "cost_usd": cost_usd, "priced_calls": priced_calls,
             "latency_ms": latency_ms, "timed_calls": timed_calls,
+            "billed_usd": billed_usd, "billed_calls": billed_calls,
             "by_stage": by_stage, "models": sorted(models), "providers": sorted(providers),
             "log": path}
 
@@ -727,6 +869,7 @@ def complete_structured(
         response = None
         while True:
             try:
+                check_budget(model)
                 throttle()
                 call_started = time.perf_counter()
                 response = litellm.completion(
@@ -798,6 +941,7 @@ def complete_structured(
                 attempt=attempt,
                 outcome="ok" if result is not None else "invalid",
                 provider=served_by(response),
+                billed_cost_usd=billed_cost(response),
             )
         if result is not None:
             return result

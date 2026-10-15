@@ -31,7 +31,7 @@ DEMO_ACCOUNT   ?= vendor_demo_01
 DEMO_TOKEN_ENV ?= IG_ACCESS_TOKEN_DEMO
 
 .DEFAULT_GOAL := help
-.PHONY: help ingest golden update-golden harness pipeline demo-ingest demo-pipeline stage5 verify snapshot sync simulate-sync dvc-setup data-push data-pull data-status test check-secrets install-hooks
+.PHONY: help ingest golden update-golden harness pipeline demo-ingest demo-pipeline stage5 verify spend snapshot sync simulate-sync dvc-setup data-push data-pull data-status test check-secrets install-hooks
 
 help:
 	@echo "Targets (each wraps an existing uv run script - see README for the full workflow):"
@@ -42,6 +42,7 @@ help:
 	@echo "  pipeline        uv run scripts/run_pipeline.py --account \$$(ACCOUNT) --config \$$(CONFIG)  [LIMIT=N caps posts; INGEST=1 pulls a fresh dump first; LIVE=1 traces each stage as it finishes; FORCE_PROFILE=1 re-runs Stage 1]"
 	@echo "  stage5          uv run scripts/run_stage5.py --golden \$$(GOLDEN) --stage2 \$$(STAGE2) --stage3 \$$(STAGE3) --stage4 \$$(STAGE4) --label \"\$$(LABEL)\"  [APPEND=1 adds --append-findings]"
 	@echo "  verify          uv run scripts/verify_run.py --run-id \$$(RUN_ID) [--expect-model \$$(EXPECT)] [--posts \$$(POSTS)] [--predictions \$$(PREDS)] [--log \$$(LOG)]   (RUN_ID= alone lists each log's run_ids)"
+	@echo "  spend           uv run scripts/round_spend.py   (round-2 spend per run_id, the cap, and OpenRouter's own usage)"
 	@echo "  snapshot        uv run scripts/run_build_snapshot.py --vendor-handle \$$(VENDOR) --account \$$(ACCOUNT)"
 	@echo "                  (baseline from the latest raw dump; pass GOLDEN= for the legacy golden-set path)"
 	@echo "  sync            uv run scripts/run_stage6.py --vendor-handle \$$(VENDOR) --golden \$$(GOLDEN) --token-env \$$(TOKEN_ENV)"
@@ -112,6 +113,11 @@ stage5:
 # the pair. With no RUN_ID, lists the run_ids present in the log.
 verify:
 	uv run scripts/verify_run.py $(if $(RUN_ID),--run-id $(RUN_ID),--list) $(foreach m,$(EXPECT),--expect-model $(m)) $(if $(POSTS),--posts $(POSTS),) $(foreach p,$(PREDS),--predictions $(p)) $(if $(LOG),--log $(LOG),)
+
+# Round-2 spend per run_id against ROUND_BUDGET_USD, beside the OpenRouter key's
+# own usage. The cap itself is enforced before every paid call in llm_client.py.
+spend:
+	uv run scripts/round_spend.py
 
 # Builds from the latest raw dump for ACCOUNT - the baseline is then the same
 # live feed the sync re-fetches. GOLDEN_SNAPSHOT=1 uses the legacy golden-set

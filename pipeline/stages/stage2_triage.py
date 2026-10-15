@@ -28,6 +28,8 @@ from pydantic import BaseModel
 from pipeline.llm_client import (
     complete_structured,
     log_token_usage,
+    billed_cost,
+    check_budget,
     request_kwargs,
     served_by,
     throttle,
@@ -209,6 +211,7 @@ def _pass_b(
 
     # Bypasses complete_structured(), so it must throttle itself - this call
     # spends the same per-minute provider quota as every other one.
+    check_budget(vision_model)
     throttle()
     call_started = time.perf_counter()
     response = litellm.completion(
@@ -243,6 +246,7 @@ def _pass_b(
                 latency_ms=latency_ms,
                 outcome=outcome,
                 provider=served_by(response),
+                billed_cost_usd=billed_cost(response),
             )
     result.escalated = True
 

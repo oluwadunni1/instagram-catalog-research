@@ -301,7 +301,7 @@ def test_a_log_with_an_older_header_is_refused() -> None:
     old = ",".join(llm_client.TOKEN_LOG_FIELDNAMES[:-3])
     llm_client.TOKEN_LOG_PATH.write_text(old + "\n", encoding="utf-8")
 
-    with pytest.raises(RuntimeError, match="Migrate the header"):
+    with pytest.raises(RuntimeError, match="extend_token_log_header"):
         _write_call()
 
 

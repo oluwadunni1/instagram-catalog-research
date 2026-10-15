@@ -167,6 +167,10 @@ def verify(
                      "invalid and were retried; their tokens are in the total above")
     if usage["providers"]:
         lines.append(f"  [info] served by: {', '.join(usage['providers'])}")
+    billed = (f", billed ${usage['billed_usd']:.4f} on {usage['billed_calls']} call(s)"
+              if usage["billed_calls"] else "")
+    lines.append(f"  [info] cost: ${usage['cost_usd']:.4f} at listed rates on "
+                 f"{usage['priced_calls']} priced call(s){billed}")
 
     # --- 2. no silent degradation to the regex fallback -------------------
     check(usage["fallbacks"] == 0, "no regex fallback", (

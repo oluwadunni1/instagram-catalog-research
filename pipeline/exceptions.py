@@ -24,3 +24,15 @@ class MissingRawDumpError(PipelineError):
 
 class MissingCredentialsError(PipelineError):
     """A required credential (e.g. IG_ACCESS_TOKEN) is not set."""
+
+
+class BudgetExceededError(BaseException):
+    """Round spend has reached ROUND_BUDGET_USD; no further paid call is made.
+
+    A BaseException, like KeyboardInterrupt, and deliberately not a
+    PipelineError: every per-post isolation site in the harness, the runner
+    and Stage 3 catches Exception, and Stage 3 turns what it catches into the
+    regex fallback. An Exception here would be absorbed post by post - the run
+    would carry on, quietly heuristic, until every remaining post had failed.
+    The point of a cap is that the run stops where it is.
+    """

@@ -34,6 +34,7 @@ make sync     VENDOR=<ig_username> GOLDEN=... CHANGES=report/changes_x.json TOKE
 make simulate-sync                             # offline Stage 6, no API, no snapshot writes
 make data-pull / data-push / data-status       # DVC <-> Cloudflare R2
 make verify RUN_ID=<id> [EXPECT=<model>] [POSTS=N]  # gate a run before publishing its numbers
+make spend                                     # round-2 spend per run_id vs ROUND_BUDGET_USD
 make test / check-secrets / install-hooks      # offline checks (see below)
 ```
 
@@ -216,14 +217,23 @@ over partly-heuristic output and fails `make verify` on the fallback check.
 site that reaches a provider must call it** — the vision Pass B calls bypass
 `complete_structured()` and throttle themselves for exactly this reason.
 
-**`estimated_cost_usd` in `report/token_log.csv` is mostly 0.0, and 0.0 does not mean free.**
-Since 2026-09-21 `log_token_usage()` prices each row from `MODEL_RATES` in
-`pipeline/llm_client.py`, but that table holds only Jev. Every Gemini row, every other unpriced
-model, and every row written before 2026-09-21 is 0.0; rows are never recomputed, since the log
-is append-only evidence. `read_run_usage()` reports `priced_calls` beside `calls` — a total
-whose `priced_calls` is short of `calls` understates and must be quoted that way. Every
-"Cost: $X" the harness prints is still `cost_per_call_usd` × call count, not real spend. Real
-Gemini cost must be computed by hand from `prompt_tokens`/`completion_tokens`.
+**`estimated_cost_usd` is 0.0 on most v1 rows, and 0.0 does not mean free.** It is tokens ×
+the rate in `MODEL_RATES` (`pipeline/llm_client.py`) when the row was written, and rows are
+never recomputed. In v1 that table held only Jev, so every Gemini and other row there is 0.0;
+real v1 cost is computed by hand from `prompt_tokens`/`completion_tokens`. `MODEL_RATES` now
+prices every round-2 OpenRouter model (a test fails if an `r2_*.yaml` names an unpriced one), and
+v2 rows also carry `billed_cost_usd`: OpenRouter's own charge for that call. `read_run_usage()`
+reports `priced_calls` and `billed_calls` beside `calls`; a total whose coverage is short of
+`calls` understates and must be quoted that way. Every "Cost: $X" the harness prints is still
+`cost_per_call_usd` × call count, not real spend.
+
+**Round 2 has a hard spend cap.** Before every OpenRouter call, `check_budget()` compares the v2
+log's OpenRouter spend (billed where recorded, else estimated, else today's rate) with
+`ROUND_BUDGET_USD` (default 5.0, `off` to disable) and raises `BudgetExceededError` at or over it.
+That is a `BaseException` on purpose: Stage 3 turns any `Exception` into the regex fallback and
+every stage loop isolates per-post `Exception`s, so an ordinary error would be absorbed post by
+post. `make spend` prints spend per run_id, the cap left, and OpenRouter's own usage for the key
+(which lags by minutes and includes un-logged probes).
 
 **Configs labelled `model: dummy-heuristic` still make live LLM calls.** Every
 `archive/stage2_*.yaml` and `archive/stage4_*.yaml` points `stage3_extract.module` at the real
