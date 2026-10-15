@@ -285,7 +285,28 @@ TOKEN_LOG_FIELDNAMES = [
     # project's rate limiting. Empty on a row with no call behind it (a
     # fallback row) and on every v1 row, which predates the column.
     "latency_ms",
+    # Every attempt that reached a provider gets a row, not only the one that
+    # succeeded: a response that fails the schema is still billed. attempt is
+    # 1-based within one complete_structured() call; outcome is "ok", "invalid"
+    # (it came back but failed parsing or the schema) or "fallback" (no call
+    # behind the row). Before 2026-10-15 only "ok" attempts were logged, so the
+    # smoke run r2_family_qwen_20261015T134852Z understates its own spend.
+    "attempt",
+    "outcome",
+    # Who actually served the call: OpenRouter's upstream provider ("Phala"),
+    # or litellm's provider label for a direct call ("gemini"). September's Qwen
+    # failures came from a routing nobody could see, because this was missing.
+    "provider",
 ]
+
+
+def served_by(response) -> str:
+    """The provider that answered a litellm response, or "" when unknown."""
+    provider = getattr(response, "provider", None)
+    if provider:
+        return str(provider)
+    hidden = getattr(response, "_hidden_params", None) or {}
+    return str(hidden.get("custom_llm_provider") or "")
 
 
 def token_log_paths() -> list[Path]:
@@ -319,6 +340,9 @@ def log_token_usage(
     escalated: bool = False,
     fallback_used: bool = False,
     latency_ms: float | None = None,
+    attempt: int = 1,
+    outcome: str = "ok",
+    provider: str = "",
 ) -> None:
     """Append one row to the v2 token log, writing the header first if the file doesn't exist yet.
 
@@ -338,6 +362,19 @@ def log_token_usage(
         )
     TOKEN_LOG_PATH.parent.mkdir(exist_ok=True)
     write_header = not TOKEN_LOG_PATH.exists()
+    if not write_header:
+        # The header is written once, when the file is created, so a column
+        # added later never reaches an existing log: new rows would carry
+        # values the header does not name, and every reader would misread
+        # them. That happened on 2026-10-15 - attempt/outcome/provider rows
+        # under a header without them, read back as answered calls. Refuse.
+        with TOKEN_LOG_PATH.open(encoding="utf-8", newline="") as f:
+            header = next(csv.reader(f), [])
+        if header != TOKEN_LOG_FIELDNAMES:
+            raise RuntimeError(
+                f"{TOKEN_LOG_PATH} has columns {header}, but rows are written with "
+                f"{TOKEN_LOG_FIELDNAMES}. Migrate the header before logging to it."
+            )
 
     row = {
         "run_id": run_id,
@@ -353,6 +390,9 @@ def log_token_usage(
         "fallback_used": fallback_used,
         "estimated_cost_usd": estimate_cost_usd(model, prompt_tokens, completion_tokens),
         "latency_ms": "" if latency_ms is None else round(latency_ms, 1),
+        "attempt": attempt,
+        "outcome": outcome,
+        "provider": provider,
     }
 
     with TOKEN_LOG_PATH.open("a", newline="", encoding="utf-8") as f:
@@ -380,16 +420,21 @@ def read_run_usage(run_id: str, log_path: Path | None = None) -> dict:
     scripts/run_pipeline.py and scripts/verify_run.py read through this.
     """
     path = log_path or find_run_log(run_id) or TOKEN_LOG_PATH
-    empty = {"calls": 0, "prompt_tokens": 0, "completion_tokens": 0, "total_tokens": 0,
-             "fallbacks": 0, "cost_usd": 0.0, "priced_calls": 0, "latency_ms": 0.0,
-             "timed_calls": 0, "by_stage": {}, "models": [], "log": path}
+    empty = {"calls": 0, "invalid_attempts": 0, "prompt_tokens": 0, "completion_tokens": 0,
+             "total_tokens": 0, "fallbacks": 0, "cost_usd": 0.0, "priced_calls": 0,
+             "latency_ms": 0.0, "timed_calls": 0, "by_stage": {}, "models": [],
+             "providers": [], "log": path}
     if not path.exists():
         return empty
 
     by_stage: dict[str, dict] = {}
     models: Counter = Counter()
-    totals = {"calls": 0, "prompt_tokens": 0, "completion_tokens": 0, "total_tokens": 0,
-              "fallbacks": 0}
+    providers: Counter = Counter()
+    # calls counts answered calls only - the unit the gate's per-post band is
+    # sized in. A schema-failed attempt is counted in invalid_attempts instead,
+    # but its tokens and cost still go into every total: it was billed.
+    totals = {"calls": 0, "invalid_attempts": 0, "prompt_tokens": 0, "completion_tokens": 0,
+              "total_tokens": 0, "fallbacks": 0}
     # Tracked apart from the token totals because cost is only as trustworthy as
     # its coverage: rows predating MODEL_RATES, and rows for a model with no rate
     # on file, both carry 0.0. priced_calls < calls means the total understates,
@@ -415,14 +460,17 @@ def read_run_usage(run_id: str, log_path: Path | None = None) -> dict:
             stage = row.get("stage") or "unknown"
             entry = by_stage.setdefault(
                 stage,
-                {"calls": 0, "prompt_tokens": 0, "completion_tokens": 0,
+                {"calls": 0, "invalid_attempts": 0, "prompt_tokens": 0, "completion_tokens": 0,
                  "total_tokens": 0, "cost_usd": 0.0, "latency_ms": 0.0, "timed_calls": 0},
             )
             for key in ("prompt_tokens", "completion_tokens", "total_tokens"):
                 entry[key] += _int(key)
                 totals[key] += _int(key)
-            entry["calls"] += 1
-            totals["calls"] += 1
+            # v1 rows have no outcome column; every one of them was an answer.
+            invalid = (row.get("outcome") or "ok") == "invalid"
+            counter = "invalid_attempts" if invalid else "calls"
+            entry[counter] += 1
+            totals[counter] += 1
 
             try:
                 row_cost = float(row.get("estimated_cost_usd") or 0.0)
@@ -436,7 +484,9 @@ def read_run_usage(run_id: str, log_path: Path | None = None) -> dict:
                 row_latency = float(row.get("latency_ms") or "")
             except ValueError:
                 row_latency = None
-            if row_latency is not None:
+            # Latency is per answered call, like calls: a runaway invalid
+            # attempt would otherwise drag the model's mean with it.
+            if row_latency is not None and not invalid:
                 entry["latency_ms"] += row_latency
                 entry["timed_calls"] += 1
                 latency_ms += row_latency
@@ -444,10 +494,13 @@ def read_run_usage(run_id: str, log_path: Path | None = None) -> dict:
             if (row.get("fallback_used") or "").strip().lower() == "true":
                 totals["fallbacks"] += 1
             models[row.get("model") or "unknown"] += 1
+            if row.get("provider"):
+                providers[row["provider"]] += 1
 
     return {**totals, "cost_usd": cost_usd, "priced_calls": priced_calls,
             "latency_ms": latency_ms, "timed_calls": timed_calls,
-            "by_stage": by_stage, "models": sorted(models), "log": path}
+            "by_stage": by_stage, "models": sorted(models), "providers": sorted(providers),
+            "log": path}
 
 
 # How a call asks for JSON. "json_object" (the default, and the only mode
@@ -650,6 +703,7 @@ def complete_structured(
         logger.debug("[%s] Raw response:\n%s", stage_name, raw_text)
 
         # --- Parse and validate JSON ---
+        result = None
         try:
             parsed = _extract_json(raw_text)
             result = schema.model_validate(parsed)
@@ -659,22 +713,29 @@ def complete_structured(
         except ValidationError as exc:
             last_content_error = exc
             error_detail = f"schema mismatch: {_validation_summary(exc)}"
-        else:
-            if run_id is not None:
-                usage = getattr(response, "usage", None)
-                log_token_usage(
-                    run_id=run_id,
-                    vendor_id=vendor_id or "unknown",
-                    post_id=post_id or "",
-                    stage=stage_name,
-                    model=model,
-                    prompt_tokens=getattr(usage, "prompt_tokens", 0) or 0,
-                    completion_tokens=getattr(usage, "completion_tokens", 0) or 0,
-                    total_tokens=getattr(usage, "total_tokens", None),
-                    escalated=escalated,
-                    fallback_used=fallback_used,
-                    latency_ms=latency_ms,
-                )
+
+        # Logged whether or not it parsed: a response that failed the schema
+        # was still billed, and a run that needed three attempts per post
+        # costs three times what one row per post would claim.
+        if run_id is not None:
+            usage = getattr(response, "usage", None)
+            log_token_usage(
+                run_id=run_id,
+                vendor_id=vendor_id or "unknown",
+                post_id=post_id or "",
+                stage=stage_name,
+                model=model,
+                prompt_tokens=getattr(usage, "prompt_tokens", 0) or 0,
+                completion_tokens=getattr(usage, "completion_tokens", 0) or 0,
+                total_tokens=getattr(usage, "total_tokens", None),
+                escalated=escalated,
+                fallback_used=fallback_used,
+                latency_ms=latency_ms,
+                attempt=attempt,
+                outcome="ok" if result is not None else "invalid",
+                provider=served_by(response),
+            )
+        if result is not None:
             return result
 
         if attempt <= max_retries:

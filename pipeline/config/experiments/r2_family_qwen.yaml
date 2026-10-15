@@ -13,8 +13,13 @@ stage2_triage:
   text_model: openrouter/qwen/qwen-2.5-7b-instruct
   vision_model: openrouter/qwen/qwen3-vl-8b-instruct
   confidence_threshold: 0.7
-  structured_output: json_schema
-  model: Qwen Family json_schema (OpenRouter)
+  # json_object, not json_schema: under json_schema the first attempt on all 5
+  # posts of r2_family_qwen_20261015T134852Z ran away in the confidence float
+  # until max_tokens; under json_object 6/6 answers were valid (2026-10-15
+  # diagnostic, provider Phala). The key covers both passes, so the vision
+  # Pass B is on json_object here too.
+  structured_output: json_object
+  model: Qwen Family r2 (OpenRouter)
   cost_per_call_usd: 0.0
   note: >-
     UNRUN. Smoke-test on five autos posts including both failing ones before
@@ -26,7 +31,7 @@ stage3_extract:
   text_model: openrouter/qwen/qwen3-14b
   vision_model: openrouter/qwen/qwen3-vl-8b-instruct
   structured_output: json_schema
-  model: Qwen Family json_schema (OpenRouter)
+  model: Qwen Family r2 (OpenRouter)
   cost_per_call_usd: 0.0
   note: UNRUN. See stage2_triage.
 
@@ -34,7 +39,7 @@ stage4_signals:
   module: pipeline.stages.stage4_signals
   function: detect_signals
   signals_model: openrouter/qwen/qwen-2.5-7b-instruct
-  structured_output: json_schema
-  model: Qwen Family json_schema (OpenRouter)
+  structured_output: json_object  # same model as Stage 2 Pass A - see there
+  model: Qwen Family r2 (OpenRouter)
   cost_per_call_usd: 0.0
   note: UNRUN. See stage2_triage.

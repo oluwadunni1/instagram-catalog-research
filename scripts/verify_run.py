@@ -159,6 +159,14 @@ def verify(
         ))
         return False, lines
     check(True, "rows logged", f"{usage['calls']} call(s), {usage['total_tokens']:,} tokens")
+    # Informational, not a check: a retry is legitimate, but its tokens are in
+    # the total above, and a high count is the first sign a model or provider
+    # is not following the schema.
+    if usage["invalid_attempts"]:
+        lines.append(f"  [info] schema retries: {usage['invalid_attempts']} attempt(s) came back "
+                     "invalid and were retried; their tokens are in the total above")
+    if usage["providers"]:
+        lines.append(f"  [info] served by: {', '.join(usage['providers'])}")
 
     # --- 2. no silent degradation to the regex fallback -------------------
     check(usage["fallbacks"] == 0, "no regex fallback", (
@@ -219,6 +227,8 @@ def verify(
     lines.append("  Per stage:")
     for stage, entry in sorted(usage["by_stage"].items()):
         line = f"    {stage:<26} {entry['calls']:>3} calls  {entry['total_tokens']:>7,} tokens"
+        if entry["invalid_attempts"]:
+            line += f"  +{entry['invalid_attempts']} invalid"
         # A mean over timed calls only: v1 rows and fallback rows carry no time.
         if entry["timed_calls"]:
             line += f"  {entry['latency_ms'] / entry['timed_calls']:>7,.0f} ms/call"

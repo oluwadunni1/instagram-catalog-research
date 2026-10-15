@@ -14,6 +14,7 @@ Offline: no network, no .env, no golden set.
 
 from __future__ import annotations
 
+import csv
 from pathlib import Path
 
 import pytest
@@ -223,9 +224,9 @@ def test_the_v1_log_is_never_appended_to(monkeypatch: pytest.MonkeyPatch) -> Non
 def test_a_new_row_records_its_latency() -> None:
     _write_call(latency_ms=812.345)
 
-    header, row = llm_client.TOKEN_LOG_PATH.read_text(encoding="utf-8").splitlines()
-    assert header.endswith(",latency_ms")
-    assert row.endswith(",812.3")
+    with llm_client.TOKEN_LOG_PATH.open(encoding="utf-8", newline="") as f:
+        (row,) = csv.DictReader(f)
+    assert row["latency_ms"] == "812.3"
 
 
 def test_mean_latency_is_over_timed_calls_only() -> None:
@@ -264,3 +265,41 @@ def test_an_explicit_log_path_wins(tmp_path: Path) -> None:
     _write_call(latency_ms=1.0)
 
     assert read_run_usage("r", other)["total_tokens"] == 6
+
+
+# --- every attempt is a row ------------------------------------------------
+
+def test_an_invalid_attempt_is_billed_but_not_counted_as_a_call() -> None:
+    """A schema-failed response is paid for. Its tokens belong in the spend;
+    it must not count as an answered call, or the gate's per-post band would
+    pass a model that needed three tries per post."""
+    _write_call(prompt_tokens=100, completion_tokens=1000, attempt=1, outcome="invalid")
+    _write_call(prompt_tokens=100, completion_tokens=20, attempt=2, latency_ms=50.0)
+
+    usage = read_run_usage("r")
+
+    assert (usage["calls"], usage["invalid_attempts"]) == (1, 1)
+    assert usage["completion_tokens"] == 1020
+    assert usage["by_stage"]["stage2_triage_pass_a"]["invalid_attempts"] == 1
+
+
+def test_a_v1_row_counts_as_an_answered_call(tmp_path: Path) -> None:
+    """v1 has no outcome column, and only ever logged answered calls."""
+    v1 = tmp_path / "token_log_v1.csv"
+    v1.write_text(HEADER + "old,t,v,p1,stage2_triage_pass_a,gemini/x,10,2,12,False,False,0.0\n",
+                  encoding="utf-8")
+
+    usage = read_run_usage("old")
+
+    assert (usage["calls"], usage["invalid_attempts"]) == (1, 0)
+
+
+def test_a_log_with_an_older_header_is_refused() -> None:
+    """The header is only written when the file is created. On 2026-10-15
+    rows with attempt/outcome/provider landed under a header without them,
+    and two invalid attempts were read back as answered calls."""
+    old = ",".join(llm_client.TOKEN_LOG_FIELDNAMES[:-3])
+    llm_client.TOKEN_LOG_PATH.write_text(old + "\n", encoding="utf-8")
+
+    with pytest.raises(RuntimeError, match="Migrate the header"):
+        _write_call()

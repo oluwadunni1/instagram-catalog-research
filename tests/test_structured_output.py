@@ -11,6 +11,7 @@ Offline: no network, no .env, no golden set.
 
 from __future__ import annotations
 
+import csv
 import json
 from types import SimpleNamespace
 
@@ -80,7 +81,8 @@ def _fake_completion(monkeypatch: pytest.MonkeyPatch, replies: list[str]) -> lis
         calls.append(kwargs)
         return SimpleNamespace(
             choices=[SimpleNamespace(message=SimpleNamespace(content=next(stream)))],
-            usage=None,
+            usage=SimpleNamespace(prompt_tokens=100, completion_tokens=10, total_tokens=110),
+            provider="Phala",
         )
 
     monkeypatch.setattr(llm_client.litellm, "completion", completion)
@@ -115,3 +117,41 @@ def test_a_retry_names_the_allowed_labels(monkeypatch: pytest.MonkeyPatch) -> No
     assert "post_type: Input should be" in correction and "'log'" in correction
     assert "errors.pydantic.dev" not in correction
     assert result.post_type == "announcement"
+
+
+def test_every_attempt_is_logged_with_its_provider(monkeypatch: pytest.MonkeyPatch) -> None:
+    """The smoke run r2_family_qwen_20261015T134852Z logged 11 rows while
+    paying for at least 17 calls: the runaway first attempts were invisible.
+    And September's failures could not be traced to a provider at all."""
+    _fake_completion(monkeypatch, [
+        json.dumps({"post_type": "log"}),
+        json.dumps({"post_type": "announcement", "confidence": 0.8}),
+    ])
+
+    complete_structured(model="m", system_prompt="s", user_prompt="u", schema=TriageResult,
+                        run_id="r", vendor_id="v", post_id="p")
+
+    with llm_client.TOKEN_LOG_PATH.open(encoding="utf-8", newline="") as f:
+        rows = list(csv.DictReader(f))
+    assert [(r["attempt"], r["outcome"], r["provider"]) for r in rows] == [
+        ("1", "invalid", "Phala"), ("2", "ok", "Phala"),
+    ]
+
+
+def test_a_pass_b_response_that_fails_to_parse_is_still_logged(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Pass B builds its own request, so it needs its own guarantee."""
+    from pipeline.stages import stage2_triage
+
+    _fake_completion(monkeypatch, ["not json"])
+    monkeypatch.setattr(stage2_triage, "throttle", lambda: None)
+    monkeypatch.setattr(stage2_triage.litellm, "completion", llm_client.litellm.completion)
+    post = {"post_id": "p", "caption": "", "media_url": "https://cdn.example/p.jpg"}
+
+    with pytest.raises(json.JSONDecodeError):
+        stage2_triage._pass_b(post, None, "m", "r", "v", "p")
+
+    with llm_client.TOKEN_LOG_PATH.open(encoding="utf-8", newline="") as f:
+        (row,) = csv.DictReader(f)
+    assert (row["stage"], row["outcome"], row["provider"]) == ("stage2_triage_pass_b", "invalid", "Phala")

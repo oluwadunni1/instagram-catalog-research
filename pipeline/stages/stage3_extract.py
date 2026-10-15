@@ -35,6 +35,7 @@ from pipeline.llm_client import (
     complete_structured,
     log_token_usage,
     response_format_kwargs,
+    served_by,
     throttle,
 )
 from pipeline.ocr import DEFAULT_MIN_CHARS, extract_text
@@ -514,23 +515,31 @@ def _pass_b(
         metadata={"run_name": "stage3_extract_pass_b", "tags": ["stage3_extract_pass_b"]},
     )
     latency_ms = (time.perf_counter() - call_started) * 1000
-    parsed = json.loads(response.choices[0].message.content)
-    result = ProductExtractionResult.model_validate(parsed)
-
-    if run_id is not None:
-        usage = getattr(response, "usage", None)
-        log_token_usage(
-            run_id=run_id,
-            vendor_id=vendor_id or "unknown",
-            post_id=post_id,
-            stage="stage3_extract_pass_b",
-            model=vision_model,
-            prompt_tokens=getattr(usage, "prompt_tokens", 0) or 0,
-            completion_tokens=getattr(usage, "completion_tokens", 0) or 0,
-            total_tokens=getattr(usage, "total_tokens", None),
-            escalated=True,
-            latency_ms=latency_ms,
-        )
+    # The row is written in finally so a response that fails to parse is
+    # logged too, as outcome "invalid", before the error propagates: it was
+    # billed either way.
+    outcome = "invalid"
+    try:
+        parsed = json.loads(response.choices[0].message.content)
+        result = ProductExtractionResult.model_validate(parsed)
+        outcome = "ok"
+    finally:
+        if run_id is not None:
+            usage = getattr(response, "usage", None)
+            log_token_usage(
+                run_id=run_id,
+                vendor_id=vendor_id or "unknown",
+                post_id=post_id,
+                stage="stage3_extract_pass_b",
+                model=vision_model,
+                prompt_tokens=getattr(usage, "prompt_tokens", 0) or 0,
+                completion_tokens=getattr(usage, "completion_tokens", 0) or 0,
+                total_tokens=getattr(usage, "total_tokens", None),
+                escalated=True,
+                latency_ms=latency_ms,
+                outcome=outcome,
+                provider=served_by(response),
+            )
 
     return result
 
@@ -698,6 +707,7 @@ def extract_product(
                 completion_tokens=0,
                 total_tokens=0,
                 fallback_used=True,
+                outcome="fallback",
             )
         return _regex_fallback(post, profile)
 
