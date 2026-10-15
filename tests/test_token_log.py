@@ -198,3 +198,69 @@ def test_a_run_predating_real_cost_reports_zero_priced_calls(
     assert usage["calls"] == 2
     assert usage["cost_usd"] == 0.0
     assert usage["priced_calls"] == 0
+
+
+# --- v1 / v2 logs and latency ----------------------------------------------
+
+def _write_call(**overrides) -> None:
+    row = dict(run_id="r", vendor_id="v", post_id="p1", stage="stage2_triage_pass_a",
+               model="gemini/x", prompt_tokens=10, completion_tokens=2)
+    llm_client.log_token_usage(**{**row, **overrides})
+
+
+def test_the_v1_log_is_never_appended_to(monkeypatch: pytest.MonkeyPatch) -> None:
+    """v1 is the evidence behind every README figure up to round 1. A re-run
+    appending to it would sit beside rows it was never part of, which is the
+    mixing the v2 log exists to prevent."""
+    monkeypatch.setattr(llm_client, "TOKEN_LOG_PATH", llm_client.TOKEN_LOG_V1_PATH)
+
+    with pytest.raises(RuntimeError, match="frozen v1"):
+        _write_call()
+
+    assert not llm_client.TOKEN_LOG_V1_PATH.exists()
+
+
+def test_a_new_row_records_its_latency() -> None:
+    _write_call(latency_ms=812.345)
+
+    header, row = llm_client.TOKEN_LOG_PATH.read_text(encoding="utf-8").splitlines()
+    assert header.endswith(",latency_ms")
+    assert row.endswith(",812.3")
+
+
+def test_mean_latency_is_over_timed_calls_only() -> None:
+    """A fallback row has no call behind it and carries no time. Averaging
+    over every call would count it as an instant answer and flatter the
+    model, the same coverage trap priced_calls guards against for cost."""
+    _write_call(latency_ms=400.0)
+    _write_call(latency_ms=600.0)
+    _write_call(stage="stage3_extract_fallback", fallback_used=True)
+
+    usage = read_run_usage("r")
+
+    assert usage["calls"] == 3
+    assert usage["timed_calls"] == 2
+    assert usage["latency_ms"] / usage["timed_calls"] == 500.0
+
+
+def test_a_v1_run_is_found_in_the_v1_log(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """Every run_id quoted in README.md lives in v1. It has to keep verifying
+    without anyone remembering which file it is in."""
+    v1 = tmp_path / "token_log_v1.csv"
+    v1.write_text(HEADER + "old,t,v,p1,stage2_triage_pass_a,gemini/x,10,2,12,False,False,0.0\n",
+                  encoding="utf-8")
+    _write_call(run_id="new", latency_ms=100.0)
+
+    old, new = read_run_usage("old"), read_run_usage("new")
+
+    assert (old["log"], old["calls"], old["timed_calls"]) == (v1, 1, 0)
+    assert (new["log"], new["calls"]) == (llm_client.TOKEN_LOG_PATH, 1)
+
+
+def test_an_explicit_log_path_wins(tmp_path: Path) -> None:
+    other = tmp_path / "elsewhere.csv"
+    other.write_text(HEADER + "r,t,v,p1,stage2_triage_pass_a,gemini/x,5,1,6,False,False,0.0\n",
+                     encoding="utf-8")
+    _write_call(latency_ms=1.0)
+
+    assert read_run_usage("r", other)["total_tokens"] == 6

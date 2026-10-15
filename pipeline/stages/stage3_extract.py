@@ -23,6 +23,7 @@ than letting Stage 3 crash the eval run.
 """
 
 import json
+import time
 import logging
 import re
 from typing import Literal
@@ -30,7 +31,12 @@ from typing import Literal
 import litellm
 from pydantic import BaseModel
 
-from pipeline.llm_client import complete_structured, log_token_usage, throttle
+from pipeline.llm_client import (
+    complete_structured,
+    log_token_usage,
+    response_format_kwargs,
+    throttle,
+)
 from pipeline.ocr import DEFAULT_MIN_CHARS, extract_text
 from pipeline.stages.stage2_triage import _is_uninformative_caption
 from pipeline.types import Post, ProductPrediction, vision_image_url
@@ -419,6 +425,7 @@ def _pass_a(
     vendor_id: str | None,
     post_id: str,
     max_tokens: int = DEFAULT_MAX_TOKENS,
+    structured_output: str = "json_object",
 ) -> ProductExtractionResult:
     """Cheap text-only pass."""
     return complete_structured(
@@ -432,6 +439,7 @@ def _pass_a(
         post_id=post_id,
         escalated=False,
         max_tokens=max_tokens,
+        structured_output=structured_output,
     )
 
 
@@ -442,6 +450,7 @@ def _pass_a_ocr(
     vendor_id: str | None,
     post_id: str,
     max_tokens: int = DEFAULT_MAX_TOKENS,
+    structured_output: str = "json_object",
 ) -> ProductExtractionResult:
     """Text pass over a prompt that carries an OCR block.
 
@@ -463,6 +472,7 @@ def _pass_a_ocr(
         post_id=post_id,
         escalated=True,
         max_tokens=max_tokens,
+        structured_output=structured_output,
     )
 
 
@@ -473,6 +483,7 @@ def _pass_b(
     run_id: str | None,
     vendor_id: str | None,
     post_id: str,
+    structured_output: str = "json_object",
 ) -> ProductExtractionResult:
     """Vision escalation. NOTE: complete_structured() currently only sends
     text messages - this constructs a multimodal message directly via
@@ -494,13 +505,15 @@ def _pass_b(
     # Bypasses complete_structured(), so it must throttle itself - this call
     # spends the same per-minute provider quota as every other one.
     throttle()
+    call_started = time.perf_counter()
     response = litellm.completion(
         model=vision_model,
         messages=messages,
         temperature=0.0,
-        response_format={"type": "json_object"},
+        **response_format_kwargs(ProductExtractionResult, structured_output, vision_model),
         metadata={"run_name": "stage3_extract_pass_b", "tags": ["stage3_extract_pass_b"]},
     )
+    latency_ms = (time.perf_counter() - call_started) * 1000
     parsed = json.loads(response.choices[0].message.content)
     result = ProductExtractionResult.model_validate(parsed)
 
@@ -516,6 +529,7 @@ def _pass_b(
             completion_tokens=getattr(usage, "completion_tokens", 0) or 0,
             total_tokens=getattr(usage, "total_tokens", None),
             escalated=True,
+            latency_ms=latency_ms,
         )
 
     return result
@@ -547,6 +561,7 @@ def extract_product(
     max_tokens: int = DEFAULT_MAX_TOKENS,
     use_ocr: bool = False,
     ocr_min_chars: int = DEFAULT_MIN_CHARS,
+    structured_output: str = "json_object",
 ) -> list[ProductPrediction]:
     """Extracts one or more products from a post via a three-tier cascade.
 
@@ -630,9 +645,11 @@ def extract_product(
 
         user_prompt = _build_user_prompt(post, profile, vendor_comments, ocr_text)
         if ocr_text:
-            result = _pass_a_ocr(user_prompt, text_model, run_id, vendor_id, post_id, max_tokens)
+            result = _pass_a_ocr(user_prompt, text_model, run_id, vendor_id, post_id, max_tokens,
+                                 structured_output)
         else:
-            result = _pass_a(user_prompt, text_model, run_id, vendor_id, post_id, max_tokens)
+            result = _pass_a(user_prompt, text_model, run_id, vendor_id, post_id, max_tokens,
+                             structured_output)
 
         needs_escalation = _needs_escalation(result)
         if ocr_text and _guard_ocr_prices(result, ocr_text):
@@ -657,7 +674,8 @@ def extract_product(
         # only when the free tiers could not answer.
         if needs_escalation and image_url and not confirmed_no_price:
             logger.info("[stage3_extract] %s: escalating to vision Pass B", post_id)
-            result = _pass_b(post, user_prompt, vision_model, run_id, vendor_id, post_id)
+            result = _pass_b(post, user_prompt, vision_model, run_id, vendor_id, post_id,
+                             structured_output)
     except Exception as exc:
         logger.warning(
             "[stage3_extract] LLM extraction failed (%s: %s) - falling back to regex heuristic",

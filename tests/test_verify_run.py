@@ -303,3 +303,16 @@ def test_prediction_lists_and_a_catalog_can_be_mixed(
 
     assert passed is False
     assert "2 errored of 2" in "\n".join(lines)
+
+
+def test_a_v1_run_verifies_against_the_v1_log(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """Round 2 writes a v2 log; the run_ids behind every README figure stay in
+    the frozen v1 log and must still pass the gate from there."""
+    v1 = tmp_path / "token_log_v1.csv"
+    v1.write_text(HEADER + _rows("old", 3), encoding="utf-8")
+    monkeypatch.setattr(llm_client, "TOKEN_LOG_V1_PATH", v1)
+
+    passed, lines = verify_run.verify("old", posts=3)
+
+    assert passed
+    assert lines[0] == f"  log: {v1}"

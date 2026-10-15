@@ -41,7 +41,7 @@ help:
 	@echo "  harness         uv run eval/harness.py --golden \$$(GOLDEN) --config \$$(CONFIG)"
 	@echo "  pipeline        uv run scripts/run_pipeline.py --account \$$(ACCOUNT) --config \$$(CONFIG)  [LIMIT=N caps posts; INGEST=1 pulls a fresh dump first; LIVE=1 traces each stage as it finishes; FORCE_PROFILE=1 re-runs Stage 1]"
 	@echo "  stage5          uv run scripts/run_stage5.py --golden \$$(GOLDEN) --stage2 \$$(STAGE2) --stage3 \$$(STAGE3) --stage4 \$$(STAGE4) --label \"\$$(LABEL)\"  [APPEND=1 adds --append-findings]"
-	@echo "  verify          uv run scripts/verify_run.py --run-id \$$(RUN_ID) [--expect-model \$$(EXPECT)] [--posts \$$(POSTS)] [--predictions \$$(PREDS)]   (RUN_ID= alone lists the log's run_ids)"
+	@echo "  verify          uv run scripts/verify_run.py --run-id \$$(RUN_ID) [--expect-model \$$(EXPECT)] [--posts \$$(POSTS)] [--predictions \$$(PREDS)] [--log \$$(LOG)]   (RUN_ID= alone lists each log's run_ids)"
 	@echo "  snapshot        uv run scripts/run_build_snapshot.py --vendor-handle \$$(VENDOR) --account \$$(ACCOUNT)"
 	@echo "                  (baseline from the latest raw dump; pass GOLDEN= for the legacy golden-set path)"
 	@echo "  sync            uv run scripts/run_stage6.py --vendor-handle \$$(VENDOR) --golden \$$(GOLDEN) --token-env \$$(TOKEN_ENV)"
@@ -111,7 +111,7 @@ stage5:
 # files. Exits non-zero, so `make harness ... && make verify RUN_ID=...` fails
 # the pair. With no RUN_ID, lists the run_ids present in the log.
 verify:
-	uv run scripts/verify_run.py $(if $(RUN_ID),--run-id $(RUN_ID),--list) $(foreach m,$(EXPECT),--expect-model $(m)) $(if $(POSTS),--posts $(POSTS),) $(foreach p,$(PREDS),--predictions $(p))
+	uv run scripts/verify_run.py $(if $(RUN_ID),--run-id $(RUN_ID),--list) $(foreach m,$(EXPECT),--expect-model $(m)) $(if $(POSTS),--posts $(POSTS),) $(foreach p,$(PREDS),--predictions $(p)) $(if $(LOG),--log $(LOG),)
 
 # Builds from the latest raw dump for ACCOUNT - the baseline is then the same
 # live feed the sync re-fetches. GOLDEN_SNAPSHOT=1 uses the legacy golden-set

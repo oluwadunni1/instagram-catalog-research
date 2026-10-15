@@ -1,0 +1,40 @@
+name: r2_family_qwen
+description: >-
+  Round 2: archive/family_qwen.yaml's model strings, with the provider enforcing
+  each stage's schema (structured_output: json_schema). The September runs of
+  that config failed the gate on autos: Qwen 2.5 7B invented labels and keys on
+  44 of 71 first attempts under json_object, and posts 17897690802571800 and
+  18073956491710644 exhausted every retry in both runs. As of 2026-10-15 every
+  model string here has an OpenRouter provider listing structured_outputs.
+
+stage2_triage:
+  module: pipeline.stages.stage2_triage
+  function: triage_post
+  text_model: openrouter/qwen/qwen-2.5-7b-instruct
+  vision_model: openrouter/qwen/qwen3-vl-8b-instruct
+  confidence_threshold: 0.7
+  structured_output: json_schema
+  model: Qwen Family json_schema (OpenRouter)
+  cost_per_call_usd: 0.0
+  note: >-
+    UNRUN. Smoke-test on five autos posts including both failing ones before
+    any full run, and gate it with make verify before quoting a number.
+
+stage3_extract:
+  module: pipeline.stages.stage3_extract
+  function: extract_product
+  text_model: openrouter/qwen/qwen3-14b
+  vision_model: openrouter/qwen/qwen3-vl-8b-instruct
+  structured_output: json_schema
+  model: Qwen Family json_schema (OpenRouter)
+  cost_per_call_usd: 0.0
+  note: UNRUN. See stage2_triage.
+
+stage4_signals:
+  module: pipeline.stages.stage4_signals
+  function: detect_signals
+  signals_model: openrouter/qwen/qwen-2.5-7b-instruct
+  structured_output: json_schema
+  model: Qwen Family json_schema (OpenRouter)
+  cost_per_call_usd: 0.0
+  note: UNRUN. See stage2_triage.

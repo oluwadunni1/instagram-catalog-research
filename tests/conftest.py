@@ -29,3 +29,19 @@ def no_sleep(monkeypatch: pytest.MonkeyPatch) -> None:
     import pipeline.media_fingerprint as mf
 
     monkeypatch.setattr(mf.time, "sleep", lambda _seconds: None)
+
+
+@pytest.fixture(autouse=True)
+def isolated_token_logs(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """Points both token logs at absent files under tmp_path for every test.
+
+    Readers now search the v1 log as well as the v2 one (find_run_log), so a
+    test that redirects only TOKEN_LOG_PATH would otherwise read the real
+    report/token_log.csv - and a test whose code path logs a call would append
+    to the real v2 log. Tests that need a log monkeypatch TOKEN_LOG_PATH (or
+    TOKEN_LOG_V1_PATH) over these.
+    """
+    import pipeline.llm_client as llm_client
+
+    monkeypatch.setattr(llm_client, "TOKEN_LOG_PATH", tmp_path / "token_log_v2.csv")
+    monkeypatch.setattr(llm_client, "TOKEN_LOG_V1_PATH", tmp_path / "token_log_v1.csv")

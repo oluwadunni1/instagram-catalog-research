@@ -18,13 +18,19 @@ signal to watch, not just a debugging detail.
 """
 
 import json
+import time
 import re
 from typing import Literal
 
 import litellm
 from pydantic import BaseModel
 
-from pipeline.llm_client import complete_structured, log_token_usage, throttle
+from pipeline.llm_client import (
+    complete_structured,
+    log_token_usage,
+    response_format_kwargs,
+    throttle,
+)
 from pipeline.types import Post, vision_image_url
 
 POST_TYPES = Literal[
@@ -134,6 +140,7 @@ def _pass_a(
     vendor_id: str | None,
     post_id: str,
     stage_name: str = "stage2_triage_pass_a",
+    structured_output: str = "json_object",
 ) -> TriageResult:
     """Cheap text-only classification pass.
 
@@ -157,6 +164,7 @@ def _pass_a(
         vendor_id=vendor_id,
         post_id=post_id,
         escalated=False,
+        structured_output=structured_output,
     )
     result.escalated = False
     return result
@@ -170,6 +178,7 @@ def _pass_b(
     vendor_id: str | None,
     post_id: str,
     stage_name: str = "stage2_triage_pass_b",
+    structured_output: str = "json_object",
 ) -> TriageResult:
     """Vision escalation. NOTE: complete_structured() currently only sends
     text messages - this constructs a multimodal message directly via
@@ -197,13 +206,15 @@ def _pass_b(
     # Bypasses complete_structured(), so it must throttle itself - this call
     # spends the same per-minute provider quota as every other one.
     throttle()
+    call_started = time.perf_counter()
     response = litellm.completion(
         model=vision_model,
         messages=messages,
         temperature=0.0,
-        response_format={"type": "json_object"},
+        **response_format_kwargs(TriageResult, structured_output, vision_model),
         metadata={"run_name": stage_name, "tags": [stage_name]},
     )
+    latency_ms = (time.perf_counter() - call_started) * 1000
     parsed = json.loads(response.choices[0].message.content)
     result = TriageResult.model_validate(parsed)
     result.escalated = True
@@ -220,6 +231,7 @@ def _pass_b(
             completion_tokens=getattr(usage, "completion_tokens", 0) or 0,
             total_tokens=getattr(usage, "total_tokens", None),
             escalated=True,
+            latency_ms=latency_ms,
         )
 
     return result
@@ -233,6 +245,7 @@ def triage_post(
     confidence_threshold: float = 0.7,
     run_id: str | None = None,
     vendor_id: str | None = None,
+    structured_output: str = "json_object",
 ) -> dict:
     """Classifies one post via the Pass A -> Pass B cascade.
 
@@ -251,6 +264,8 @@ def triage_post(
             one eval/harness.py run - token usage is only logged when this
             is set (see complete_structured() in pipeline/llm_client.py).
         vendor_id: Account label, for the token log's "vendor_id" column.
+        structured_output: "json_object" or "json_schema", for both passes -
+            see response_format_kwargs() in pipeline/llm_client.py.
 
     Returns:
         dict matching TriageResult's fields (post_type, confidence, escalated).
@@ -259,10 +274,13 @@ def triage_post(
     post_id = post.get("post_id") or post.get("id") or ""
 
     if _is_uninformative_caption(caption) and vision_image_url(post):
-        result = _pass_b(post, profile, vision_model, run_id, vendor_id, post_id)
+        result = _pass_b(post, profile, vision_model, run_id, vendor_id, post_id,
+                         structured_output=structured_output)
     else:
-        result = _pass_a(post, profile, text_model, run_id, vendor_id, post_id)
+        result = _pass_a(post, profile, text_model, run_id, vendor_id, post_id,
+                         structured_output=structured_output)
         if result.confidence < confidence_threshold and vision_image_url(post):
-            result = _pass_b(post, profile, vision_model, run_id, vendor_id, post_id)
+            result = _pass_b(post, profile, vision_model, run_id, vendor_id, post_id,
+                             structured_output=structured_output)
 
     return result.model_dump()

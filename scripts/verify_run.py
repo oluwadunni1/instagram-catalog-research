@@ -20,8 +20,13 @@ and a run that fails the gate is discarded and repeated, not reported.
         --posts 30
 
 Exits 0 on PASS, 1 on FAIL, so it can gate a shell loop. --list shows the
-run_ids present in the log, for when you no longer have the one printed by
+run_ids present in each log, for when you no longer have the one printed by
 the run.
+
+There are two logs (pipeline/llm_client.py): the frozen v1 log,
+report/token_log.csv, behind every README figure up to round 1, and the v2
+log, report/token_log_v2.csv, which every new run writes. A run is verified
+against whichever log holds its run_id; --log names one explicitly.
 
 Checks (each independently fatal):
   1. At least one row logged for the run_id.
@@ -64,12 +69,14 @@ MIN_CALLS_PER_POST = 1.0
 MAX_CALLS_PER_POST = 4.0
 
 
-def list_run_ids() -> list[tuple[str, int]]:
-    """Every run_id in the token log with its row count, oldest first."""
-    if not llm_client.TOKEN_LOG_PATH.exists():
+def list_run_ids(log_path: Path | None = None) -> list[tuple[str, int]]:
+    """Every run_id in one token log (the v2 log by default) with its row
+    count, oldest first."""
+    log_path = log_path or llm_client.TOKEN_LOG_PATH
+    if not log_path.exists():
         return []
     counts: Counter = Counter()
-    with llm_client.TOKEN_LOG_PATH.open(encoding="utf-8", newline="") as f:
+    with log_path.open(encoding="utf-8", newline="") as f:
         for row in csv.DictReader(f):
             counts[row.get("run_id") or "unknown"] += 1
     return list(counts.items())
@@ -130,11 +137,12 @@ def verify(
     min_calls: int | None = None,
     max_calls: int | None = None,
     predictions: list[Path] | None = None,
+    log_path: Path | None = None,
 ) -> tuple[bool, list[str]]:
     """Returns (passed, report_lines). Never raises on a failed check - a
     gate that crashes tells you less than one that explains itself."""
-    usage = read_run_usage(run_id)
-    lines: list[str] = []
+    usage = read_run_usage(run_id, log_path)
+    lines: list[str] = [f"  log: {usage['log']}"]
     failures: list[str] = []
 
     def check(ok: bool, label: str, detail: str) -> None:
@@ -145,7 +153,7 @@ def verify(
     # --- 1. the run reached a model at all --------------------------------
     if usage["calls"] == 0:
         check(False, "rows logged", (
-            f"ZERO rows in {llm_client.TOKEN_LOG_PATH} for run_id {run_id!r}. No model was called. "
+            f"ZERO rows in {usage['log']} for run_id {run_id!r}. No model was called. "
             "A clean-looking run with no token rows is infrastructure failure, not a model "
             "that answered nothing (README.md). Nothing else can be checked."
         ))
@@ -210,14 +218,18 @@ def verify(
     lines.append("")
     lines.append("  Per stage:")
     for stage, entry in sorted(usage["by_stage"].items()):
-        lines.append(f"    {stage:<26} {entry['calls']:>3} calls  {entry['total_tokens']:>7,} tokens")
+        line = f"    {stage:<26} {entry['calls']:>3} calls  {entry['total_tokens']:>7,} tokens"
+        # A mean over timed calls only: v1 rows and fallback rows carry no time.
+        if entry["timed_calls"]:
+            line += f"  {entry['latency_ms'] / entry['timed_calls']:>7,.0f} ms/call"
+        lines.append(line)
 
     return not failures, lines
 
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description="Gate one run's validity against report/token_log.csv before publishing "
+        description="Gate one run's validity against the token log before publishing "
                     "its numbers. Exits non-zero on failure."
     )
     parser.add_argument("--run-id", default=None,
@@ -237,8 +249,11 @@ def main() -> None:
                              "because it never reached litellm. Pass all three stage files.")
     parser.add_argument("--min-calls", type=int, default=None)
     parser.add_argument("--max-calls", type=int, default=None)
+    parser.add_argument("--log", type=Path, default=None,
+                        help="The token log to read. Default: whichever log holds the run_id "
+                             "(v2 report/token_log_v2.csv, then frozen v1 report/token_log.csv).")
     parser.add_argument("--list", action="store_true",
-                        help="List the run_ids present in the token log and exit")
+                        help="List the run_ids present in each token log and exit")
     args = parser.parse_args()
 
     try:
@@ -247,13 +262,14 @@ def main() -> None:
         pass
 
     if args.list:
-        runs = list_run_ids()
-        if not runs:
-            print(f"No rows in {llm_client.TOKEN_LOG_PATH}.")
-            return
-        print(f"{len(runs)} run_id(s) in {llm_client.TOKEN_LOG_PATH}:")
-        for run_id, count in runs:
-            print(f"  {count:>5} rows  {run_id}")
+        for log_path in [args.log] if args.log else llm_client.token_log_paths():
+            runs = list_run_ids(log_path)
+            if not runs:
+                print(f"No rows in {log_path}.")
+                continue
+            print(f"{len(runs)} run_id(s) in {log_path}:")
+            for run_id, count in runs:
+                print(f"  {count:>5} rows  {run_id}")
         return
 
     if not args.run_id:
@@ -266,6 +282,7 @@ def main() -> None:
         min_calls=args.min_calls,
         max_calls=args.max_calls,
         predictions=args.predictions,
+        log_path=args.log,
     )
 
     print(f"=== Verifying run {args.run_id} ===")

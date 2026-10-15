@@ -146,6 +146,7 @@ def decide(
     while True:
         try:
             throttle()
+            call_started = time.perf_counter()
             response = requests.post(
                 JEV_URL, headers=headers, json=payload, timeout=REQUEST_TIMEOUT_SECONDS
             )
@@ -189,6 +190,7 @@ def decide(
 
         break
 
+    latency_ms = (time.perf_counter() - call_started) * 1000
     body = response.json()
 
     if run_id is not None:
@@ -205,6 +207,9 @@ def decide(
             model=resolved_model,
             prompt_tokens=int(usage.get("input_tokens") or usage.get("prompt_tokens") or 0),
             completion_tokens=int(usage.get("output_tokens") or usage.get("completion_tokens") or 0),
+            # The final, successful attempt only - the backoff sleeps above
+            # are not in it.
+            latency_ms=latency_ms,
         )
 
     return body

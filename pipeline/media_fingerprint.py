@@ -104,6 +104,7 @@ def compute_caption_embedding(
         # snapshot build makes one of these per post back to back. Same reason the
         # vision Pass B calls throttle themselves (CLAUDE.md).
         throttle()
+        call_started = time.perf_counter()
         # The key goes in an x-goog-api-key header, never `?key=` - requests
         # embeds the full request URL in HTTPError, and this call's failure
         # path logs at WARNING (visible at any LOG_LEVEL), so a quota 429
@@ -118,9 +119,11 @@ def compute_caption_embedding(
             },
             timeout=EMBEDDING_TIMEOUT_SECONDS,
         )
+        latency_ms = (time.perf_counter() - call_started) * 1000
         resp.raise_for_status()
         values = resp.json()["embedding"]["values"]
-        _log_embedding_call(resp, post_id=post_id, run_id=run_id, vendor_id=vendor_id)
+        _log_embedding_call(resp, post_id=post_id, run_id=run_id, vendor_id=vendor_id,
+                            latency_ms=latency_ms)
         return values, True
     except Exception as exc:  # noqa: BLE001 - any failure degrades to a zero vector
         # redact_tokens(exc), not the bare exception: defence in depth for
@@ -131,8 +134,9 @@ def compute_caption_embedding(
         time.sleep(EMBEDDING_SLEEP_SECONDS)
 
 
-def _log_embedding_call(resp, *, post_id: str, run_id: str | None, vendor_id: str | None) -> None:
-    """One report/token_log.csv row per successful embedding call.
+def _log_embedding_call(resp, *, post_id: str, run_id: str | None, vendor_id: str | None,
+                        latency_ms: float | None = None) -> None:
+    """One token-log row per successful embedding call.
 
     embedContent has no usage block in its response the way a chat completion
     does, so the token counts are best-effort and usually zero. That is fine -
@@ -157,4 +161,5 @@ def _log_embedding_call(resp, *, post_id: str, run_id: str | None, vendor_id: st
         prompt_tokens=prompt_tokens,
         completion_tokens=0,
         total_tokens=usage.get("totalTokenCount", prompt_tokens) or prompt_tokens,
+        latency_ms=latency_ms,
     )

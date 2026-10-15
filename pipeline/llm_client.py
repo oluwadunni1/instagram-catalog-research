@@ -14,9 +14,10 @@ the pipeline.  It:
     rate-limits and 5xx overloads) - free-tier models share pools that get
     temporarily overloaded; crashing the whole eval run on the first 429
     is the wrong behaviour for experiments
-  - Logs prompt/completion token usage to report/token_log.csv (see
-    log_token_usage()) whenever the caller passes a run_id - opt-in per
-    call so a one-off script or REPL probe doesn't pollute the log
+  - Logs prompt/completion token usage and call latency to the token log
+    (report/token_log_v2.csv - see log_token_usage()) whenever the caller
+    passes a run_id - opt-in per call so a one-off script or REPL probe
+    doesn't pollute the log
 
 Logging goes to stdout so `uv run` output is easy to follow.
 """
@@ -259,7 +260,13 @@ def estimate_cost_usd(model: str, prompt_tokens: int, completion_tokens: int) ->
     return (prompt_tokens * prompt_rate + completion_tokens * completion_rate) / 1_000_000
 
 
-TOKEN_LOG_PATH = Path("report") / "token_log.csv"
+# Two logs, and only one of them is ever written. v1 is every row up to round 1:
+# the evidence behind every figure in README.md, frozen on 2026-10-15 so a
+# re-run can never mix into it. v2 is round 2 onward, with the same columns
+# plus latency_ms. Readers find a run in whichever log holds it (find_run_log),
+# so a v1 run_id still verifies without anyone naming the file.
+TOKEN_LOG_V1_PATH = Path("report") / "token_log.csv"
+TOKEN_LOG_PATH = Path("report") / "token_log_v2.csv"
 TOKEN_LOG_FIELDNAMES = [
     "run_id",
     "timestamp",
@@ -273,7 +280,30 @@ TOKEN_LOG_FIELDNAMES = [
     "escalated",
     "fallback_used",
     "estimated_cost_usd",
+    # Wall time of the provider call that produced the result, in ms. Excludes
+    # throttle() pacing and backoff sleeps, so it measures the model, not this
+    # project's rate limiting. Empty on a row with no call behind it (a
+    # fallback row) and on every v1 row, which predates the column.
+    "latency_ms",
 ]
+
+
+def token_log_paths() -> list[Path]:
+    """Every token log, newest first. Read at call time rather than bound at
+    import, so a test that points TOKEN_LOG_PATH elsewhere moves both the
+    writer and every reader."""
+    return [TOKEN_LOG_PATH, TOKEN_LOG_V1_PATH]
+
+
+def find_run_log(run_id: str) -> Path | None:
+    """The log holding this run_id's rows, or None when no log does."""
+    for path in token_log_paths():
+        if not path.exists():
+            continue
+        with path.open(encoding="utf-8", newline="") as f:
+            if any(row.get("run_id") == run_id for row in csv.DictReader(f)):
+                return path
+    return None
 
 
 def log_token_usage(
@@ -288,14 +318,24 @@ def log_token_usage(
     total_tokens: int | None = None,
     escalated: bool = False,
     fallback_used: bool = False,
+    latency_ms: float | None = None,
 ) -> None:
-    """Append one row to report/token_log.csv, writing the header first if the file doesn't exist yet.
+    """Append one row to the v2 token log, writing the header first if the file doesn't exist yet.
+
+    Refuses to write to the frozen v1 log. Every README figure traces to a
+    run_id in it, so a row appended there would sit beside evidence it was
+    never part of.
 
     estimated_cost_usd is computed from MODEL_RATES. A model with no rate on
     file is priced 0.0 and warned about - see the note above MODEL_RATES for
     why an unknown rate is never guessed, and why rows written before that
     landed are left at 0.0 rather than recomputed.
     """
+    if TOKEN_LOG_PATH.resolve() == TOKEN_LOG_V1_PATH.resolve():
+        raise RuntimeError(
+            f"{TOKEN_LOG_V1_PATH} is the frozen v1 token log and is never appended to. "
+            "New rows go to the v2 log."
+        )
     TOKEN_LOG_PATH.parent.mkdir(exist_ok=True)
     write_header = not TOKEN_LOG_PATH.exists()
 
@@ -312,6 +352,7 @@ def log_token_usage(
         "escalated": escalated,
         "fallback_used": fallback_used,
         "estimated_cost_usd": estimate_cost_usd(model, prompt_tokens, completion_tokens),
+        "latency_ms": "" if latency_ms is None else round(latency_ms, 1),
     }
 
     with TOKEN_LOG_PATH.open("a", newline="", encoding="utf-8") as f:
@@ -321,9 +362,13 @@ def log_token_usage(
         writer.writerow(row)
 
 
-def read_run_usage(run_id: str) -> dict:
-    """Per-stage call counts and token totals for one run, read back from
-    report/token_log.csv.
+def read_run_usage(run_id: str, log_path: Path | None = None) -> dict:
+    """Per-stage call counts, token totals and latency for one run, read back
+    from the token log.
+
+    log_path names the log to read; by default it is whichever log holds the
+    run_id (find_run_log), falling back to the v2 log for a run with no rows.
+    "log" in the result says which file was read.
 
     Deliberately not accumulated in memory as we go: the log is what actually
     reached litellm, so a stage that silently fell back to a different model,
@@ -334,9 +379,11 @@ def read_run_usage(run_id: str) -> dict:
     reader and writer of the log share one definition of its shape. Both
     scripts/run_pipeline.py and scripts/verify_run.py read through this.
     """
+    path = log_path or find_run_log(run_id) or TOKEN_LOG_PATH
     empty = {"calls": 0, "prompt_tokens": 0, "completion_tokens": 0, "total_tokens": 0,
-             "fallbacks": 0, "cost_usd": 0.0, "priced_calls": 0, "by_stage": {}, "models": []}
-    if not TOKEN_LOG_PATH.exists():
+             "fallbacks": 0, "cost_usd": 0.0, "priced_calls": 0, "latency_ms": 0.0,
+             "timed_calls": 0, "by_stage": {}, "models": [], "log": path}
+    if not path.exists():
         return empty
 
     by_stage: dict[str, dict] = {}
@@ -349,8 +396,12 @@ def read_run_usage(run_id: str) -> dict:
     # and a caller quoting the figure has to say so.
     cost_usd = 0.0
     priced_calls = 0
+    # Same coverage rule as cost: a mean latency is over timed_calls, never
+    # over calls, because v1 rows and fallback rows carry no time at all.
+    latency_ms = 0.0
+    timed_calls = 0
 
-    with TOKEN_LOG_PATH.open(encoding="utf-8", newline="") as f:
+    with path.open(encoding="utf-8", newline="") as f:
         for row in csv.DictReader(f):
             if row.get("run_id") != run_id:
                 continue
@@ -365,7 +416,7 @@ def read_run_usage(run_id: str) -> dict:
             entry = by_stage.setdefault(
                 stage,
                 {"calls": 0, "prompt_tokens": 0, "completion_tokens": 0,
-                 "total_tokens": 0, "cost_usd": 0.0},
+                 "total_tokens": 0, "cost_usd": 0.0, "latency_ms": 0.0, "timed_calls": 0},
             )
             for key in ("prompt_tokens", "completion_tokens", "total_tokens"):
                 entry[key] += _int(key)
@@ -381,12 +432,106 @@ def read_run_usage(run_id: str) -> dict:
             cost_usd += row_cost
             if row_cost > 0.0:
                 priced_calls += 1
+            try:
+                row_latency = float(row.get("latency_ms") or "")
+            except ValueError:
+                row_latency = None
+            if row_latency is not None:
+                entry["latency_ms"] += row_latency
+                entry["timed_calls"] += 1
+                latency_ms += row_latency
+                timed_calls += 1
             if (row.get("fallback_used") or "").strip().lower() == "true":
                 totals["fallbacks"] += 1
             models[row.get("model") or "unknown"] += 1
 
     return {**totals, "cost_usd": cost_usd, "priced_calls": priced_calls,
-            "by_stage": by_stage, "models": sorted(models)}
+            "latency_ms": latency_ms, "timed_calls": timed_calls,
+            "by_stage": by_stage, "models": sorted(models), "log": path}
+
+
+# How a call asks for JSON. "json_object" (the default, and the only mode
+# before 2026-10-15) asks for any JSON object and leaves the schema to
+# _extract_json() and model_validate(). "json_schema" sends the Pydantic schema
+# itself, so a provider that supports structured outputs constrains decoding to
+# it. Qwen 2.5 7B under json_object returned invented labels and keys on 44 of
+# 71 first attempts in the September autos runs ("log", "sync_confidence",
+# {"post_type": "log", "data": {...}}) - shapes no retry message fixes.
+STRUCTURED_OUTPUT_MODES = ("json_object", "json_schema")
+
+
+def _strict_json_schema(schema: Type[BaseModel]) -> dict:
+    """schema's JSON Schema in the form strict structured outputs require:
+    every property required and no extra properties, at every level.
+
+    A field with a default becomes required too. That is what strict mode
+    demands, and it is harmless here: a field like TriageResult.escalated is
+    overwritten by our own code after the call either way.
+    """
+    def tighten(node):
+        if isinstance(node, dict):
+            if node.get("type") == "object" and "properties" in node:
+                node["required"] = list(node["properties"])
+                node["additionalProperties"] = False
+            for value in node.values():
+                tighten(value)
+        elif isinstance(node, list):
+            for value in node:
+                tighten(value)
+        return node
+
+    return tighten(schema.model_json_schema())
+
+
+def response_format_kwargs(schema: Type[BaseModel], structured_output: str, model: str) -> dict:
+    """The litellm.completion() kwargs that ask `model` for JSON in the given
+    mode. Shared by complete_structured() and the vision Pass B calls, which
+    build their own multimodal requests.
+
+    For json_schema on OpenRouter it also sets provider.require_parameters, so
+    OpenRouter routes only to providers that honour response_format. Without
+    it a request can land on a provider that ignores the schema, and the call
+    behaves exactly like json_object while the config claims otherwise.
+    """
+    if structured_output == "json_object":
+        return {"response_format": {"type": "json_object"}}
+    if structured_output == "json_schema":
+        kwargs: dict = {"response_format": {
+            "type": "json_schema",
+            "json_schema": {"name": schema.__name__, "strict": True,
+                            "schema": _strict_json_schema(schema)},
+        }}
+        if model.startswith("openrouter/"):
+            kwargs["extra_body"] = {"provider": {"require_parameters": True}}
+        return kwargs
+    raise ValueError(
+        f"structured_output must be one of {STRUCTURED_OUTPUT_MODES}, got {structured_output!r}"
+    )
+
+
+def _field_guide(schema: Type[BaseModel]) -> str:
+    """One line per top-level field: its name, and its allowed values when it
+    is a closed set. The retry message used to name the fields only, so a
+    model that invented a label was told the field exists but not what may go
+    in it."""
+    properties = schema.model_json_schema().get("properties", {})
+    lines = []
+    for name, spec in properties.items():
+        allowed = spec.get("enum")
+        if allowed:
+            lines.append(f"- {name}: one of {', '.join(map(str, allowed))}")
+        else:
+            lines.append(f"- {name}: {spec.get('type', 'see schema')}")
+    return "\n".join(lines)
+
+
+def _validation_summary(exc: ValidationError) -> str:
+    """What was wrong, one short line per error, without pydantic's URLs."""
+    parts = []
+    for error in exc.errors():
+        where = ".".join(str(part) for part in error.get("loc", ())) or "(root)"
+        parts.append(f"{where}: {error.get('msg')} (got {error.get('input')!r})")
+    return "; ".join(parts)
 
 
 def complete_structured(
@@ -405,6 +550,7 @@ def complete_structured(
     post_id: str | None = None,
     escalated: bool = False,
     fallback_used: bool = False,
+    structured_output: str = "json_object",
 ) -> T:
     """Call `model` and parse the response JSON into `schema`.
 
@@ -426,7 +572,7 @@ def complete_structured(
                                experiment run together. Token usage is only
                                logged when this is set - omit it (the
                                default) for a one-off script or REPL probe
-                               you don't want polluting report/token_log.csv.
+                               you don't want polluting the token log.
         vendor_id:             Account label, for the token log's "vendor_id"
                                column. Only used when run_id is set.
         post_id:               Post id, for the token log's "post_id" column
@@ -439,6 +585,8 @@ def complete_structured(
         fallback_used:         Whether this call is a retry after a prior
                                fallback, for the token log's "fallback_used"
                                column. Only used when run_id is set.
+        structured_output:     "json_object" (default) or "json_schema" -
+                               see response_format_kwargs().
 
     Returns:
         A validated instance of `schema`.
@@ -451,6 +599,7 @@ def complete_structured(
         {"role": "user", "content": user_prompt},
     ]
 
+    format_kwargs = response_format_kwargs(schema, structured_output, model)
     last_content_error: Exception | None = None
     transient_attempts = 0
 
@@ -462,12 +611,13 @@ def complete_structured(
         while True:
             try:
                 throttle()
+                call_started = time.perf_counter()
                 response = litellm.completion(
                     model=model,
                     messages=messages,
                     temperature=temperature,
                     max_tokens=max_tokens,
-                    response_format={"type": "json_object"},
+                    **format_kwargs,
                     metadata={"run_name": stage_name, "tags": [stage_name, f"attempt_{attempt}"]},
                 )
                 break  # success - exit transient retry loop
@@ -495,6 +645,7 @@ def complete_structured(
                 time.sleep(wait)
                 # continue inner loop - don't advance content-attempt counter
 
+        latency_ms = (time.perf_counter() - call_started) * 1000
         raw_text: str = response.choices[0].message.content or ""
         logger.debug("[%s] Raw response:\n%s", stage_name, raw_text)
 
@@ -507,7 +658,7 @@ def complete_structured(
             error_detail = f"non-JSON response: {raw_text!r}"
         except ValidationError as exc:
             last_content_error = exc
-            error_detail = f"schema mismatch: {exc}"
+            error_detail = f"schema mismatch: {_validation_summary(exc)}"
         else:
             if run_id is not None:
                 usage = getattr(response, "usage", None)
@@ -522,22 +673,22 @@ def complete_structured(
                     total_tokens=getattr(usage, "total_tokens", None),
                     escalated=escalated,
                     fallback_used=fallback_used,
+                    latency_ms=latency_ms,
                 )
             return result
 
         if attempt <= max_retries:
             logger.warning("[%s] Attempt %d failed (%s) - retrying", stage_name, attempt, error_detail)
-            # Get the required field names directly from the schema so the
-            # correction message is specific - a model that returned {} needs
-            # to know exactly which fields it missed, not just "try again".
-            required_fields = list(schema.model_fields.keys())
+            # Built from the schema so the correction is specific: a model that
+            # returned {} needs the fields it missed, and one that invented a
+            # label needs the labels it may use, not just "try again".
             messages.append({"role": "assistant", "content": raw_text})
             messages.append({
                 "role": "user",
                 "content": (
-                    f"Your response was invalid: {error_detail}. "
-                    f"You MUST return a JSON object with these exact fields: "
-                    f"{required_fields}. "
+                    f"Your response was invalid: {error_detail}.\n"
+                    f"Return a JSON object with exactly these top-level fields and "
+                    f"no others:\n{_field_guide(schema)}\n"
                     f"Return ONLY the JSON object, no explanation, no markdown."
                 ),
             })

@@ -37,13 +37,18 @@ make verify RUN_ID=<id> [EXPECT=<model>] [POSTS=N]  # gate a run before publishi
 make test / check-secrets / install-hooks      # offline checks (see below)
 ```
 
-**`make verify` gates a run's validity** (`scripts/verify_run.py`) against
-`report/token_log.csv` — the only artifact that records what actually reached litellm rather
-than what the config claimed. It fails on: zero rows logged (the run never reached a model),
+**`make verify` gates a run's validity** (`scripts/verify_run.py`) against the token log —
+the only artifact that records what actually reached litellm rather than what the config
+claimed. **There are two logs.** `report/token_log.csv` is v1: every run up to round 1, the
+evidence behind every current README figure, frozen on 2026-10-15 — `log_token_usage()`
+refuses to append to it. `report/token_log_v2.csv` is v2: every run since, with the same
+columns plus `latency_ms` (the provider call alone, excluding `throttle()` pacing and
+backoff; empty on fallback rows). Verify and `read_run_usage()` read whichever log holds the
+run_id, so old run_ids still verify; `LOG=` / `--log` names one explicitly. It fails on: zero rows logged (the run never reached a model),
 any `fallback_used=True` row (part of the output is regex heuristic, not model output), a
 model string outside `--expect-model`, or a call count outside a band derived from `--posts`.
 Exits non-zero, so `make harness … && make verify RUN_ID=…` fails the pair. Bare
-`make verify` lists the log's run_ids. **No number goes into `README.md` or a stakeholder
+`make verify` lists each log's run_ids. **No number goes into `README.md` or a stakeholder
 artifact from a run that has not passed this gate.**
 
 **`eval/harness.py` is the verification mechanism for anything model-related**: it scores each
@@ -169,7 +174,8 @@ defaults to `None`, so it is guarded by
 | Chained catalog | `runs/<account_label>/catalog.json` | account_label | git |
 | Stage 5 bucket split | `runs/<account_label>/buckets/{auto_import,needs_attention,auto_exclude}.json` | account_label | git |
 | Harness predictions | `report/<vendor_id>/stage{2,3,4}_<model>_predictions.json` | vendor_id + model | DVC |
-| Token log | `report/token_log.csv` | append-only, has `vendor_id` column | DVC |
+| Token log v1 (frozen) | `report/token_log.csv` | read-only since 2026-10-15, has `vendor_id` column | DVC |
+| Token log v2 | `report/token_log_v2.csv` | append-only, adds `latency_ms` | DVC |
 | Stage 6 snapshot | `data/snapshots/<vendor_handle>/` | vendor_handle | DVC |
 | Stage 6 changes | `report/changes.json` | fixed default — pass `--changes` per vendor | DVC |
 
@@ -248,7 +254,8 @@ params that change on every fetch, which would make every post falsely "changed"
   "Caveats on the numbers" sections, and code comments citing a finding point there. When a new
   result changes a conclusion, edit the relevant section rather than appending — but never drop
   a caveat just because it is inconvenient. `report/` is regenerated on every run and is not the
-  record; `report/token_log.csv` is the primary evidence behind every figure.
+  record; the token logs (v1 `report/token_log.csv`, v2 `report/token_log_v2.csv`) are the
+  primary evidence behind every figure.
 - **The data is split between git and DVC, and which is which is deliberate.**
   `eval/golden/` and `runs/` are **committed to git** so the experiment can be re-run from a
   clone. They carry no third-party data: Meta withholds comment text, so every raw dump's
