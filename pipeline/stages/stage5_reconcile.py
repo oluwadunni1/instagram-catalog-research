@@ -4,6 +4,7 @@ the already-computed Stage 2/3/4 outputs, routing each post's extracted
 products into one of three buckets for the POC catalog import flow.
 """
 
+from collections.abc import Sequence
 from typing import Literal
 
 from pipeline.types import Post, vision_image_url
@@ -15,6 +16,7 @@ UNKNOWN_NAME_FLAG = "Product name unknown — please verify"
 LOW_CONFIDENCE_FLAG = "Low extraction confidence — please verify product details"
 SOLD_FLAG = "Item may already be sold — verify before importing"
 NO_PRODUCTS_FLAG = "No products could be extracted from this post"
+STAGE_ERROR_FLAG = "A pipeline stage failed on this post — review it by hand"
 
 LOW_CONFIDENCE_THRESHOLD = 0.65
 
@@ -24,17 +26,25 @@ def route_post(
     stage2_result: dict,
     stage3_result: list[dict],
     stage4_result: list[dict],
+    failed_stages: Sequence[str] = (),
 ) -> dict:
     """Routes a post's extracted products into one of three buckets.
 
     Priority order (first match wins, except the per-product flag pass
     which collects across every product before deciding auto_import vs.
     needs_attention):
-      1. post_type isn't product_listing -> auto_exclude
-      2. any stage4 "sold" signal -> needs_attention
-      3. no products extracted -> needs_attention
-      4. per-product checks (missing price, unknown name, low confidence)
+      1. any stage in failed_stages -> needs_attention
+      2. post_type isn't product_listing -> auto_exclude
+      3. any stage4 "sold" signal -> needs_attention
+      4. no products extracted -> needs_attention
+      5. per-product checks (missing price, unknown name, low confidence)
          -> needs_attention if any flag fires, else auto_import
+
+    failed_stages names the stages that raised on this post. It is checked
+    first because a failed stage's result is a placeholder, not a verdict: a
+    Stage 2 failure used to arrive as post_type "unknown" and route to
+    auto_exclude, so a real product left the catalog with no flag, and a
+    Stage 4 failure arrives as [] - indistinguishable from "no sold signal".
     """
     post_id = post.get("post_id") or post.get("id") or ""
     # vision_image_url(), not media_url: for a Reel/VIDEO post media_url is
@@ -42,6 +52,16 @@ def route_post(
     # post's thumbnail. Stage 5 was missed by the 2026-09-05 sweep that
     # threaded this helper through Stage 2/3 and the pHash call sites.
     thumbnail_url = vision_image_url(post)
+
+    if failed_stages:
+        return {
+            "post_id": post_id,
+            "bucket": "needs_attention",
+            "flags": [STAGE_ERROR_FLAG],
+            "thumbnail_url": thumbnail_url,
+            "products": stage3_result,
+            "signals": stage4_result,
+        }
 
     if stage2_result.get("post_type") != "product_listing":
         return {

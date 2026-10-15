@@ -11,6 +11,7 @@ from pipeline.stages.stage5_reconcile import (
     MISSING_PRICE_FLAG,
     NO_PRODUCTS_FLAG,
     SOLD_FLAG,
+    STAGE_ERROR_FLAG,
     UNKNOWN_NAME_FLAG,
     route_post,
 )
@@ -92,3 +93,22 @@ def test_thumbnail_url_is_preferred_for_reels() -> None:
     }
     result = route_post(reel, LISTING, [_product()], [])
     assert result["thumbnail_url"].endswith(".jpg")
+
+
+def test_a_failed_stage_routes_to_needs_attention_not_auto_exclude() -> None:
+    """A Stage 2 failure arrives as the placeholder post_type "unknown". Read
+    as a verdict it routed to auto_exclude, and a real product left the
+    catalog with no flag; the failure has to outrank the placeholder."""
+    result = route_post(POST, {"post_type": "unknown"}, [], [], failed_stages=["stage2"])
+
+    assert result["bucket"] == "needs_attention"
+    assert result["flags"] == [STAGE_ERROR_FLAG]
+
+
+def test_a_failed_signal_stage_blocks_auto_import() -> None:
+    """A Stage 4 failure arrives as [], which reads exactly like "no sold
+    signal" - so a clean listing would auto-import an item that may be sold."""
+    result = route_post(POST, LISTING, [_product()], [], failed_stages=["stage4"])
+
+    assert result["bucket"] == "needs_attention"
+    assert result["flags"] == [STAGE_ERROR_FLAG]

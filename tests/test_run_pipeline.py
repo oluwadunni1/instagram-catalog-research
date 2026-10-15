@@ -188,3 +188,74 @@ def test_bucket_files_land_beside_the_catalog(tmp_path: Path) -> None:
     written = run_pipeline.write_bucket_files(_catalog([]), tmp_path / "nested" / "catalog.json")
 
     assert written["auto_import"].parent == tmp_path / "nested" / "buckets"
+
+
+# --- per-post stage failures -----------------------------------------------
+
+def _raise(*_args, **_kwargs):
+    raise RuntimeError("provider down")
+
+
+def _chained_run(tmp_path: Path, monkeypatch, triage, signals=None) -> dict:
+    """run_pipeline() over a two-post dump with stub stages: no network, no
+    .env, no model. Only the wiring between the stage loops and Stage 5 runs."""
+    from types import SimpleNamespace
+
+    dump = tmp_path / "dump.json"
+    dump.write_text(json.dumps({
+        "profile": {"username": "the_vendor"},
+        "media": [{"id": "bad", "caption": "Phone 25k"}, {"id": "good", "caption": "Laptop 90k"}],
+    }), encoding="utf-8")
+    stages = {
+        "stage2_triage": triage,
+        "stage3_extract": lambda post, profile: [{
+            "name": "Thing", "price": {"value": 1, "source": "caption"},
+            "extraction_confidence": 0.9,
+        }],
+        "stage4_signals": signals or (lambda post, profile: []),
+    }
+    monkeypatch.setattr(run_pipeline, "load_experiment_config", lambda path: SimpleNamespace(
+        name="stub", stage1_profile=None, stage4_signals=object()))
+    monkeypatch.setattr(run_pipeline, "latest_dump", lambda account: dump)
+    monkeypatch.setattr(run_pipeline, "get_or_create_profile", lambda *a, **k: SimpleNamespace(
+        model_dump=lambda: {"vendor_username": "the_vendor"}))
+    monkeypatch.setattr(run_pipeline, "load_stage_fn",
+                        lambda config, stage, **k: (stages[stage], stage, None))
+    monkeypatch.setattr(run_pipeline, "read_run_usage", lambda run_id: {})
+
+    catalog = run_pipeline.run_pipeline("vendor_demo", Path("stub.yaml"),
+                                        out_path=tmp_path / "catalog.json")
+    return {item["post_id"]: item for item in catalog["items"]}
+
+
+def test_a_raising_stage2_lands_the_post_in_needs_attention(tmp_path: Path, monkeypatch) -> None:
+    """The fail-s2drop bug: an errored Stage 2 used to become post_type
+    "unknown" and route to auto_exclude, so a product vanished unflagged."""
+    def triage(post, profile):
+        if post["post_id"] == "bad":
+            _raise()
+        return {"post_type": "product_listing", "confidence": 0.9, "escalated": False}
+
+    items = _chained_run(tmp_path, monkeypatch, triage)
+
+    assert items["bad"]["bucket"] == "needs_attention"
+    assert items["bad"]["failed_stages"] == ["stage2"]
+    assert items["good"]["bucket"] == "auto_import"
+    assert items["good"]["failed_stages"] == []
+
+
+def test_a_raising_stage4_blocks_auto_import(tmp_path: Path, monkeypatch) -> None:
+    """A Stage 4 error returns [], the same value as "no sold signal"."""
+    def triage(post, profile):
+        return {"post_type": "product_listing", "confidence": 0.9, "escalated": False}
+
+    def signals(post, profile):
+        if post["post_id"] == "bad":
+            _raise()
+        return []
+
+    items = _chained_run(tmp_path, monkeypatch, triage, signals)
+
+    assert items["bad"]["bucket"] == "needs_attention"
+    assert items["bad"]["failed_stages"] == ["stage4"]
+    assert items["good"]["bucket"] == "auto_import"

@@ -394,8 +394,9 @@ def run_pipeline(
             stage2 = triage_fn(post, profile_dict)
         except Exception as exc:
             # Mirrors the harness's per-post isolation: one bad post must not
-            # take the run down. An un-triaged post is routed as unknown,
-            # which Stage 5 sends to auto_exclude.
+            # take the run down. The placeholder below is not a verdict:
+            # route_post() sees stage2 in failed_stages and sends the post to
+            # needs_attention, where it used to route "unknown" to auto_exclude.
             logger.error("[stage2 ERROR] %s: %s: %s", post_id, type(exc).__name__, exc)
             errors.append({"post_id": post_id, "stage": "stage2", "error": str(exc)})
             stage2 = {"post_type": "unknown", "confidence": 0.0, "escalated": False}
@@ -458,12 +459,16 @@ def run_pipeline(
     if live:
         _banner("Stage 5: routing - deterministic, zero LLM calls")
     items: list[dict] = []
+    failed_by_id: dict[str, list[str]] = {}
+    for error in errors:
+        failed_by_id.setdefault(error["post_id"], []).append(error["stage"])
     for post in posts:
         post_id = post["post_id"]
         stage2 = stage2_by_id[post_id]
         stage3 = stage3_by_id.get(post_id, [])
         stage4 = stage4_by_id.get(post_id, [])
-        routed = route_post(post, stage2, stage3, stage4)
+        failed_stages = failed_by_id.get(post_id, [])
+        routed = route_post(post, stage2, stage3, stage4, failed_stages)
 
         items.append({
             "post_id": post_id,
@@ -479,6 +484,7 @@ def run_pipeline(
             "triage_escalated": bool(stage2.get("escalated")),
             "bucket": routed["bucket"],
             "flags": routed["flags"],
+            "failed_stages": failed_stages,
             "products": stage3,
             "signals": stage4,
         })
