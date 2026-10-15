@@ -1,0 +1,33 @@
+name: r2_control_gemini
+description: >-
+  Round 2 control: default.yaml's Gemini models, unchanged, routed through
+  OpenRouter instead of the Google AI Studio free tier. Every round-2 candidate
+  is compared against this, not against the September figures in README.md:
+  same prompts, same route and the same paid quota as the candidates. It also
+  takes the free tier's 15 requests/minute cap and its 503s out of deciding
+  which runs finish. Stage 1 is absent, as in every family config: profiles are
+  cached per account.
+
+stage2_triage:
+  module: pipeline.stages.stage2_triage
+  function: triage_post
+  text_model: openrouter/google/gemini-3.5-flash-lite
+  vision_model: openrouter/google/gemini-3.5-flash
+  confidence_threshold: 0.7
+  model: Gemini control (OpenRouter)
+  cost_per_call_usd: 0.0
+
+stage3_extract:
+  module: pipeline.stages.stage3_extract
+  function: extract_product
+  text_model: openrouter/google/gemini-3.5-flash-lite
+  vision_model: openrouter/google/gemini-3.5-flash-lite
+  model: Gemini control (OpenRouter)
+  cost_per_call_usd: 0.0
+
+stage4_signals:
+  module: pipeline.stages.stage4_signals
+  function: detect_signals
+  signals_model: openrouter/google/gemini-3.5-flash-lite
+  model: Gemini control (OpenRouter)
+  cost_per_call_usd: 0.0

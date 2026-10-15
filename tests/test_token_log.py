@@ -303,3 +303,24 @@ def test_a_log_with_an_older_header_is_refused() -> None:
 
     with pytest.raises(RuntimeError, match="Migrate the header"):
         _write_call()
+
+
+def test_every_round2_model_has_a_rate() -> None:
+    """Round 2 runs under a spend cap, and an unpriced model logs 0.0 - a
+    run of it would look free and never trip the cap. Every model string a
+    round-2 config names must be priced before that config can run."""
+    import yaml
+
+    configs = sorted((Path(__file__).resolve().parent.parent / "pipeline" / "config"
+                      / "experiments").glob("r2_*.yaml"))
+    assert configs, "no round-2 configs found"
+    named = {
+        value
+        for config in configs
+        for stage in yaml.safe_load(config.read_text(encoding="utf-8")).values()
+        if isinstance(stage, dict)
+        for key, value in stage.items()
+        if key.endswith("_model") or key == "signals_model"
+    }
+
+    assert named - set(llm_client.MODEL_RATES) == set()

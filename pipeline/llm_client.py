@@ -216,6 +216,29 @@ MODEL_RATES: dict[str, tuple[float, float]] = {
     # which has been quoting it since the model was introduced.
     "jev-1.13.0": (0.042, 0.0),
     "jev-latest": (0.042, 0.0),
+    # Round 2 candidates, all through OpenRouter. Source: the model-level
+    # `pricing` in https://openrouter.ai/api/v1/models, read 2026-10-15. Two
+    # limits on what these prices tell you:
+    #   - OpenRouter prices vary by upstream provider, and the log's provider
+    #     column records which one served each row; these are the listed
+    #     model price. Qwen3-14B, for one, is $0.10 / $0.22 on NextBit against
+    #     $0.12 / $0.24 listed, so its rows overstate slightly.
+    #   - Prices move. Kimi K3's input was $0.70 on 2026-10-14 and $0.45 a day
+    #     later. A row is priced at the rate on file when it was written and
+    #     never recomputed, so update the date when you change a line.
+    "openrouter/google/gemini-3.5-flash-lite": (0.30, 2.50),
+    "openrouter/google/gemini-3.5-flash": (1.50, 9.00),
+    "openrouter/openai/gpt-4o-mini": (0.15, 0.60),
+    "openrouter/meta-llama/llama-3.1-8b-instruct": (0.05, 0.08),
+    "openrouter/meta-llama/llama-4-scout": (0.18, 0.59),
+    "openrouter/qwen/qwen-2.5-7b-instruct": (0.10, 0.20),
+    "openrouter/qwen/qwen3-14b": (0.12, 0.24),
+    "openrouter/qwen/qwen3-vl-8b-instruct": (0.25, 0.75),
+    "openrouter/qwen/qwen3.7-flash": (0.03, 0.13),
+    "openrouter/nex-agi/nex-n2.5-mini": (0.025, 0.10),
+    "openrouter/xiaomi/mimo-v2.6-flash": (0.14, 0.28),
+    "openrouter/moonshotai/kimi-k2.6": (0.65, 3.41),
+    "openrouter/moonshotai/kimi-k3": (0.45, 15.00),
 }
 
 # Models seen in the log with no rate on file. Kept separate from MODEL_RATES so
@@ -224,12 +247,13 @@ MODEL_RATES: dict[str, tuple[float, float]] = {
 #
 # UNPRICED, needs a rate from the provider's own page before any cost figure
 # that includes these rows can be quoted:
-#   gemini/gemini-3.5-flash-lite  - README records the COMPLETION rate as
-#       $2.50/M, but the prompt rate has never been written down anywhere in
-#       this repo, and the per-post figures in README.md were derived without
-#       recording it. Half a rate cannot price a row.
+#   gemini/gemini-3.5-flash-lite  - the direct Google AI Studio route, used by
+#       every round-1 run on the free tier. README records the COMPLETION rate
+#       as $2.50/M but never the prompt rate, and Google's paid rate need not
+#       match OpenRouter's. Half a rate cannot price a row.
 #   gemini/gemini-3.5-flash       - same.
-#   the GPT-4o Mini / Llama / Qwen strings from the model comparison.
+#   the round-1 OpenRouter rows (2026-09) - priced 0.0 when written, and rows
+#       are never recomputed, so their cost stays hand-derived.
 #   gemini-embedding-001          - Stage 6's caption embeddings
 #       (pipeline/media_fingerprint.py). Google prices embeddings per input
 #       token on a separate sheet from the generative models, and embedContent
