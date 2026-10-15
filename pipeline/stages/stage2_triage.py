@@ -28,7 +28,7 @@ from pydantic import BaseModel
 from pipeline.llm_client import (
     complete_structured,
     log_token_usage,
-    response_format_kwargs,
+    request_kwargs,
     served_by,
     throttle,
 )
@@ -142,6 +142,7 @@ def _pass_a(
     post_id: str,
     stage_name: str = "stage2_triage_pass_a",
     structured_output: str = "json_object",
+    reasoning: str | None = None,
 ) -> TriageResult:
     """Cheap text-only classification pass.
 
@@ -166,6 +167,7 @@ def _pass_a(
         post_id=post_id,
         escalated=False,
         structured_output=structured_output,
+        reasoning=reasoning,
     )
     result.escalated = False
     return result
@@ -180,6 +182,7 @@ def _pass_b(
     post_id: str,
     stage_name: str = "stage2_triage_pass_b",
     structured_output: str = "json_object",
+    reasoning: str | None = None,
 ) -> TriageResult:
     """Vision escalation. NOTE: complete_structured() currently only sends
     text messages - this constructs a multimodal message directly via
@@ -212,7 +215,7 @@ def _pass_b(
         model=vision_model,
         messages=messages,
         temperature=0.0,
-        **response_format_kwargs(TriageResult, structured_output, vision_model),
+        **request_kwargs(TriageResult, structured_output, vision_model, reasoning),
         metadata={"run_name": stage_name, "tags": [stage_name]},
     )
     latency_ms = (time.perf_counter() - call_started) * 1000
@@ -255,6 +258,8 @@ def triage_post(
     run_id: str | None = None,
     vendor_id: str | None = None,
     structured_output: str = "json_object",
+    reasoning: str | None = None,
+    vision_reasoning: str | None = None,
 ) -> dict:
     """Classifies one post via the Pass A -> Pass B cascade.
 
@@ -275,6 +280,12 @@ def triage_post(
         vendor_id: Account label, for the token log's "vendor_id" column.
         structured_output: "json_object" or "json_schema", for both passes -
             see response_format_kwargs() in pipeline/llm_client.py.
+        reasoning: None, "off", "low", "medium" or "high", for Pass A - see
+            request_kwargs() in pipeline/llm_client.py.
+        vision_reasoning: The same, for Pass B. Separate because the two
+            models differ: a non-reasoning vision model's provider may not
+            accept the parameter at all, and under json_schema OpenRouter
+            then finds no provider for the call.
 
     Returns:
         dict matching TriageResult's fields (post_type, confidence, escalated).
@@ -284,12 +295,15 @@ def triage_post(
 
     if _is_uninformative_caption(caption) and vision_image_url(post):
         result = _pass_b(post, profile, vision_model, run_id, vendor_id, post_id,
-                         structured_output=structured_output)
+                         structured_output=structured_output,
+                         reasoning=vision_reasoning)
     else:
         result = _pass_a(post, profile, text_model, run_id, vendor_id, post_id,
-                         structured_output=structured_output)
+                         structured_output=structured_output,
+                         reasoning=reasoning)
         if result.confidence < confidence_threshold and vision_image_url(post):
             result = _pass_b(post, profile, vision_model, run_id, vendor_id, post_id,
-                             structured_output=structured_output)
+                             structured_output=structured_output,
+                             reasoning=vision_reasoning)
 
     return result.model_dump()

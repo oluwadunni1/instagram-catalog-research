@@ -34,7 +34,7 @@ from pydantic import BaseModel
 from pipeline.llm_client import (
     complete_structured,
     log_token_usage,
-    response_format_kwargs,
+    request_kwargs,
     served_by,
     throttle,
 )
@@ -427,6 +427,7 @@ def _pass_a(
     post_id: str,
     max_tokens: int = DEFAULT_MAX_TOKENS,
     structured_output: str = "json_object",
+    reasoning: str | None = None,
 ) -> ProductExtractionResult:
     """Cheap text-only pass."""
     return complete_structured(
@@ -441,6 +442,7 @@ def _pass_a(
         escalated=False,
         max_tokens=max_tokens,
         structured_output=structured_output,
+        reasoning=reasoning,
     )
 
 
@@ -452,6 +454,7 @@ def _pass_a_ocr(
     post_id: str,
     max_tokens: int = DEFAULT_MAX_TOKENS,
     structured_output: str = "json_object",
+    reasoning: str | None = None,
 ) -> ProductExtractionResult:
     """Text pass over a prompt that carries an OCR block.
 
@@ -474,6 +477,7 @@ def _pass_a_ocr(
         escalated=True,
         max_tokens=max_tokens,
         structured_output=structured_output,
+        reasoning=reasoning,
     )
 
 
@@ -485,6 +489,7 @@ def _pass_b(
     vendor_id: str | None,
     post_id: str,
     structured_output: str = "json_object",
+    reasoning: str | None = None,
 ) -> ProductExtractionResult:
     """Vision escalation. NOTE: complete_structured() currently only sends
     text messages - this constructs a multimodal message directly via
@@ -511,7 +516,7 @@ def _pass_b(
         model=vision_model,
         messages=messages,
         temperature=0.0,
-        **response_format_kwargs(ProductExtractionResult, structured_output, vision_model),
+        **request_kwargs(ProductExtractionResult, structured_output, vision_model, reasoning),
         metadata={"run_name": "stage3_extract_pass_b", "tags": ["stage3_extract_pass_b"]},
     )
     latency_ms = (time.perf_counter() - call_started) * 1000
@@ -571,6 +576,8 @@ def extract_product(
     use_ocr: bool = False,
     ocr_min_chars: int = DEFAULT_MIN_CHARS,
     structured_output: str = "json_object",
+    reasoning: str | None = None,
+    vision_reasoning: str | None = None,
 ) -> list[ProductPrediction]:
     """Extracts one or more products from a post via a three-tier cascade.
 
@@ -610,6 +617,12 @@ def extract_product(
             recorded run unchanged; stage3_ocr.yaml is what turns it on.
         ocr_min_chars: Below this many recognised characters the read counts as
             failed and the cascade escalates to vision as it did before.
+        structured_output: "json_object" or "json_schema", for every tier -
+            see response_format_kwargs() in pipeline/llm_client.py.
+        reasoning: None, "off", "low", "medium" or "high", for the text and
+            OCR passes - see request_kwargs() in pipeline/llm_client.py.
+        vision_reasoning: The same, for Pass B - separate for the reason given
+            in stage2_triage.triage_post().
 
     Returns:
         A list of ProductPrediction, one per distinct product the model found.
@@ -655,10 +668,10 @@ def extract_product(
         user_prompt = _build_user_prompt(post, profile, vendor_comments, ocr_text)
         if ocr_text:
             result = _pass_a_ocr(user_prompt, text_model, run_id, vendor_id, post_id, max_tokens,
-                                 structured_output)
+                                 structured_output, reasoning)
         else:
             result = _pass_a(user_prompt, text_model, run_id, vendor_id, post_id, max_tokens,
-                             structured_output)
+                             structured_output, reasoning)
 
         needs_escalation = _needs_escalation(result)
         if ocr_text and _guard_ocr_prices(result, ocr_text):
@@ -673,7 +686,8 @@ def extract_product(
                 logger.info("[stage3_extract] %s: retrying text pass with OCR", post_id)
                 user_prompt = _build_user_prompt(post, profile, vendor_comments, ocr_text)
                 result = _pass_a_ocr(
-                    user_prompt, text_model, run_id, vendor_id, post_id, max_tokens
+                    user_prompt, text_model, run_id, vendor_id, post_id, max_tokens,
+                    structured_output, reasoning,
                 )
                 needs_escalation = _needs_escalation(result)
                 if _guard_ocr_prices(result, ocr_text):
@@ -684,7 +698,7 @@ def extract_product(
         if needs_escalation and image_url and not confirmed_no_price:
             logger.info("[stage3_extract] %s: escalating to vision Pass B", post_id)
             result = _pass_b(post, user_prompt, vision_model, run_id, vendor_id, post_id,
-                             structured_output)
+                             structured_output, vision_reasoning)
     except Exception as exc:
         logger.warning(
             "[stage3_extract] LLM extraction failed (%s: %s) - falling back to regex heuristic",

@@ -155,3 +155,83 @@ def test_a_pass_b_response_that_fails_to_parse_is_still_logged(
     with llm_client.TOKEN_LOG_PATH.open(encoding="utf-8", newline="") as f:
         (row,) = csv.DictReader(f)
     assert (row["stage"], row["outcome"], row["provider"]) == ("stage2_triage_pass_b", "invalid", "Phala")
+
+
+# --- reasoning -------------------------------------------------------------
+
+def test_reasoning_off_disables_it_on_openrouter() -> None:
+    from pipeline.llm_client import request_kwargs
+
+    assert request_kwargs(TriageResult, "json_object", "openrouter/qwen/x", "off")["extra_body"] == {
+        "reasoning": {"enabled": False},
+    }
+    assert request_kwargs(TriageResult, "json_object", "openrouter/qwen/x", "low")["extra_body"] == {
+        "reasoning": {"effort": "low"},
+    }
+
+
+def test_reasoning_merges_with_the_json_schema_provider_requirement() -> None:
+    """Both settings live in OpenRouter's extra_body; one must not replace
+    the other."""
+    from pipeline.llm_client import request_kwargs
+
+    extra = request_kwargs(TriageResult, "json_schema", "openrouter/qwen/x", "off")["extra_body"]
+
+    assert extra == {"provider": {"require_parameters": True}, "reasoning": {"enabled": False}}
+
+
+def test_no_reasoning_key_sends_nothing() -> None:
+    """Absent means the provider default - what every earlier run got - so
+    old configs reproduce."""
+    from pipeline.llm_client import request_kwargs
+
+    assert "extra_body" not in request_kwargs(TriageResult, "json_object", "openrouter/qwen/x")
+
+
+@pytest.mark.parametrize("model, setting", [("gemini/x", "off"), ("openrouter/qwen/x", "none")])
+def test_a_reasoning_setting_that_would_not_apply_is_refused(model: str, setting: str) -> None:
+    """A config that says "off" must never run with reasoning on because the
+    route ignored the key, or because the value was misspelled."""
+    from pipeline.llm_client import request_kwargs
+
+    with pytest.raises(ValueError, match="reasoning"):
+        request_kwargs(TriageResult, "json_object", model, setting)
+
+
+def test_stage3_hands_both_settings_to_every_tier(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Stage 3 has a text pass, an OCR retry and a vision pass, and the OCR
+    retry was once missed when a setting was threaded through. A product
+    with no name escalates through all three."""
+    from pipeline.stages import stage3_extract
+
+    seen: list[tuple] = []
+
+    unfinished = stage3_extract.ProductExtractionResult(
+        products=[stage3_extract.ProductItem(price=stage3_extract.PriceModel(source="none"))]
+    )
+
+    def fake_text(**kwargs):
+        seen.append((kwargs["stage_name"], kwargs["structured_output"], kwargs["reasoning"]))
+        return unfinished
+
+    def fake_vision(post, user_prompt, vision_model, run_id, vendor_id, post_id,
+                    structured_output, reasoning):
+        seen.append(("stage3_extract_pass_b", structured_output, reasoning))
+        return unfinished
+
+    monkeypatch.setattr(stage3_extract, "complete_structured", fake_text)
+    monkeypatch.setattr(stage3_extract, "_pass_b", fake_vision)
+    monkeypatch.setattr(stage3_extract, "extract_text", lambda *a, **k: ("CAMRY 25,000,000", "ok"))
+    post = {"post_id": "p", "caption": "Toyota Camry for sale", "media_url": "https://cdn.example/p.jpg"}
+
+    stage3_extract.extract_product(post, None, text_model="openrouter/qwen/x",
+                                   vision_model="openrouter/qwen/v", use_ocr=True,
+                                   structured_output="json_schema", reasoning="off",
+                                   vision_reasoning="low")
+
+    assert [entry[0] for entry in seen] == [
+        "stage3_extract_pass_a", "stage3_extract_pass_a_ocr", "stage3_extract_pass_b",
+    ]
+    assert [entry[1:] for entry in seen] == [
+        ("json_schema", "off"), ("json_schema", "off"), ("json_schema", "low"),
+    ]

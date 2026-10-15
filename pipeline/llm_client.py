@@ -562,6 +562,43 @@ def response_format_kwargs(schema: Type[BaseModel], structured_output: str, mode
     )
 
 
+# Reasoning settings a config may name. None (the key absent) sends nothing,
+# so the provider's own default applies - which is what every run before
+# 2026-10-15 got. Qwen3-14B's default is to reason: in smoke run
+# r2_family_qwen_20261015T140152Z one Stage 3 attempt spent all 4,096 output
+# tokens and 199 s reasoning, and returned an empty answer.
+REASONING_SETTINGS = ("off", "low", "medium", "high")
+
+
+def request_kwargs(
+    schema: Type[BaseModel],
+    structured_output: str,
+    model: str,
+    reasoning: str | None = None,
+) -> dict:
+    """Every litellm.completion() kwarg a stage's config controls: the JSON
+    mode (response_format_kwargs) plus the reasoning setting, merged into one
+    extra_body for OpenRouter.
+
+    reasoning is OpenRouter's request parameter, so it is refused for any
+    other route rather than silently dropped - a config that says "off" must
+    not run with reasoning on.
+    """
+    kwargs = response_format_kwargs(schema, structured_output, model)
+    if reasoning is None:
+        return kwargs
+    if reasoning not in REASONING_SETTINGS:
+        raise ValueError(f"reasoning must be one of {REASONING_SETTINGS}, got {reasoning!r}")
+    if not model.startswith("openrouter/"):
+        raise ValueError(
+            f"reasoning: {reasoning!r} is only wired for openrouter/ models; {model!r} would "
+            "ignore it. Remove the key or route the model through OpenRouter."
+        )
+    setting = {"enabled": False} if reasoning == "off" else {"effort": reasoning}
+    kwargs["extra_body"] = {**kwargs.get("extra_body", {}), "reasoning": setting}
+    return kwargs
+
+
 def _field_guide(schema: Type[BaseModel]) -> str:
     """One line per top-level field: its name, and its allowed values when it
     is a closed set. The retry message used to name the fields only, so a
@@ -604,6 +641,7 @@ def complete_structured(
     escalated: bool = False,
     fallback_used: bool = False,
     structured_output: str = "json_object",
+    reasoning: str | None = None,
 ) -> T:
     """Call `model` and parse the response JSON into `schema`.
 
@@ -640,6 +678,8 @@ def complete_structured(
                                column. Only used when run_id is set.
         structured_output:     "json_object" (default) or "json_schema" -
                                see response_format_kwargs().
+        reasoning:             None (provider default), "off", "low",
+                               "medium" or "high" - see request_kwargs().
 
     Returns:
         A validated instance of `schema`.
@@ -652,7 +692,7 @@ def complete_structured(
         {"role": "user", "content": user_prompt},
     ]
 
-    format_kwargs = response_format_kwargs(schema, structured_output, model)
+    format_kwargs = request_kwargs(schema, structured_output, model, reasoning)
     last_content_error: Exception | None = None
     transient_attempts = 0
 

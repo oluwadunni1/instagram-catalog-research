@@ -183,6 +183,7 @@ def detect_signals(
     run_id: str | None = None,
     vendor_id: str | None = None,
     structured_output: str = "json_object",
+    reasoning: str | None = None,
 ) -> list[dict]:
     """Detects business signals for one post via a regex prefilter -> LLM
     cascade.
@@ -235,6 +236,7 @@ def detect_signals(
         vendor_id=vendor_id,
         post_id=post_id,
         structured_output=structured_output,
+        reasoning=reasoning,
     )
 
     return [signal.model_dump() for signal in result.signals]
