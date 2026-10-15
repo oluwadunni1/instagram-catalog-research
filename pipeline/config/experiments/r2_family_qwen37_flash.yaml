@@ -1,0 +1,40 @@
+name: r2_family_qwen37_flash
+description: >-
+  Round 2, ultra-cheap tier: Qwen3.7 Flash on every stage, text and vision. Rates in
+  MODEL_RATES (pipeline/llm_client.py), from OpenRouter on 2026-10-15. It is a
+  reasoning model, so reasoning is off on every pass - Qwen3-14B with it on
+  spent 4,096 tokens and 199 s on one Stage 3 attempt
+  (r2_family_qwen_20261015T140152Z). structured_output: json_object. One provider (Alibaba), which accepts json_object but not json_schema.
+  Stage 1 is absent, as in every family config: profiles are cached.
+
+stage2_triage:
+  module: pipeline.stages.stage2_triage
+  function: triage_post
+  text_model: openrouter/qwen/qwen3.7-flash
+  vision_model: openrouter/qwen/qwen3.7-flash
+  confidence_threshold: 0.7
+  structured_output: json_object
+  reasoning: "off"
+  vision_reasoning: "off"
+  model: Qwen3.7 Flash (OpenRouter)
+  cost_per_call_usd: 0.0
+
+stage3_extract:
+  module: pipeline.stages.stage3_extract
+  function: extract_product
+  text_model: openrouter/qwen/qwen3.7-flash
+  vision_model: openrouter/qwen/qwen3.7-flash
+  structured_output: json_object
+  reasoning: "off"
+  vision_reasoning: "off"
+  model: Qwen3.7 Flash (OpenRouter)
+  cost_per_call_usd: 0.0
+
+stage4_signals:
+  module: pipeline.stages.stage4_signals
+  function: detect_signals
+  signals_model: openrouter/qwen/qwen3.7-flash
+  structured_output: json_object
+  reasoning: "off"
+  model: Qwen3.7 Flash (OpenRouter)
+  cost_per_call_usd: 0.0
