@@ -3,9 +3,10 @@
 **Round 2, 2026-10-15.** Config: [`r2_family_qwen.yaml`](../pipeline/config/experiments/r2_family_qwen.yaml) at commit `548d453`.
 Both full runs passed `make verify`, with no fallbacks and no errored posts.
 
-**Verdict:** level with the recorded Gemini figures on triage and product names, weaker on autos
-prices, and far behind on Stage 4 signals. It's a cheap option for Stages 2 and 3. Qwen 2.5 7B
-is out for Stage 4.
+**Verdict:** behind the [Gemini control](r2_control_gemini.md) on every scored axis except autos
+name similarity, but 3–5× cheaper. It comes closest on triage and product names. It's weaker on prices, especially autos,
+and far behind on Stage 4 signals. Stage 3 is also about 4× slower. Qwen 2.5 7B is out for
+Stage 4. For Stages 2 and 3 it's a cost-for-accuracy trade, not a like-for-like replacement.
 
 ## Setup
 
@@ -20,26 +21,29 @@ they made no call.
 
 ## Results
 
-| | autos (30 posts) | gadgets (41 posts) | recorded Gemini, autos / gadgets |
+| | autos (30 posts) | gadgets (41 posts) | [control](r2_control_gemini.md), autos / gadgets |
 |---|---|---|---|
-| Run id | `r2_family_qwen_20261015T144319Z` | `r2_family_qwen_20261015T144953Z` | README [Model comparison](../README.md#model-comparison) |
-| **S2** post type, 5-class | 29/30 = 97% | 38/41 = 93% | 97% / 93% |
-| S2 product vs not (precision / recall) | 97% (100% / 96%) | 95% (100% / 94%) | |
+| Run id | `r2_family_qwen_20261015T144319Z` | `r2_family_qwen_20261015T144953Z` | `r2_control_gemini_20261015T154323Z` / `…T154556Z` |
+| **S2** post type, 5-class | 29/30 = 97% | 38/41 = 93% | 100% / 98% |
+| S2 product vs not (precision / recall) | 97% (100% / 96%) | 95% (100% / 94%) | 100% / 100% |
 | S2 vision escalations | 0/30 | 5/41, all 5 correct | 1/30, 5/41 |
 | **S3** price, first product | 16/19 = 84% | 31/31 = 100% | 100% / 100% |
-| S3 price, every product | 19/24 = 79% | 88/91 = 97% | |
-| S3 name similarity | 92% | 82% (74% every product) | 91% / 81% |
-| S3 missing-price recall | 6/6 | 6/6 | 6/6 / 3/3 |
-| S3 products returned / gold | 30 / 30 | 95 / 97 | |
-| S3 vision escalations | 7/25 | 5/33 | |
-| **S4** micro F1 (precision / recall) | 33% (100% / 20%) | 0% (found 0 of 5) | 88% / 77% |
-| Tokens | 132,005 | 139,044 | 91,102 / 115,281 |
-| Cost, hand-priced | ~$0.019 | ~$0.021 | |
-| Wall time | 6 min | 6 min | |
+| S3 price, every product | 19/24 = 79% | 88/91 = 97% | 100% / 100% |
+| S3 name similarity, first / every product | 92% / 92% | 82% / 74% | 90% / 90%, 87% / 85% |
+| S3 missing-price recall | 6/6 | 6/6 | 6/6 / 6/6 |
+| S3 products returned / gold | 30 / 30 | 95 / 97 | 30 / 30, 97 / 97 |
+| S3 vision escalations | 7/25 | 5/33 | 5/25, 5/33 |
+| **S4** micro F1 (precision / recall) | 33% (100% / 20%) | 0% (found 0 of 5) | 87% / 77% |
+| Tokens | 132,005 | 139,044 | 118,966 / 142,292 |
+| **Cost** | ~$0.019, hand-priced | ~$0.021, hand-priced | $0.061 / $0.107 |
+| Wall time | 6 min | 6 min | 2.4 min / 2.9 min |
 
-The recorded Gemini column is **not a like-for-like baseline**. It was measured in September,
-partly under older prompts. The comparison that counts is `r2-control`: Gemini 3.5 Flash-Lite
-through OpenRouter on today's prompts, not yet run.
+The S2 miss on gadgets post `18190139290395806` (gold `meme_personal`, predicted `announcement`)
+is shared with the control. Qwen's other misses are its own:
+- **S2:** autos post `18073956491710644` ("Available in Lagos 📍") went to announcement, and two
+  gadgets listings went to testimonial_repost.
+- **S3:** three autos posts returned no price: `18042748280816067`, `18051759722796086` and
+  `18133507585622516`.
 
 ## Per stage
 
