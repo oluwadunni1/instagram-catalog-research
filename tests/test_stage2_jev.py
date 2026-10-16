@@ -205,3 +205,97 @@ def test_nothing_is_logged_without_a_run_id(monkeypatch: pytest.MonkeyPatch) -> 
 
     stage2_triage_jev.triage_post_jev(post())
     assert calls["n"] == 0
+
+
+# --- images ----------------------------------------------------------------
+# Jev accepts images behind a per-request header, within a 280-1568 px window
+# per side (docs.typesafe.ai/images). These pin the request shape, the
+# resizing that keeps an Instagram photo inside the window, and which calls
+# each image_policy makes.
+
+def _jpeg(width: int, height: int) -> bytes:
+    from io import BytesIO
+
+    from PIL import Image
+
+    out = BytesIO()
+    Image.new("RGB", (width, height), "red").save(out, "JPEG")
+    return out.getvalue()
+
+
+def test_assets_are_sent_with_the_images_header(monkeypatch: pytest.MonkeyPatch) -> None:
+    sent: list[dict] = []
+
+    def fake_post(url, headers, json, timeout):
+        sent.append({"headers": headers, "json": json})
+        return FakeResponse(body=jev_body(0.9))
+
+    monkeypatch.setattr(jev_client.requests, "post", fake_post)
+    asset = {"type": "image", "format": "jpg", "data_base64": "AAAA"}
+    jev_client.decide(state={"image": "img-1"}, questions={}, assets={"img-1": asset})
+    jev_client.decide(state="text only", questions={})
+
+    assert sent[0]["headers"][jev_client.IMAGES_HEADER] == "true"
+    assert sent[0]["json"]["assets"] == {"img-1": asset}
+    assert jev_client.IMAGES_HEADER not in sent[1]["headers"]
+    assert "assets" not in sent[1]["json"]
+
+
+@pytest.mark.parametrize("size", [(100, 50), (720, 1280), (4000, 3000), (2000, 150)])
+def test_prepared_image_fits_the_size_window(size: tuple[int, int]) -> None:
+    from io import BytesIO
+
+    from PIL import Image
+
+    with Image.open(BytesIO(jev_client.prepare_image(_jpeg(*size)))) as img:
+        assert img.format == "JPEG"
+        assert jev_client.IMAGE_MIN_SIDE <= img.width <= jev_client.IMAGE_MAX_SIDE
+        assert jev_client.IMAGE_MIN_SIDE <= img.height <= jev_client.IMAGE_MAX_SIDE
+
+
+def test_an_image_that_cannot_be_fetched_fails_the_call(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Silently answering on text alone would hide that the photo was never seen."""
+    def broken_get(*a, **k):
+        raise jev_client.requests.ConnectionError("CDN link expired")
+
+    monkeypatch.setattr(jev_client.requests, "get", broken_get)
+    with pytest.raises(jev_client.JevError, match="could not prepare image"):
+        jev_client.image_asset("https://cdn.example/expired.jpg")
+
+
+@pytest.mark.parametrize("policy, caption, has_image, p_text, expected_calls, escalated", [
+    ("never", "Hilux for sale", True, 0.55, ["text"], False),
+    ("always", "Hilux for sale", True, 0.99, ["image"], False),
+    ("always", "Hilux for sale", False, 0.99, ["text"], False),
+    ("escalate", "Hilux for sale", True, 0.95, ["text"], False),
+    ("escalate", "Hilux for sale", True, 0.55, ["text", "image"], True),
+    ("escalate", "", True, 0.55, ["image"], True),
+    ("escalate", "Hilux for sale", False, 0.55, ["text"], False),
+])
+def test_image_policy_decides_which_calls_are_made(
+    monkeypatch: pytest.MonkeyPatch, policy: str, caption: str, has_image: bool,
+    p_text: float, expected_calls: list[str], escalated: bool,
+) -> None:
+    calls: list[str] = []
+
+    def fake_post(url, headers, json, timeout):
+        with_image = "assets" in json
+        calls.append("image" if with_image else "text")
+        return FakeResponse(body=jev_body(0.97 if with_image else p_text))
+
+    monkeypatch.setattr(jev_client.requests, "post", fake_post)
+    monkeypatch.setattr(stage2_triage_jev, "image_asset",
+                        lambda url: ("img-ref", {"type": "image", "format": "jpg", "data_base64": "AA"}))
+    p = {"post_id": "p1", "caption": caption}
+    if has_image:
+        p["media_url"] = "https://cdn.example/p1.jpg"
+
+    result = stage2_triage_jev.triage_post_jev(p, image_policy=policy)
+
+    assert calls == expected_calls
+    assert result["escalated"] is escalated
+
+
+def test_unknown_image_policy_is_refused() -> None:
+    with pytest.raises(ValueError, match="image_policy"):
+        stage2_triage_jev.triage_post_jev(post(), image_policy="sometimes")

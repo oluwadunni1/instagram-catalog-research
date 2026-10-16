@@ -6,6 +6,7 @@ conclusions.
 
 | Date | Experiment | Verdict |
 |---|---|---|
+| 2026-10-16 | [r2_jev](r2_jev.md) | **Jev no longer needs Gemini for Stage 2.** Jev → Jev-with-photo scores 97% / 98% against the hybrid's 100% / 98%, at about the same cost and with no OCR; 100% precision |
 | 2026-10-16 | [r2_family_gpt4o_mini](r2_family_gpt4o_mini.md) | Behind the control on every axis and only 1.3–1.4× cheaper; images bill at ~26–36k tokens a call |
 | 2026-10-16 | [r2_family_llama](r2_family_llama.md) | Autos only. S2 97% product vs not; out for S3 (US-dollar prices ×1,000) and S4 (39 false positives); gadgets run failed the gate |
 | 2026-10-15 | [r2_family_qwen37_flash](r2_family_qwen37_flash.md) | **Best of the ultra-cheap tier.** Matches the control on product vs not-product, 13–18× cheaper; misses 3 of 19 autos prices |

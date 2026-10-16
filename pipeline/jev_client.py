@@ -20,6 +20,12 @@ the docs mentioned them:
     Routing Jev through it would impose one provider's rate limit on another
     and erase the sub-second latency Jev is partly sold on. This module keeps
     its own interval.
+  - Images (added to the API by 2026-10-16) are opt-in per request: a request
+    carrying one needs the TypeSafe-Danger-Zone-Images header, and an image
+    with a side outside 280-1568 px is rejected rather than resized, so
+    image_asset() resizes and pads before sending. TypeSafe labels images
+    "dreamer-ready", not production-ready: format and accuracy may change
+    between releases.
   - "jev-latest" resolves server-side to a versioned model ("jev-1.13.0").
     The token log records the RESOLVED value, because the log's whole purpose
     is recording what actually reached the provider rather than what the
@@ -29,12 +35,16 @@ the docs mentioned them:
 
 from __future__ import annotations
 
+import base64
 import logging
 import os
 import threading
 import time
+import uuid
+from io import BytesIO
 
 import requests
+from PIL import Image, ImageOps
 
 import pipeline.settings  # noqa: F401 - import side effect: load_dotenv()
 from pipeline.llm_client import log_token_usage
@@ -46,6 +56,14 @@ JEV_URL = "https://api.typesafe.ai/v1/systemone"
 DEFAULT_JEV_MODEL = "jev-latest"
 REQUEST_TIMEOUT_SECONDS = 30
 MAX_TRANSIENT_RETRIES = 5
+
+# Images: the header that turns them on, and the size window the API accepts
+# on each side (docs.typesafe.ai/images, "Limits"). Outside it the request is
+# rejected, never resized.
+IMAGES_HEADER = "TypeSafe-Danger-Zone-Images"
+IMAGE_MIN_SIDE = 280
+IMAGE_MAX_SIDE = 1568
+IMAGE_DOWNLOAD_TIMEOUT_SECONDS = 20
 
 # Jev's published rate limits are not documented for this tier, and the probes
 # ran ~11 calls back to back without a 429 (the one failure was a 503, which is
@@ -101,6 +119,45 @@ class JevError(RuntimeError):
     """A Jev call that could not be completed. Message is already redacted."""
 
 
+def prepare_image(raw: bytes) -> bytes:
+    """Re-encode an image file to a baseline JPEG inside Jev's size window.
+
+    Rotated upright first, because the API strips EXIF and does not apply its
+    orientation. Shrunk so the longer side is at most IMAGE_MAX_SIDE, then
+    padded (not stretched) so neither side is under IMAGE_MIN_SIDE.
+    """
+    with Image.open(BytesIO(raw)) as original:
+        img = ImageOps.exif_transpose(original).convert("RGB")
+    img.thumbnail((IMAGE_MAX_SIDE, IMAGE_MAX_SIDE))
+    if img.width < IMAGE_MIN_SIDE or img.height < IMAGE_MIN_SIDE:
+        canvas = Image.new("RGB", (max(img.width, IMAGE_MIN_SIDE),
+                                   max(img.height, IMAGE_MIN_SIDE)), "white")
+        canvas.paste(img, ((canvas.width - img.width) // 2, (canvas.height - img.height) // 2))
+        img = canvas
+    out = BytesIO()
+    img.save(out, "JPEG", quality=90)
+    return out.getvalue()
+
+
+def image_asset(image_url: str) -> tuple[str, dict]:
+    """Download one image and return (reference, asset) for decide()'s assets.
+
+    The reference is a fresh UUID: the API matches references as plain text
+    anywhere in the request, so it must be a string no caption can contain.
+    Raises JevError on a download or decode failure - an image the cascade
+    meant to look at and could not is a failed call, not a text-only answer.
+    """
+    try:
+        resp = requests.get(image_url, timeout=IMAGE_DOWNLOAD_TIMEOUT_SECONDS)
+        resp.raise_for_status()
+        data = prepare_image(resp.content)
+    except Exception as exc:  # noqa: BLE001 - every failure means the same thing here
+        raise JevError(f"could not prepare image for Jev: {redact_tokens(exc)}") from None
+    reference = f"img-{uuid.uuid4()}"
+    return reference, {"type": "image", "format": "jpg",
+                       "data_base64": base64.b64encode(data).decode("ascii")}
+
+
 def decide(
     *,
     state: object,
@@ -110,6 +167,7 @@ def decide(
     run_id: str | None = None,
     vendor_id: str | None = None,
     post_id: str | None = None,
+    assets: dict | None = None,
 ) -> dict:
     """One Jev System One call. Returns the parsed response body.
 
@@ -127,6 +185,9 @@ def decide(
         run_id: token usage is logged only when this is set, matching
             complete_structured() - a one-off probe should not pollute
             report/token_log.csv, which verify_run.py gates on.
+        assets: reference -> asset map from image_asset(). Each reference
+            must appear somewhere in state or questions. When given, the
+            request also carries the images header.
 
     Raises:
         JevError: on a missing key, a permanent HTTP error, or transient
@@ -141,6 +202,9 @@ def decide(
 
     payload = {"model": jev_model, "state": state, "questions": questions}
     headers = typesafe_auth_headers(key)
+    if assets:
+        payload["assets"] = assets
+        headers = {**headers, IMAGES_HEADER: "true"}
 
     transient_attempts = 0
     while True:

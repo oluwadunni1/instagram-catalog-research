@@ -46,6 +46,13 @@ TWO TRIGGERS, TWO TARGETS, deliberately different:
     SOLD while still listing a price, an "available soon" - where looking at
     the photo adds nothing, and text is far cheaper than vision.
 
+SUPERSEDED IN PART, 2026-10-16. Jev now accepts images, so "Jev is
+text-only" no longer holds. stage2_triage_jev.py's image_policy="escalate"
+is this cascade with Gemini taken out: r2_jev_cascade scored 97% / 98%
+against this hybrid's 100% / 98% (r2_jev_hybrid_gemini), with no OCR
+dependency. See experiments/r2_jev.md. This module is kept as the
+comparison and is unchanged.
+
 Emits the same binary vocabulary as stage2_triage_jev.py ("product_listing" /
 "not_product"), so every downstream consumer keeps working unchanged - they
 all test `!= "product_listing"` already.

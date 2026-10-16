@@ -1,0 +1,33 @@
+name: r2_jev_text
+description: >-
+  Round 2: Jev alone, text only - the re-baseline of round 1's stage2_jev.yaml
+  (stage2_jev_20260921T084428Z / T084716Z: 93% / 80%), on today's prompts and golden
+  sets. image_policy never, so it makes exactly the round-1 call.
+  Binary product-vs-not, run with --only-stage 2. Jev calls go straight to TypeSafe
+  (pipeline/jev_client.py, TYPESAFE_API_KEY), never through OpenRouter, so they are
+  outside ROUND_BUDGET_USD. jev-latest resolved to jev-1.13.0 on 2026-10-16; gate with
+  --expect-model jev-1.13.0.
+
+  Scoring note that travels with any number from this config: Jev picks between 2
+  options while the Gemini stage picks between 5, so part of any Jev advantage is the
+  smaller option set. Compare on the binary product-vs-not metric only.
+
+stage2_triage:
+  module: pipeline.stages.stage2_triage_jev
+  function: triage_post_jev
+  jev_model: jev-latest
+  threshold: 0.5
+  image_policy: never
+  model: Jev Text (TypeSafe)
+  cost_per_call_usd: 0.0
+
+# REQUIRED BY THE SCHEMA, NEVER INVOKED: run with --only-stage 2. Kept on the
+# round-2 control's models so a full run would hit the known-good path.
+stage3_extract:
+  module: pipeline.stages.stage3_extract
+  function: extract_product
+  text_model: openrouter/google/gemini-3.5-flash-lite
+  vision_model: openrouter/google/gemini-3.5-flash-lite
+  model: Gemini control (OpenRouter)
+  cost_per_call_usd: 0.0
+  note: Not part of this experiment. Present only because ExperimentConfig requires it.
