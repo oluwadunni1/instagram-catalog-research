@@ -86,7 +86,7 @@ This is the largest non-product class and absorbs most promotional content.
 | `17894529186657159` | **Clearance sale.** Promotional, still `announcement`: no specific unit is listed. |
 | `18331493713257979` | **Financing offer** with partner banks. Promotional, still `announcement`. |
 | `17983552128060866` | Commentary on an unreleased iPhone. Nothing is for sale. |
-| `18024559289696773` | **"iPhone Ultra Protective Case available soon ( Phone not included )".** Relabeled from `product_listing` on 2026-09-23. No price, no call to action - a heads-up, not an offer. Gold carries no products, matching `18163097968466814` below. See the note in README.md on what this cost. |
+| `18024559289696773` | **"iPhone Ultra Protective Case available soon ( Phone not included )".** Relabeled from `product_listing` on 2026-09-23. No price, no call to action - a heads-up, not an offer. Gold carries no products, matching `18163097968466814` below. See the note in experiments/r1_stage2_rebaseline.md on what this cost. |
 | `18163097968466814` | **The documented trap.** Names three iPhone 18 models and reads exactly like a listing, but they are unreleased ("Expected September 9"). Gold carries no products. |
 | `17897690802571800` | "Happy new month to all our clients worldwide." Institutional voice, addressed to clients. |
 

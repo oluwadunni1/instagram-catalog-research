@@ -259,10 +259,13 @@ params that change on every fetch, which would make every post falsely "changed"
 - Scripts in `scripts/` and `eval/` use `argparse` with defaults that reproduce the original
   `vendor_autos_01` run, so a bare invocation stays reproducible. Follow that pattern rather
   than hardcoding a vendor.
-- `README.md` is the experiment record. It was consolidated from an append-only dated findings
-  log; the durable conclusions and every caveat on them now live in its "What went wrong" and
-  "Caveats on the numbers" sections, and code comments citing a finding point there. When a new
-  result changes a conclusion, edit the relevant section rather than appending — but never drop
+- `README.md` is the overview: the headline conclusions, and every caveat on them in its
+  "What went wrong", "Caveats" and "Known limits" sections, which code comments citing a
+  finding point to. The detailed record is `experiments/`, one file per experiment with its
+  run ids (`r1_*` for round 1, moved out of the README on 2026-10-16; `r2_*` for round 2). A new
+  experiment gets its own record and a row in `experiments/README.md`; the root README gets a
+  line only when the conclusion changes. When a new result changes a conclusion, edit the
+  relevant section rather than appending — but never drop
   a caveat just because it is inconvenient. `report/` is regenerated on every run and is not the
   record; the token logs (v1 `report/token_log.csv`, v2 `report/token_log_v2.csv`) are the
   primary evidence behind every figure.
