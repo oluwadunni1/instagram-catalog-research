@@ -115,7 +115,7 @@ Run ids:
 - **One run per vendor; there's no noise floor yet** (`r2-noise`). Jev's answers moved by up to
   0.02 between runs on the same post.
 - **Images are a beta feature.** TypeSafe says accuracy and format may change between releases,
-  so pin `jev-1.13.0` rather than `jev-latest` before relying on these thresholds.
+  so the four configs are pinned to `jev-1.13.0` (2026-10-16), the version every run here used.
 - **`escalate_below` 0.80 came from the hybrid's tuning on autos**; it wasn't retuned for the
   photo tier. Gadgets is still the held-out half.
 - **Jev cost is estimated**, tokens × $0.042/M. TypeSafe doesn't return a charge per call, so

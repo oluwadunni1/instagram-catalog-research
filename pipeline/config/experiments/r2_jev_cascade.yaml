@@ -7,7 +7,8 @@ description: >-
   round 1's Jev misses were mostly caption-less posts it could not see.
   Binary product-vs-not, run with --only-stage 2. Jev calls go straight to TypeSafe
   (pipeline/jev_client.py, TYPESAFE_API_KEY), never through OpenRouter, so they are
-  outside ROUND_BUDGET_USD. jev-latest resolved to jev-1.13.0 on 2026-10-16; gate with
+  outside ROUND_BUDGET_USD. Pinned to jev-1.13.0, which jev-latest resolved to for every
+  2026-10-16 run: images are a beta, so an alias move could change answers unseen. Gate with
   --expect-model jev-1.13.0.
 
   Scoring note that travels with any number from this config: Jev picks between 2
@@ -17,7 +18,7 @@ description: >-
 stage2_triage:
   module: pipeline.stages.stage2_triage_jev
   function: triage_post_jev
-  jev_model: jev-latest
+  jev_model: jev-1.13.0
   threshold: 0.5
   image_policy: escalate
   escalate_below: 0.80
