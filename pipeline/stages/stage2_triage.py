@@ -264,6 +264,7 @@ def triage_post(
     structured_output: str = "json_object",
     reasoning: str | None = None,
     vision_reasoning: str | None = None,
+    vision_structured_output: str | None = None,
 ) -> dict:
     """Classifies one post via the Pass A -> Pass B cascade.
 
@@ -290,16 +291,24 @@ def triage_post(
             models differ: a non-reasoning vision model's provider may not
             accept the parameter at all, and under json_schema OpenRouter
             then finds no provider for the call.
+        vision_structured_output: structured_output for Pass B alone; None
+            means the same as Pass A. Separate for the same kind of reason:
+            OpenRouter drops every provider that does not accept the
+            requested mode, and a text model and a vision model can have no
+            mode in common - Llama 3.1 8B's cheap providers take only
+            json_object, Llama 4 Scout's only json_schema
+            (r2_family_llama_20261016T002658Z found no Scout endpoint).
 
     Returns:
         dict matching TriageResult's fields (post_type, confidence, escalated).
     """
     caption = post.get("caption") or ""
     post_id = post.get("post_id") or post.get("id") or ""
+    vision_mode = vision_structured_output or structured_output
 
     if _is_uninformative_caption(caption) and vision_image_url(post):
         result = _pass_b(post, profile, vision_model, run_id, vendor_id, post_id,
-                         structured_output=structured_output,
+                         structured_output=vision_mode,
                          reasoning=vision_reasoning)
     else:
         result = _pass_a(post, profile, text_model, run_id, vendor_id, post_id,
@@ -307,7 +316,7 @@ def triage_post(
                          reasoning=reasoning)
         if result.confidence < confidence_threshold and vision_image_url(post):
             result = _pass_b(post, profile, vision_model, run_id, vendor_id, post_id,
-                             structured_output=structured_output,
+                             structured_output=vision_mode,
                              reasoning=vision_reasoning)
 
     return result.model_dump()

@@ -1,0 +1,36 @@
+name: r2_family_gpt4o_mini
+description: >-
+  Round 2: GPT-4o Mini on every stage, text and vision. Rates in MODEL_RATES
+  (pipeline/llm_client.py), from OpenRouter on 2026-10-15. Not a reasoning model, so
+  reasoning is unset. structured_output: json_object - every provider (OpenAI, Azure)
+  accepts it, and json_schema gave runaway confidence decimals on Qwen 2.5 7B, Nex and
+  MiMo. Round 1's family_gpt4o_mini.yaml (archive/) was the same models, before the
+  codebook and the v2 log.
+  Stage 1 is absent, as in every family config: profiles are cached.
+
+stage2_triage:
+  module: pipeline.stages.stage2_triage
+  function: triage_post
+  text_model: openrouter/openai/gpt-4o-mini
+  vision_model: openrouter/openai/gpt-4o-mini
+  confidence_threshold: 0.7
+  structured_output: json_object
+  model: GPT-4o Mini (OpenRouter)
+  cost_per_call_usd: 0.0
+
+stage3_extract:
+  module: pipeline.stages.stage3_extract
+  function: extract_product
+  text_model: openrouter/openai/gpt-4o-mini
+  vision_model: openrouter/openai/gpt-4o-mini
+  structured_output: json_object
+  model: GPT-4o Mini (OpenRouter)
+  cost_per_call_usd: 0.0
+
+stage4_signals:
+  module: pipeline.stages.stage4_signals
+  function: detect_signals
+  signals_model: openrouter/openai/gpt-4o-mini
+  structured_output: json_object
+  model: GPT-4o Mini (OpenRouter)
+  cost_per_call_usd: 0.0

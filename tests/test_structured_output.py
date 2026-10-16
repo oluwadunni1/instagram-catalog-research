@@ -235,3 +235,49 @@ def test_stage3_hands_both_settings_to_every_tier(monkeypatch: pytest.MonkeyPatc
     assert [entry[1:] for entry in seen] == [
         ("json_schema", "off"), ("json_schema", "off"), ("json_schema", "low"),
     ]
+
+
+def test_vision_structured_output_overrides_pass_b_only(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Llama 3.1 8B's cheap providers take only json_object and Llama 4 Scout's
+    only json_schema, so one mode for both passes left Scout with no provider.
+    The vision mode must reach Pass B alone, and default to the text mode."""
+    from pipeline.stages import stage2_triage, stage3_extract
+
+    seen: list[tuple] = []
+
+    def fake_s2_text(post, profile, model, run_id, vendor_id, post_id, structured_output, reasoning):
+        seen.append(("s2a", structured_output))
+        return stage2_triage.TriageResult(post_type="product_listing", confidence=0.1)
+
+    def fake_s2_vision(post, profile, model, run_id, vendor_id, post_id, structured_output, reasoning):
+        seen.append(("s2b", structured_output))
+        return stage2_triage.TriageResult(post_type="product_listing", confidence=0.9)
+
+    unfinished = stage3_extract.ProductExtractionResult(
+        products=[stage3_extract.ProductItem(price=stage3_extract.PriceModel(source="none"))]
+    )
+
+    def fake_s3_text(**kwargs):
+        seen.append(("s3a", kwargs["structured_output"]))
+        return unfinished
+
+    def fake_s3_vision(post, user_prompt, vision_model, run_id, vendor_id, post_id,
+                       structured_output, reasoning):
+        seen.append(("s3b", structured_output))
+        return unfinished
+
+    monkeypatch.setattr(stage2_triage, "_pass_a", fake_s2_text)
+    monkeypatch.setattr(stage2_triage, "_pass_b", fake_s2_vision)
+    monkeypatch.setattr(stage3_extract, "complete_structured", fake_s3_text)
+    monkeypatch.setattr(stage3_extract, "_pass_b", fake_s3_vision)
+    post = {"post_id": "p", "caption": "Toyota Camry for sale", "media_url": "https://cdn.example/p.jpg"}
+
+    for vision_mode in ("json_schema", None):
+        seen.clear()
+        stage2_triage.triage_post(post, None, structured_output="json_object",
+                                  vision_structured_output=vision_mode)
+        stage3_extract.extract_product(post, None, structured_output="json_object",
+                                       vision_structured_output=vision_mode)
+        expected_b = vision_mode or "json_object"
+        assert seen == [("s2a", "json_object"), ("s2b", expected_b),
+                        ("s3a", "json_object"), ("s3b", expected_b)]

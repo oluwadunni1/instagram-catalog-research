@@ -1,0 +1,43 @@
+name: r2_family_llama
+description: >-
+  Round 2: the Llama family. Llama 3.1 8B for every text pass, Llama 4 Scout (the
+  multimodal member) for both vision passes - the pairing from round 1's
+  family_llama.yaml (archive/), which never ran. Rates in MODEL_RATES
+  (pipeline/llm_client.py), from OpenRouter on 2026-10-15; both list the Groq-era price,
+  above today's cheapest providers, so estimated_cost_usd is an upper bound and
+  billed_cost_usd is the real figure. Neither reasons, so reasoning is unset.
+  Output mode differs by pass. Llama 3.1 8B's cheap providers accept response_format but
+  not structured_outputs, so the text passes are json_object. Scout is the reverse: with
+  json_object OpenRouter found no endpoint at all (r2_family_llama_20261016T002658Z - it
+  dropped DeepInfra and Novita, leaving only a BYOK Google endpoint), so the vision passes
+  are json_schema via vision_structured_output, which routes to DeepInfra.
+  Stage 1 is absent, as in every family config: profiles are cached.
+
+stage2_triage:
+  module: pipeline.stages.stage2_triage
+  function: triage_post
+  text_model: openrouter/meta-llama/llama-3.1-8b-instruct
+  vision_model: openrouter/meta-llama/llama-4-scout
+  confidence_threshold: 0.7
+  structured_output: json_object
+  vision_structured_output: json_schema
+  model: Llama Family r2 (OpenRouter)
+  cost_per_call_usd: 0.0
+
+stage3_extract:
+  module: pipeline.stages.stage3_extract
+  function: extract_product
+  text_model: openrouter/meta-llama/llama-3.1-8b-instruct
+  vision_model: openrouter/meta-llama/llama-4-scout
+  structured_output: json_object
+  vision_structured_output: json_schema
+  model: Llama Family r2 (OpenRouter)
+  cost_per_call_usd: 0.0
+
+stage4_signals:
+  module: pipeline.stages.stage4_signals
+  function: detect_signals
+  signals_model: openrouter/meta-llama/llama-3.1-8b-instruct
+  structured_output: json_object
+  model: Llama Family r2 (OpenRouter)
+  cost_per_call_usd: 0.0

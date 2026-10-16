@@ -6,6 +6,8 @@ conclusions.
 
 | Date | Experiment | Verdict |
 |---|---|---|
+| 2026-10-16 | [r2_family_gpt4o_mini](r2_family_gpt4o_mini.md) | Behind the control on every axis and only 1.3–1.4× cheaper; images bill at ~26–36k tokens a call |
+| 2026-10-16 | [r2_family_llama](r2_family_llama.md) | Autos only. S2 97% product vs not; out for S3 (US-dollar prices ×1,000) and S4 (39 false positives); gadgets run failed the gate |
 | 2026-10-15 | [r2_family_qwen37_flash](r2_family_qwen37_flash.md) | **Best of the ultra-cheap tier.** Matches the control on product vs not-product, 13–18× cheaper; misses 3 of 19 autos prices |
 | 2026-10-15 | [r2_family_mimo_flash](r2_family_mimo_flash.md) | Autos only. 100% prices, but 7× slower, S4 over-calls, only 2.6× cheaper; gadgets run cut short |
 | 2026-10-15 | [r2_family_nex_mini](r2_family_nex_mini.md) | Autos only. S2 precision 86%, under target; gadgets run failed the gate on provider errors |

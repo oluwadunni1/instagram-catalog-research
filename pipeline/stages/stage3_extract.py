@@ -582,6 +582,7 @@ def extract_product(
     structured_output: str = "json_object",
     reasoning: str | None = None,
     vision_reasoning: str | None = None,
+    vision_structured_output: str | None = None,
 ) -> list[ProductPrediction]:
     """Extracts one or more products from a post via a three-tier cascade.
 
@@ -627,6 +628,8 @@ def extract_product(
             OCR passes - see request_kwargs() in pipeline/llm_client.py.
         vision_reasoning: The same, for Pass B - separate for the reason given
             in stage2_triage.triage_post().
+        vision_structured_output: structured_output for Pass B alone; None
+            means the same as the text tiers. See stage2_triage.triage_post().
 
     Returns:
         A list of ProductPrediction, one per distinct product the model found.
@@ -702,7 +705,7 @@ def extract_product(
         if needs_escalation and image_url and not confirmed_no_price:
             logger.info("[stage3_extract] %s: escalating to vision Pass B", post_id)
             result = _pass_b(post, user_prompt, vision_model, run_id, vendor_id, post_id,
-                             structured_output, vision_reasoning)
+                             vision_structured_output or structured_output, vision_reasoning)
     except Exception as exc:
         logger.warning(
             "[stage3_extract] LLM extraction failed (%s: %s) - falling back to regex heuristic",
