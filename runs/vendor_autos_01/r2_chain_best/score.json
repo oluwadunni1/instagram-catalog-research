@@ -1,0 +1,106 @@
+{
+  "account_label": "vendor_autos_01",
+  "run_id": "pipeline_vendor_autos_01_20261017T103539Z",
+  "config": "r2_chain_best",
+  "scored_posts": 30,
+  "golden_posts": 30,
+  "missing_from_catalog": 0,
+  "stage2": {
+    "correct": 24,
+    "total": 30,
+    "accuracy": 0.8,
+    "binary_correct": 29,
+    "binary_accuracy": 0.9666666666666667,
+    "product_precision": 1.0
+  },
+  "stale_gold": {
+    "count": 2,
+    "post_ids": [
+      "18129555988734304",
+      "18128205745669337"
+    ]
+  },
+  "stage3": {
+    "price_correct": 17,
+    "price_total": 17,
+    "price_accuracy": 1.0,
+    "name_similarity": 0.8782691543922646,
+    "name_scored": 23,
+    "missing_price_hits": 6,
+    "missing_price_total": 6,
+    "missing_price_recall": 1.0,
+    "routing_misses": 1,
+    "routing_missed_ids": [
+      "18029319446669897"
+    ]
+  },
+  "stage4": {
+    "per_signal": {
+      "clearance": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "tp": 0,
+        "fp": 1,
+        "fn": 1
+      },
+      "finance_available": {
+        "precision": 0.5,
+        "recall": 0.3333333333333333,
+        "f1": 0.4,
+        "tp": 1,
+        "fp": 1,
+        "fn": 2
+      },
+      "price_negotiable": {
+        "precision": 1.0,
+        "recall": 0.6666666666666666,
+        "f1": 0.8,
+        "tp": 2,
+        "fp": 0,
+        "fn": 1
+      },
+      "sold": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "tp": 0,
+        "fp": 0,
+        "fn": 2
+      },
+      "stock_count_known": {
+        "precision": 0.6666666666666666,
+        "recall": 0.5,
+        "f1": 0.5714285714285715,
+        "tp": 2,
+        "fp": 1,
+        "fn": 2
+      },
+      "swap_deal": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "tp": 3,
+        "fp": 0,
+        "fn": 0
+      },
+      "urgent": {
+        "precision": 1.0,
+        "recall": 0.5714285714285714,
+        "f1": 0.7272727272727273,
+        "tp": 4,
+        "fp": 0,
+        "fn": 3
+      }
+    },
+    "macro_f1": 0.4998144712430427,
+    "signal_types": 7
+  },
+  "routing": {
+    "auto_import": 26,
+    "needs_attention": 6,
+    "auto_exclude": 8,
+    "total": 40,
+    "attention_rate": 0.15
+  }
+}

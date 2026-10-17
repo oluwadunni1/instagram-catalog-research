@@ -1,0 +1,35 @@
+name: r2_chain_best
+description: >-
+  Round 2's pick per stage, run chained (scripts/run_pipeline.py) and scored with
+  scripts/score_catalog.py, so Stage 3 and 4 see only the posts Stage 2 called listings.
+  Stage 2 is r2_jev_cascade (Jev text, then Jev with the photo when unsure or captionless:
+  97% / 98% product vs not, 100% precision, experiments/r2_jev.md). Stages 3 and 4 are
+  r2_control_gemini's (100% of prices on both vendors; S4 micro F1 87% / 77%), the only
+  family that priced every product correctly. Stage 1 is absent: profiles are cached per
+  account. Jev is pinned to jev-1.13.0 and goes straight to TypeSafe, outside
+  ROUND_BUDGET_USD. Gate with --expect-model jev-1.13.0 plus the two Gemini strings.
+
+stage2_triage:
+  module: pipeline.stages.stage2_triage_jev
+  function: triage_post_jev
+  jev_model: jev-1.13.0
+  threshold: 0.5
+  image_policy: escalate
+  escalate_below: 0.80
+  model: Best Chain r2 (TypeSafe + OpenRouter)
+  cost_per_call_usd: 0.0
+
+stage3_extract:
+  module: pipeline.stages.stage3_extract
+  function: extract_product
+  text_model: openrouter/google/gemini-3.5-flash-lite
+  vision_model: openrouter/google/gemini-3.5-flash-lite
+  model: Best Chain r2 (TypeSafe + OpenRouter)
+  cost_per_call_usd: 0.0
+
+stage4_signals:
+  module: pipeline.stages.stage4_signals
+  function: detect_signals
+  signals_model: openrouter/google/gemini-3.5-flash-lite
+  model: Best Chain r2 (TypeSafe + OpenRouter)
+  cost_per_call_usd: 0.0

@@ -196,7 +196,7 @@ def _raise(*_args, **_kwargs):
     raise RuntimeError("provider down")
 
 
-def _chained_run(tmp_path: Path, monkeypatch, triage, signals=None) -> dict:
+def _chained_run(tmp_path: Path, monkeypatch, triage, signals=None, usage=None) -> dict:
     """run_pipeline() over a two-post dump with stub stages: no network, no
     .env, no model. Only the wiring between the stage loops and Stage 5 runs."""
     from types import SimpleNamespace
@@ -221,7 +221,7 @@ def _chained_run(tmp_path: Path, monkeypatch, triage, signals=None) -> dict:
         model_dump=lambda: {"vendor_username": "the_vendor"}))
     monkeypatch.setattr(run_pipeline, "load_stage_fn",
                         lambda config, stage, **k: (stages[stage], stage, None))
-    monkeypatch.setattr(run_pipeline, "read_run_usage", lambda run_id: {})
+    monkeypatch.setattr(run_pipeline, "read_run_usage", lambda run_id: usage or {})
 
     catalog = run_pipeline.run_pipeline("vendor_demo", Path("stub.yaml"),
                                         out_path=tmp_path / "catalog.json")
@@ -242,6 +242,20 @@ def test_a_raising_stage2_lands_the_post_in_needs_attention(tmp_path: Path, monk
     assert items["bad"]["failed_stages"] == ["stage2"]
     assert items["good"]["bucket"] == "auto_import"
     assert items["good"]["failed_stages"] == []
+
+
+def test_the_catalog_is_written_when_usage_names_its_log(tmp_path: Path, monkeypatch) -> None:
+    """read_run_usage() returns the log it read as a Path. The catalog embeds
+    usage, and json.dumps() raised on the Path after the run had paid for
+    every call, so no chained run since the v2 log could save its catalog."""
+    def triage(post, profile):
+        return {"post_type": "product_listing", "confidence": 0.9, "escalated": False}
+
+    _chained_run(tmp_path, monkeypatch, triage,
+                 usage={"calls": 0, "log": tmp_path / "report" / "token_log_v2.csv"})
+
+    written = json.loads((tmp_path / "catalog.json").read_text(encoding="utf-8"))
+    assert written["usage"]["log"] == (tmp_path / "report" / "token_log_v2.csv").as_posix()
 
 
 def test_a_raising_stage4_blocks_auto_import(tmp_path: Path, monkeypatch) -> None:

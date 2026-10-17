@@ -7,6 +7,7 @@ run ids are in the frozen v1 log, `report/token_log.csv`.
 
 | Date | Experiment | Verdict |
 |---|---|---|
+| 2026-10-17 | [r2_chain_best](r2_chain_best.md) | **Round 2's chained run.** Jev for Stage 2, Gemini for 3-4: 97% / 95% product vs not, every extracted post priced right, $0.14 / $0.17 per 100 posts, ~6-7 min per 100 posts |
 | 2026-10-16 | [r2_jev](r2_jev.md) | **Jev no longer needs Gemini for Stage 2.** Jev → Jev-with-photo scores 97% / 98% against the hybrid's 100% / 98%, at about the same cost and with no OCR; 100% precision |
 | 2026-10-16 | [r2_family_gpt4o_mini](r2_family_gpt4o_mini.md) | Behind the control on every axis and only 1.3–1.4× cheaper; images bill at ~26–36k tokens a call |
 | 2026-10-16 | [r2_family_llama](r2_family_llama.md) | Autos only. S2 97% product vs not; out for S3 (US-dollar prices ×1,000) and S4 (39 false positives); gadgets run failed the gate |

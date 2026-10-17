@@ -53,11 +53,20 @@ sys.path.insert(0, str(REPO_ROOT / "eval"))
 from harness import name_similarity  # noqa: E402
 
 
-def score_catalog(catalog: dict, golden: list[dict]) -> dict:
+def score_catalog(catalog: dict, golden: list[dict],
+                  captions: dict[str, str] | None = None) -> dict:
     """Scores one chained catalog against a golden set.
 
     Every denominator here matches eval/harness.py's, so the result can be put
     beside a harness run without adjustment.
+
+    captions maps post_id to the caption the chained run actually read (from
+    its source dump). A post whose caption no longer matches the one it was
+    labelled from has stale gold: the 2026-09-24 Stage 6 measurement edited 15
+    gadgets captions on purpose, changing their prices, so a model reading the
+    new price correctly would score as wrong. Those posts are left out of the
+    Stage 3 and Stage 4 scores and listed, never silently. Stage 2 still scores
+    them: the edits changed prices, not what the posts are.
     """
     items = {item["post_id"]: item for item in catalog.get("items", [])}
     scored_posts = 0
@@ -66,6 +75,13 @@ def score_catalog(catalog: dict, golden: list[dict]) -> dict:
     # --- Stage 2 ----------------------------------------------------------
     s2_correct = 0
     s2_total = 0
+    # Binary product vs not-product: what every downstream consumer reduces
+    # post_type to, and the only question a binary Stage 2 (Jev) answers - its
+    # "not_product" can never equal a gold "announcement".
+    s2_binary_correct = 0
+    s2_pred_products = 0
+    s2_true_products = 0
+    stale_ids: list[str] = []
 
     # --- Stage 3 (gold denominator) ---------------------------------------
     price_correct = 0
@@ -95,6 +111,18 @@ def score_catalog(catalog: dict, golden: list[dict]) -> dict:
             s2_total += 1
             if item.get("post_type") == gold_type:
                 s2_correct += 1
+            gold_is_product = gold_type == "product_listing"
+            pred_is_product = item.get("post_type") == "product_listing"
+            if gold_is_product == pred_is_product:
+                s2_binary_correct += 1
+            if pred_is_product:
+                s2_pred_products += 1
+                if gold_is_product:
+                    s2_true_products += 1
+
+        if captions is not None and post_id in captions and                 (captions[post_id] or "").strip() != (post.get("caption") or "").strip():
+            stale_ids.append(post_id)
+            continue
 
         # Stage 3: same denominator as score_stage3 - posts whose GOLD type is
         # product_listing and which carry gold products. A post Stage 2 sent
@@ -172,7 +200,13 @@ def score_catalog(catalog: dict, golden: list[dict]) -> dict:
             "correct": s2_correct,
             "total": s2_total,
             "accuracy": s2_correct / s2_total if s2_total else 0.0,
+            "binary_correct": s2_binary_correct,
+            "binary_accuracy": s2_binary_correct / s2_total if s2_total else 0.0,
+            "product_precision": (
+                s2_true_products / s2_pred_products if s2_pred_products else None
+            ),
         },
+        "stale_gold": {"count": len(stale_ids), "post_ids": stale_ids},
         "stage3": {
             "price_correct": price_correct,
             "price_total": price_total,
@@ -214,7 +248,12 @@ def format_report(score: dict) -> str:
         "  These use eval/harness.py's own denominators, so they sit directly beside",
         "  a harness run. The difference is the routing penalty.",
         "",
-        f"  Stage 2 accuracy        : {s2['correct']}/{s2['total']} = {s2['accuracy'] * 100:.0f}%",
+        f"  Stage 2 accuracy        : {s2['correct']}/{s2['total']} = {s2['accuracy'] * 100:.0f}%"
+        "  (5-class)",
+        f"  Stage 2 product vs not  : {s2['binary_correct']}/{s2['total']} "
+        f"= {s2['binary_accuracy'] * 100:.0f}%"
+        + (f", precision {s2['product_precision'] * 100:.0f}%"
+           if s2["product_precision"] is not None else ""),
         f"  Stage 3 price accuracy  : {s3['price_correct']}/{s3['price_total']} "
         f"= {s3['price_accuracy'] * 100:.0f}%",
         f"  Stage 3 name similarity : {s3['name_similarity'] * 100:.0f}% over "
@@ -228,6 +267,15 @@ def format_report(score: dict) -> str:
         )
     else:
         lines.append("  Missing-price recall    : n/a (no missing-price posts in gold)")
+
+    stale = score.get("stale_gold") or {"count": 0, "post_ids": []}
+    if stale["count"]:
+        lines.append(
+            f"  STALE GOLD              : {stale['count']} post(s) left out of Stages 3-4 - "
+            "their caption changed since labelling"
+        )
+        for post_id in stale["post_ids"]:
+            lines.append(f"      {post_id}")
 
     lines.append("")
     lines.append(
@@ -290,7 +338,17 @@ def main() -> None:
     catalog = json.loads(args.catalog.read_text(encoding="utf-8"))
     golden = json.loads(args.golden.read_text(encoding="utf-8"))
 
-    score = score_catalog(catalog, golden)
+    # The dump the chained run read, recorded in the catalog. Without it the
+    # stale-gold check cannot run, and the report says so rather than guessing.
+    captions = None
+    source_dump = catalog.get("source_dump")
+    if source_dump and (REPO_ROOT / source_dump).exists():
+        dump = json.loads((REPO_ROOT / source_dump).read_text(encoding="utf-8"))
+        captions = {m["id"]: m.get("caption") or "" for m in dump.get("media", [])}
+    else:
+        print(f"  (source dump {source_dump!r} not found: stale-gold check skipped)")
+
+    score = score_catalog(catalog, golden, captions)
     print(format_report(score))
 
     if args.json:

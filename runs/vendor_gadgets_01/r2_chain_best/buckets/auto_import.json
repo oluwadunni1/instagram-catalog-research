@@ -1,0 +1,2259 @@
+[
+  {
+    "post_id": "18126496534854207",
+    "permalink": "https://www.instagram.com/p/DdoycHkCBxF/",
+    "timestamp": "2026-09-23T16:55:29+0000",
+    "media_type": "IMAGE",
+    "media_product_type": "FEED",
+    "thumbnail_url": "https://scontent.cdninstagram.com/v/t51.82787-15/808803010_18110161591984202_4429738575801652389_n.jpg?stp=dst-jpg_e35_tt6&_nc_cat=111&ccb=7-5&_nc_sid=18de74&efg=eyJlZmdfdGFnIjoiRkVFRC5iZXN0X2ltYWdlX3VybGdlbi5DMyJ9&_nc_ohc=V-e6Oqigp4EQ7kNvwGKHnUz&_nc_oc=Adrm_WO2rzm3cGmJraWfTd8145oTp75l9gLtYkWpfYrJg0AK4aowwMgOy7l5L31afkI&_nc_zt=23&_nc_ht=scontent.cdninstagram.com&edm=ANQ71j8EAAAA&_nc_gid=9Y-Jyf7VXMF2Xv71_Jxgow&_nc_tpa=Q5bMBQLELF2roj_akqeXfdxvMeagQ3w1PwSCN-CLvA3X4o0L_yGhP8dmGn6aM-y-3clKJKb77VzXrrFmKg&oh=00_AQOiisyutHlUmEQQZUBHKVcYlMJ02VReY4u0IszLf9UbBw&oe=6AD6C7AD",
+    "post_type": "product_listing",
+    "triage_confidence": 0.97,
+    "triage_escalated": false,
+    "bucket": "auto_import",
+    "flags": [],
+    "failed_stages": [],
+    "products": [
+      {
+        "name": "UK-used iPhone 12 Pro Max 128GB",
+        "description": "Top-quality UK-used iPhone 12 Pro Max available now! 128GB",
+        "images": [],
+        "variants": [],
+        "price": {
+          "value": 450000,
+          "currency": "NGN",
+          "source": "caption",
+          "confidence": 1.0
+        },
+        "quantity_signal": {
+          "kind": "none",
+          "evidence": null
+        },
+        "negotiation_signal": "unknown",
+        "extraction_confidence": 1.0
+      },
+      {
+        "name": "UK-used iPhone 12 Pro Max 256GB",
+        "description": "Top-quality UK-used iPhone 12 Pro Max available now! 256GB",
+        "images": [],
+        "variants": [],
+        "price": {
+          "value": 500000,
+          "currency": "NGN",
+          "source": "caption",
+          "confidence": 1.0
+        },
+        "quantity_signal": {
+          "kind": "none",
+          "evidence": null
+        },
+        "negotiation_signal": "unknown",
+        "extraction_confidence": 1.0
+      }
+    ],
+    "signals": []
+  },
+  {
+    "post_id": "17995957056002627",
+    "permalink": "https://www.instagram.com/p/DdovglqiGuh/",
+    "timestamp": "2026-09-23T16:29:53+0000",
+    "media_type": "IMAGE",
+    "media_product_type": "FEED",
+    "thumbnail_url": "https://scontent.cdninstagram.com/v/t51.82787-15/797418577_18110152750984202_7259139563921978856_n.jpg?stp=dst-jpg_e35_tt6&_nc_cat=104&ccb=7-5&_nc_sid=18de74&efg=eyJlZmdfdGFnIjoiRkVFRC5iZXN0X2ltYWdlX3VybGdlbi5DMyJ9&_nc_ohc=S2K5qUcd6kQQ7kNvwHKco5u&_nc_oc=AdrMvL4VKa5cXnqBsNpbjan7egdp4U2bQ2J0XH3IBK3S2gBI1W7Tku7nho3_45ESxLY&_nc_zt=23&_nc_ht=scontent.cdninstagram.com&edm=ANQ71j8EAAAA&_nc_gid=sZnnsHQRpl8lbSmsosdVyQ&_nc_tpa=Q5bMBQJBfZ1DPXJtrbEJVHKLADXKhF1q3IcYBmrD3Q2eVDKKenmM__OhaGl-FxWIfMV43UG9R2KqeIDI9w&oh=00_AQNVn-kOdLL4UiR5skkZxCUJrG2NS328CxdmkxVUCOErnA&oe=6AD6C15B",
+    "post_type": "product_listing",
+    "triage_confidence": 0.97,
+    "triage_escalated": true,
+    "bucket": "auto_import",
+    "flags": [],
+    "failed_stages": [],
+    "products": [
+      {
+        "name": "Open box Samsung Galaxy Fold 7 256GB",
+        "description": "Open box Samsung Galaxy Fold 7 256GB",
+        "images": [],
+        "variants": [],
+        "price": {
+          "value": 1415000,
+          "currency": "NGN",
+          "source": "image",
+          "confidence": 0.95
+        },
+        "quantity_signal": {
+          "kind": "none",
+          "evidence": null
+        },
+        "negotiation_signal": "unknown",
+        "extraction_confidence": 0.95
+      },
+      {
+        "name": "Open box Samsung Galaxy Fold 7 512GB",
+        "description": "Open box Samsung Galaxy Fold 7 512GB",
+        "images": [],
+        "variants": [],
+        "price": {
+          "value": 1615000,
+          "currency": "NGN",
+          "source": "image",
+          "confidence": 0.95
+        },
+        "quantity_signal": {
+          "kind": "none",
+          "evidence": null
+        },
+        "negotiation_signal": "unknown",
+        "extraction_confidence": 0.95
+      }
+    ],
+    "signals": []
+  },
+  {
+    "post_id": "17936101512124720",
+    "permalink": "https://www.instagram.com/reel/DdongrANTvM/",
+    "timestamp": "2026-09-23T15:20:17+0000",
+    "media_type": "VIDEO",
+    "media_product_type": "REELS",
+    "thumbnail_url": "https://scontent.cdninstagram.com/v/t51.82787-15/821699080_18110130829984202_1023257389507797031_n.jpg?stp=dst-jpg_e35_tt6&_nc_cat=105&ccb=7-5&_nc_sid=18de74&efg=eyJlZmdfdGFnIjoiQ0xJUFMuYmVzdF9pbWFnZV91cmxnZW4uQzMifQ%3D%3D&_nc_ohc=gXZ9WucA35EQ7kNvwHuLw9d&_nc_oc=AdrTdh4zjJ7B2bf-HHv2TuVbzXoiqOIn1eqCLy6GPn_1T2r9meLoLLV_W5tkC8rkAP8&_nc_zt=23&_nc_ht=scontent.cdninstagram.com&edm=ANQ71j8EAAAA&_nc_gid=OMV7XaQtugZDMHBz3het9g&_nc_tpa=Q5bMBQLXT_P3qwPeJad2qc0D0_L1SApY2D-_3xlhUH22YgVUDxM-IaLFJDoEJpHwFydQDzzO3hqwIeHY7Q&oh=00_AQPT650hy2LwOkLh5pFTJaoj1v4GMz3_CevYviZ5XPSOZg&oe=6AD69463",
+    "post_type": "product_listing",
+    "triage_confidence": 0.91,
+    "triage_escalated": true,
+    "bucket": "auto_import",
+    "flags": [],
+    "failed_stages": [],
+    "products": [
+      {
+        "name": "Blue iPhone 18 ProMax Pouch",
+        "description": "Blue iPhone 18 ProMax Pouch",
+        "images": [],
+        "variants": [],
+        "price": {
+          "value": 15000,
+          "currency": "NGN",
+          "source": "caption",
+          "confidence": 1.0
+        },
+        "quantity_signal": {
+          "kind": "none",
+          "evidence": null
+        },
+        "negotiation_signal": "unknown",
+        "extraction_confidence": 1.0
+      }
+    ],
+    "signals": []
+  },
+  {
+    "post_id": "18115618310059974",
+    "permalink": "https://www.instagram.com/reel/Ddom17CN3L2/",
+    "timestamp": "2026-09-23T15:14:26+0000",
+    "media_type": "VIDEO",
+    "media_product_type": "REELS",
+    "thumbnail_url": "https://scontent.cdninstagram.com/v/t51.82787-15/819319832_18110129164984202_8780853508239170628_n.jpg?stp=dst-jpg_e35_tt6&_nc_cat=101&ccb=7-5&_nc_sid=18de74&efg=eyJlZmdfdGFnIjoiQ0xJUFMuYmVzdF9pbWFnZV91cmxnZW4uQzMifQ%3D%3D&_nc_ohc=A42Is8tlWvUQ7kNvwE7Awxd&_nc_oc=AdpN_quNvTZ4_1OkP86dJ6eIA47IFdrzlnUzKVRUfRc2kQZxCxYRw11HUSW4nqcadiI&_nc_zt=23&_nc_ht=scontent.cdninstagram.com&edm=ANQ71j8EAAAA&_nc_gid=xs9_G_zbXBI2RUcE5jTBVw&_nc_tpa=Q5bMBQJfh_5bdgYD5iexp8IP_THiBlJ5FZzm181rOXjJ4qJs3rG9_K_r-ZN0DQVqUBa7n4SvPMssVoo3HQ&oh=00_AQP-Qv-9ORicAO20TO7tobCx57VSzdjXfbghLC8OCwWSPQ&oe=6AD6B341",
+    "post_type": "product_listing",
+    "triage_confidence": 0.96,
+    "triage_escalated": false,
+    "bucket": "auto_import",
+    "flags": [],
+    "failed_stages": [],
+    "products": [
+      {
+        "name": "Samsung Galaxy Flip 5 256GB",
+        "description": "Open box- UK used Samsung Galaxy Flip 5 256GB",
+        "images": [],
+        "variants": [],
+        "price": {
+          "value": 515000,
+          "currency": "NGN",
+          "source": "caption",
+          "confidence": 1.0
+        },
+        "quantity_signal": {
+          "kind": "none",
+          "evidence": null
+        },
+        "negotiation_signal": "unknown",
+        "extraction_confidence": 1.0
+      }
+    ],
+    "signals": []
+  },
+  {
+    "post_id": "18115331426067887",
+    "permalink": "https://www.instagram.com/reel/Dc_j37RMCf8/",
+    "timestamp": "2026-09-07T16:40:01+0000",
+    "media_type": "VIDEO",
+    "media_product_type": "REELS",
+    "thumbnail_url": "https://scontent.cdninstagram.com/v/t51.82787-15/800010257_18105075160984202_8506550019303944529_n.jpg?stp=dst-jpg_e35_tt6&_nc_cat=111&ccb=7-5&_nc_sid=18de74&efg=eyJlZmdfdGFnIjoiQ0xJUFMuYmVzdF9pbWFnZV91cmxnZW4uQzMifQ%3D%3D&_nc_ohc=Fr_y45IlDygQ7kNvwGGx26V&_nc_oc=AdquZ-1xTCwMuyu5FlPT-HxW5AsR-gbLpl0ZXxbD9AgLl3OulF1ZM7rbplcNZVqehLo&_nc_zt=23&_nc_ht=scontent.cdninstagram.com&edm=ANQ71j8EAAAA&_nc_gid=Jt_Y8jpAajD7cw5CqZ-tfQ&_nc_tpa=Q5bMBQK2skavDyw0E42FLo0N5mR5limVfNQOnzotTxgBzfNvhk_yi-zRrpAVAR6pBmfzaNtY6QpY5leElA&oh=00_AQP6-GvpkEgT09tEYLCCbcw2BQ_ndiH4ztVuC1l8XcT4UA&oe=6AD6A6A4",
+    "post_type": "product_listing",
+    "triage_confidence": 0.95,
+    "triage_escalated": false,
+    "bucket": "auto_import",
+    "flags": [],
+    "failed_stages": [],
+    "products": [
+      {
+        "name": "Brand new Samsung Galaxy Tab S10 FE 128GB 5G",
+        "description": "Brand new Samsung Galaxy Tab S10 FE 128GB 5G",
+        "images": [],
+        "variants": [],
+        "price": {
+          "value": 680000,
+          "currency": "NGN",
+          "source": "caption",
+          "confidence": 1.0
+        },
+        "quantity_signal": {
+          "kind": "none",
+          "evidence": null
+        },
+        "negotiation_signal": "unknown",
+        "extraction_confidence": 1.0
+      },
+      {
+        "name": "Brand new Samsung Galaxy Tab S10 FE 256GB 5G",
+        "description": "Brand new Samsung Galaxy Tab S10 FE 256GB 5G",
+        "images": [],
+        "variants": [],
+        "price": {
+          "value": 900000,
+          "currency": "NGN",
+          "source": "caption",
+          "confidence": 1.0
+        },
+        "quantity_signal": {
+          "kind": "none",
+          "evidence": null
+        },
+        "negotiation_signal": "unknown",
+        "extraction_confidence": 1.0
+      }
+    ],
+    "signals": [
+      {
+        "signal": "finance_available",
+        "confidence": 1.0,
+        "evidence": "Take it home today with just ₦110,000 deposit!"
+      },
+      {
+        "signal": "finance_available",
+        "confidence": 1.0,
+        "evidence": "Balance spread over 2 months."
+      }
+    ]
+  },
+  {
+    "post_id": "17986005777060517",
+    "permalink": "https://www.instagram.com/p/Dc_i92aiK35/",
+    "timestamp": "2026-09-07T16:31:25+0000",
+    "media_type": "IMAGE",
+    "media_product_type": "FEED",
+    "thumbnail_url": "https://scontent.cdninstagram.com/v/t51.82787-15/799487000_18105073792984202_4262000837383735571_n.jpg?stp=dst-jpg_e35_tt6&_nc_cat=107&ccb=7-5&_nc_sid=18de74&efg=eyJlZmdfdGFnIjoiRkVFRC5iZXN0X2ltYWdlX3VybGdlbi5DMyJ9&_nc_ohc=C0uHYHvvszAQ7kNvwFOVsZ5&_nc_oc=Adqqi0z58R8pIB3QO9NSuIYHCleq4TgqI-xVkRZLlgQ0TK7ouuH7R-2t85fqkwRTlrM&_nc_zt=23&_nc_ht=scontent.cdninstagram.com&edm=ANQ71j8EAAAA&_nc_gid=wN32zQhoT-Wo9IrBrx10KA&_nc_tpa=Q5bMBQL-hErf-pvj9RTccYVqBwMqawQwOLRCtNVx-Bs-nGlv1918uYwWfdN_zb1QOEhr55OHMRd3Hl56zQ&oh=00_AQNVnFqMFxZSFv7SRGYd7zHoPK67m0AaU2N7WPZaDuEZLg&oe=6AD6933E",
+    "post_type": "product_listing",
+    "triage_confidence": 0.96,
+    "triage_escalated": false,
+    "bucket": "auto_import",
+    "flags": [],
+    "failed_stages": [],
+    "products": [
+      {
+        "name": "Neatly Used AirPods Max",
+        "description": "Neatly Used AirPods Max",
+        "images": [],
+        "variants": [],
+        "price": {
+          "value": 240000,
+          "currency": "NGN",
+          "source": "caption",
+          "confidence": 1.0
+        },
+        "quantity_signal": {
+          "kind": "none",
+          "evidence": null
+        },
+        "negotiation_signal": "negotiable",
+        "extraction_confidence": 1.0
+      }
+    ],
+    "signals": [
+      {
+        "signal": "price_negotiable",
+        "confidence": 1.0,
+        "evidence": "Price: NGN240,000, slightly negotiable"
+      },
+      {
+        "signal": "stock_count_known",
+        "confidence": 1.0,
+        "evidence": "🚨ONE LUCKY BUYER🚨"
+      }
+    ]
+  },
+  {
+    "post_id": "17994209417829051",
+    "permalink": "https://www.instagram.com/reel/Dc_A8t5Nu60/",
+    "timestamp": "2026-09-07T11:34:32+0000",
+    "media_type": "VIDEO",
+    "media_product_type": "REELS",
+    "thumbnail_url": "https://scontent.cdninstagram.com/v/t51.82787-15/797842038_18105008617984202_8480999313347038844_n.jpg?stp=dst-jpg_e35_tt6&_nc_cat=102&ccb=7-5&_nc_sid=18de74&efg=eyJlZmdfdGFnIjoiQ0xJUFMuYmVzdF9pbWFnZV91cmxnZW4uQzMifQ%3D%3D&_nc_ohc=vDowyTVmbXQQ7kNvwESUloa&_nc_oc=Adr2tgTHXHfKb2MMGf4GzBP0ezt0MgI4s9xHvF0nlMZP3akD6JEGpbuvbZ2Rz_-meyY&_nc_zt=23&_nc_ht=scontent.cdninstagram.com&edm=ANQ71j8EAAAA&_nc_gid=W8aTbSCUUI1tL0I1ivGsqA&_nc_tpa=Q5bMBQK2bMpl-UZVAQhpkfjvxYvcEFjyDwRa03gvgFbyheJJpClSC-7Bcmb30481XeoLDs7mnuYrKDavCA&oh=00_AQM0nKbjcbQD6vehEjkTV87PUgBemYpEzbZ_IDmVcwBEAw&oe=6AD6AF9F",
+    "post_type": "product_listing",
+    "triage_confidence": 0.89,
+    "triage_escalated": false,
+    "bucket": "auto_import",
+    "flags": [],
+    "failed_stages": [],
+    "products": [
+      {
+        "name": "iPhone 16 Plus 128GB",
+        "description": "Brand new iPhone 16 Plus 128GB",
+        "images": [],
+        "variants": [],
+        "price": {
+          "value": 1130000,
+          "currency": "NGN",
+          "source": "caption",
+          "confidence": 1.0
+        },
+        "quantity_signal": {
+          "kind": "none",
+          "evidence": null
+        },
+        "negotiation_signal": "unknown",
+        "extraction_confidence": 1.0
+      },
+      {
+        "name": "iPhone 16 Plus 256GB",
+        "description": "Brand new iPhone 16 Plus 256GB",
+        "images": [],
+        "variants": [],
+        "price": {
+          "value": 1300000,
+          "currency": "NGN",
+          "source": "caption",
+          "confidence": 1.0
+        },
+        "quantity_signal": {
+          "kind": "none",
+          "evidence": null
+        },
+        "negotiation_signal": "unknown",
+        "extraction_confidence": 1.0
+      }
+    ],
+    "signals": []
+  },
+  {
+    "post_id": "17909013375530552",
+    "permalink": "https://www.instagram.com/p/Dc83qT8CGTw/",
+    "timestamp": "2026-09-06T15:34:32+0000",
+    "media_type": "CAROUSEL_ALBUM",
+    "media_product_type": "FEED",
+    "thumbnail_url": "https://scontent.cdninstagram.com/v/t51.82787-15/798589502_18104785054984202_7268769672837748281_n.jpg?stp=dst-jpg_e35_tt6&_nc_cat=107&ccb=7-5&_nc_sid=18de74&efg=eyJlZmdfdGFnIjoiQ0FST1VTRUxfSVRFTS5iZXN0X2ltYWdlX3VybGdlbi5DMyJ9&_nc_ohc=OXR1EQrbtd4Q7kNvwFzIgqb&_nc_oc=Adrfj7lR-HE52RsVYpTdZn7v5zegi5ryIkddo34pn9D5_DKDSVaSCbu8NFS5eAOfSCg&_nc_zt=23&_nc_ht=scontent.cdninstagram.com&edm=ANQ71j8EAAAA&_nc_gid=eG7IJh6_czA_fDGK_t_s1w&_nc_tpa=Q5bMBQImrEKP_-_GpwhOy6yb4PUVyUN3wdTUtkVLRVCgH8q3HsG1jH9emU7JffSIoTsAY8Le5SduiHI0rw&oh=00_AQMMOWXl-lYyujHhcPfTsYFK4GhVHPRjRgJo9_cO5PycBg&oe=6AD6C500",
+    "post_type": "product_listing",
+    "triage_confidence": 0.97,
+    "triage_escalated": false,
+    "bucket": "auto_import",
+    "flags": [],
+    "failed_stages": [],
+    "products": [
+      {
+        "name": "Premium UK used iPhone 15 Plus 128GB",
+        "description": "Premium UK used iPhone 15 Plus 128GB (Physical + eSIM)",
+        "images": [],
+        "variants": [],
+        "price": {
+          "value": 695000,
+          "currency": "NGN",
+          "source": "caption",
+          "confidence": 1.0
+        },
+        "quantity_signal": {
+          "kind": "none",
+          "evidence": null
+        },
+        "negotiation_signal": "unknown",
+        "extraction_confidence": 1.0
+      },
+      {
+        "name": "Premium UK used iPhone 15 Plus 256GB",
+        "description": "Premium UK used iPhone 15 Plus 256GB (Physical + eSIM)",
+        "images": [],
+        "variants": [],
+        "price": {
+          "value": 770000,
+          "currency": "NGN",
+          "source": "caption",
+          "confidence": 1.0
+        },
+        "quantity_signal": {
+          "kind": "none",
+          "evidence": null
+        },
+        "negotiation_signal": "unknown",
+        "extraction_confidence": 1.0
+      }
+    ],
+    "signals": []
+  },
+  {
+    "post_id": "17875545636631606",
+    "permalink": "https://www.instagram.com/reel/Dc829nLy-Mi/",
+    "timestamp": "2026-09-06T15:29:09+0000",
+    "media_type": "VIDEO",
+    "media_product_type": "REELS",
+    "thumbnail_url": "https://scontent.cdninstagram.com/v/t51.82787-15/797597306_18104783407984202_3827827674585163377_n.jpg?stp=dst-jpg_e35_tt6&_nc_cat=106&ccb=7-5&_nc_sid=18de74&efg=eyJlZmdfdGFnIjoiQ0xJUFMuYmVzdF9pbWFnZV91cmxnZW4uQzMifQ%3D%3D&_nc_ohc=66hMZBL1VocQ7kNvwEabKYX&_nc_oc=AdotHyVPAT8lqCHqmiCh0I_gqkrZyJJYcqXpcMcA_H1XoS2Y2sJ_J3BrlaQt3f7ASng&_nc_zt=23&_nc_ht=scontent.cdninstagram.com&edm=ANQ71j8EAAAA&_nc_gid=PG6otszg81C-4MSkOAzi4g&_nc_tpa=Q5bMBQKSD1--_XmKQHvfYfcNet6SlijQL64P9oTEz1jksW_B4rwXJ-FT_jP3dYQbs9TN7pJKtLznY9Nv8w&oh=00_AQMVZpBu5K2ZclALmt-5R-TWKguqk_GUhwk12aM-ddmxsw&oe=6AD6AADF",
+    "post_type": "product_listing",
+    "triage_confidence": 0.97,
+    "triage_escalated": true,
+    "bucket": "auto_import",
+    "flags": [],
+    "failed_stages": [],
+    "products": [
+      {
+        "name": "OmniBook X Flip Laptop 16-as0023dx",
+        "description": "OmniBook X Flip Laptop NGAI 16-as0023dx ultra 7 Processor 1TB Solid State Drive 16GB on-board LPDDR5X SDRAM Windows 11 Touchscreen, Multi-touch enabled 4-cell, 68 Wh -16.0\" 2K (1920 x 1200) IPS LED Display (400 nits) HP 5MP IR Camera",
+        "images": [],
+        "variants": [],
+        "price": {
+          "value": 1400000,
+          "currency": "NGN",
+          "source": "image",
+          "confidence": 0.95
+        },
+        "quantity_signal": {
+          "kind": "none",
+          "evidence": null
+        },
+        "negotiation_signal": "unknown",
+        "extraction_confidence": 0.95
+      }
+    ],
+    "signals": []
+  },
+  {
+    "post_id": "18085616054264180",
+    "permalink": "https://www.instagram.com/reel/Dc82ZfJNAqF/",
+    "timestamp": "2026-09-06T15:24:04+0000",
+    "media_type": "VIDEO",
+    "media_product_type": "REELS",
+    "thumbnail_url": "https://scontent.cdninstagram.com/v/t51.82787-15/798272347_18104782243984202_2792991951247549370_n.jpg?stp=dst-jpg_e35_tt6&_nc_cat=106&ccb=7-5&_nc_sid=18de74&efg=eyJlZmdfdGFnIjoiQ0xJUFMuYmVzdF9pbWFnZV91cmxnZW4uQzMifQ%3D%3D&_nc_ohc=NbkVwpasAe8Q7kNvwHYFZYX&_nc_oc=Adq72nDndzGAtjzZVK7BnM_QTVCpr5UZ5ZwuwxXBhy8RQdNXiTJSBVMQgyVm_ar8Z28&_nc_zt=23&_nc_ht=scontent.cdninstagram.com&edm=ANQ71j8EAAAA&_nc_gid=j8qXHV-lGbynjRDw-D6mNw&_nc_tpa=Q5bMBQJxtHAhMzfskQ_IH89GH70CzLhAra4sYAdjMGgKnp4m0NTQstfUfGTlvJxjMRwC7kaCUATKsphwSA&oh=00_AQMu28HeRtZjIWtUaFu2MapORKubRBkHUJs0JFbq3jra7A&oe=6AD6C4D1",
+    "post_type": "product_listing",
+    "triage_confidence": 0.97,
+    "triage_escalated": true,
+    "bucket": "auto_import",
+    "flags": [],
+    "failed_stages": [],
+    "products": [
+      {
+        "name": "Uk Used iPhone 15 ProMax ESIM UNLOCKED 256GB",
+        "description": "Uk Used iPhone 15 ProMax ESIM UNLOCKED 256GB",
+        "images": [],
+        "variants": [],
+        "price": {
+          "value": 730000,
+          "currency": "NGN",
+          "source": "image",
+          "confidence": 0.95
+        },
+        "quantity_signal": {
+          "kind": "none",
+          "evidence": null
+        },
+        "negotiation_signal": "unknown",
+        "extraction_confidence": 0.95
+      }
+    ],
+    "signals": []
+  },
+  {
+    "post_id": "18127850242812986",
+    "permalink": "https://www.instagram.com/p/Dc8zsUmCFse/",
+    "timestamp": "2026-09-06T14:59:51+0000",
+    "media_type": "IMAGE",
+    "media_product_type": "FEED",
+    "thumbnail_url": "https://scontent.cdninstagram.com/v/t51.82787-15/798064041_18104775217984202_7447095549371558198_n.jpg?stp=dst-jpg_e35_tt6&_nc_cat=108&ccb=7-5&_nc_sid=18de74&efg=eyJlZmdfdGFnIjoiRkVFRC5iZXN0X2ltYWdlX3VybGdlbi5DMyJ9&_nc_ohc=Lb_GP6qLAAAQ7kNvwFl5FLD&_nc_oc=AdoShTKUFXxec3TJ_NAEc_tgt9O4EkUFAYYCH14SOem0g2j632mtyIOay9_lk-6b7sY&_nc_zt=23&_nc_ht=scontent.cdninstagram.com&edm=ANQ71j8EAAAA&_nc_gid=5ZDhnxNePrpggKroQ8j0vg&_nc_tpa=Q5bMBQJKyZNiepPY91oSE4rIsssOdUL5Bsh8Q9GXAS1nMIvE01t660xSlYtAz3g9F58w06SeK0PhF-G3ZA&oh=00_AQPcZOCmKTbtUPcomb32dUcpSu5kFtTTC1AmFxN2wG_QNw&oe=6AD6C1F5",
+    "post_type": "product_listing",
+    "triage_confidence": 0.97,
+    "triage_escalated": false,
+    "bucket": "auto_import",
+    "flags": [],
+    "failed_stages": [],
+    "products": [
+      {
+        "name": "Premium quality Uk used iPhone 12 Pro Max 128GB",
+        "description": "Premium quality Uk used iPhone 12 Pro Max 128GB",
+        "images": [],
+        "variants": [],
+        "price": {
+          "value": 450000,
+          "currency": "NGN",
+          "source": "caption",
+          "confidence": 1.0
+        },
+        "quantity_signal": {
+          "kind": "none",
+          "evidence": null
+        },
+        "negotiation_signal": "unknown",
+        "extraction_confidence": 1.0
+      },
+      {
+        "name": "Premium quality Uk used iPhone 12 Pro Max 256GB",
+        "description": "Premium quality Uk used iPhone 12 Pro Max 256GB",
+        "images": [],
+        "variants": [],
+        "price": {
+          "value": 500000,
+          "currency": "NGN",
+          "source": "caption",
+          "confidence": 1.0
+        },
+        "quantity_signal": {
+          "kind": "none",
+          "evidence": null
+        },
+        "negotiation_signal": "unknown",
+        "extraction_confidence": 1.0
+      }
+    ],
+    "signals": []
+  },
+  {
+    "post_id": "18457546087186979",
+    "permalink": "https://www.instagram.com/reel/Dc8zFm_ut5R/",
+    "timestamp": "2026-09-06T14:55:28+0000",
+    "media_type": "VIDEO",
+    "media_product_type": "REELS",
+    "thumbnail_url": "https://scontent.cdninstagram.com/v/t51.82787-15/798589464_18104773765984202_8109285896128977538_n.jpg?stp=dst-jpg_e35_tt6&_nc_cat=107&ccb=7-5&_nc_sid=18de74&efg=eyJlZmdfdGFnIjoiQ0xJUFMuYmVzdF9pbWFnZV91cmxnZW4uQzMifQ%3D%3D&_nc_ohc=LsSW6u8lK74Q7kNvwGPXaak&_nc_oc=AdrcmJ6Q6_qQL4rEjob09LX1rPwk5zUfrwiIYtdsPRzTgWgktrQm1897DT0ld1DgHro&_nc_zt=23&_nc_ht=scontent.cdninstagram.com&edm=ANQ71j8EAAAA&_nc_gid=aIsQPX7rzo5BKDTdmsR5RA&_nc_tpa=Q5bMBQJWtkevQKzlSiJGc4V5d1UqnoUYtTSVKh7hFOfjTr0Ny-38klvRGAzZLeqIqmT84y0JOpavi7FLyg&oh=00_AQPPs3QQyclbdwFxPO6uPvrqBiWmrGSq0ooBBiaCGIpa3Q&oe=6AD6B017",
+    "post_type": "product_listing",
+    "triage_confidence": 0.97,
+    "triage_escalated": true,
+    "bucket": "auto_import",
+    "flags": [],
+    "failed_stages": [],
+    "products": [
+      {
+        "name": "HP 250R G10 CORE 3-100U 8GB DDR5 512 SSD",
+        "description": "D11CZET HP 250R G10 CORE 3-100U 8GB DDR5, 512 SSD|Intel ® Graphics|Spill-resistant, full-size, backlit, flint opaque keyboard with numeric keypad|Freedos| PC BL",
+        "images": [],
+        "variants": [],
+        "price": {
+          "value": 710000,
+          "currency": "NGN",
+          "source": "image",
+          "confidence": 0.95
+        },
+        "quantity_signal": {
+          "kind": "none",
+          "evidence": null
+        },
+        "negotiation_signal": "unknown",
+        "extraction_confidence": 0.95
+      }
+    ],
+    "signals": []
+  },
+  {
+    "post_id": "17940067572092567",
+    "permalink": "https://www.instagram.com/reel/Dc8s2LZzvUb/",
+    "timestamp": "2026-09-06T14:00:20+0000",
+    "media_type": "VIDEO",
+    "media_product_type": "REELS",
+    "thumbnail_url": "https://scontent.cdninstagram.com/v/t51.82787-15/799502966_18104760040984202_8520268515979222077_n.jpg?stp=dst-jpg_e35_tt6&_nc_cat=101&ccb=7-5&_nc_sid=18de74&efg=eyJlZmdfdGFnIjoiQ0xJUFMuYmVzdF9pbWFnZV91cmxnZW4uQzMifQ%3D%3D&_nc_ohc=ovRXopF4eiIQ7kNvwExJJv9&_nc_oc=AdpQKnO6yt2cbWZa0MAls5P02dsw7wGLldvhBtDoUC7gixyjB1YHIYNRDomHteNIojA&_nc_zt=23&_nc_ht=scontent.cdninstagram.com&edm=ANQ71j8EAAAA&_nc_gid=x01hqa0C6RrlGmGJ3l87rQ&_nc_tpa=Q5bMBQI6TSvNZsEtde-6KNJxRjJaCHAvZCjqB-zABQr-qvwXu48-K9f_aPKTwprVJw4a6K9iwHvIl5FSWw&oh=00_AQM5iXuc3sWZpcNKo0C3kP12XdCG_98Ixh-Ngfz94AYR_A&oe=6AD69F07",
+    "post_type": "product_listing",
+    "triage_confidence": 0.97,
+    "triage_escalated": true,
+    "bucket": "auto_import",
+    "flags": [],
+    "failed_stages": [],
+    "products": [
+      {
+        "name": "Premium UK used iPhone 16 256GB",
+        "description": "Premium UK used iPhone 16 256GB, Pink",
+        "images": [],
+        "variants": [],
+        "price": {
+          "value": 910000,
+          "currency": "NGN",
+          "source": "image",
+          "confidence": 0.95
+        },
+        "quantity_signal": {
+          "kind": "none",
+          "evidence": null
+        },
+        "negotiation_signal": "unknown",
+        "extraction_confidence": 0.95
+      }
+    ],
+    "signals": []
+  },
+  {
+    "post_id": "18099765671288015",
+    "permalink": "https://www.instagram.com/p/Dc7U52ZiNxD/",
+    "timestamp": "2026-09-06T01:11:35+0000",
+    "media_type": "CAROUSEL_ALBUM",
+    "media_product_type": "FEED",
+    "thumbnail_url": "https://scontent.cdninstagram.com/v/t51.82787-15/797840875_18104617000984202_4712021755590380391_n.jpg?stp=dst-jpg_e35_tt6&_nc_cat=101&ccb=7-5&_nc_sid=18de74&efg=eyJlZmdfdGFnIjoiQ0FST1VTRUxfSVRFTS5iZXN0X2ltYWdlX3VybGdlbi5DMyJ9&_nc_ohc=nZ6REGoBDeQQ7kNvwGtMrZc&_nc_oc=Adr_lD9X9M-Z1NUa03b_3ypgWWsEc_gfIXvwvDEg7WLzo6JiCMeHEMHn0XUQhLFznxo&_nc_zt=23&_nc_ht=scontent.cdninstagram.com&edm=ANQ71j8EAAAA&_nc_gid=CSRM1jiM0GL5LHawg4vUBw&_nc_tpa=Q5bMBQLXrczJnsjvFuKUSW0gYiz1IzYeLYdTAA0a8UnaoI9VB8GdS-0ZQtfQ4rPRZbXJ6zknW0plkXtxJA&oh=00_AQODXhGs_NoB0Kxq_JdA1BHJlSwiidEBLUczEdF57Ax7YA&oe=6AD6BACF",
+    "post_type": "product_listing",
+    "triage_confidence": 0.97,
+    "triage_escalated": false,
+    "bucket": "auto_import",
+    "flags": [],
+    "failed_stages": [],
+    "products": [
+      {
+        "name": "UK-used MacBook Air M2 2022 256/8GB",
+        "description": "UK-used MacBook Air M2 2022, 256/8GB.",
+        "images": [],
+        "variants": [],
+        "price": {
+          "value": 950000,
+          "currency": "NGN",
+          "source": "caption",
+          "confidence": 1.0
+        },
+        "quantity_signal": {
+          "kind": "none",
+          "evidence": null
+        },
+        "negotiation_signal": "unknown",
+        "extraction_confidence": 1.0
+      }
+    ],
+    "signals": []
+  },
+  {
+    "post_id": "17956459401229902",
+    "permalink": "https://www.instagram.com/p/Dc7UKPHCC-C/",
+    "timestamp": "2026-09-06T01:05:05+0000",
+    "media_type": "CAROUSEL_ALBUM",
+    "media_product_type": "FEED",
+    "thumbnail_url": "https://scontent.cdninstagram.com/v/t51.82787-15/797693147_18104615377984202_4427127894929512160_n.jpg?stp=dst-jpg_e35_tt6&_nc_cat=100&ccb=7-5&_nc_sid=18de74&efg=eyJlZmdfdGFnIjoiQ0FST1VTRUxfSVRFTS5iZXN0X2ltYWdlX3VybGdlbi5DMyJ9&_nc_ohc=kaOPen00nqEQ7kNvwHoUPVp&_nc_oc=AdoV2LjIBn8YlgOjlLj2Ump_8KUVdK4swIOmTVfgiu3a2yklWdxOd8sf6Stin1MLdpI&_nc_zt=23&_nc_ht=scontent.cdninstagram.com&edm=ANQ71j8EAAAA&_nc_gid=tFcSHDv93IXBuDNs4bca6Q&_nc_tpa=Q5bMBQLCkGZbtCX-LaP4KVdtjs7vfL5kYZFg0N_DvYmrAye06W3rDb8PL63eYOHCV6UtnRMzvbaJb_0K4Q&oh=00_AQP343sK5F5bDdE0iGyGwj2vbMWx3XiqdmbfqP4Jq-mR3Q&oe=6AD695E0",
+    "post_type": "product_listing",
+    "triage_confidence": 0.97,
+    "triage_escalated": false,
+    "bucket": "auto_import",
+    "flags": [],
+    "failed_stages": [],
+    "products": [
+      {
+        "name": "Premium UK used iPhone 11 64GB",
+        "description": "Premium UK used iPhone 11 64GB",
+        "images": [],
+        "variants": [],
+        "price": {
+          "value": 225000,
+          "currency": "NGN",
+          "source": "caption",
+          "confidence": 1.0
+        },
+        "quantity_signal": {
+          "kind": "none",
+          "evidence": null
+        },
+        "negotiation_signal": "unknown",
+        "extraction_confidence": 1.0
+      },
+      {
+        "name": "Premium UK used iPhone 11 128GB",
+        "description": "Premium UK used iPhone 11 128GB",
+        "images": [],
+        "variants": [],
+        "price": {
+          "value": 260000,
+          "currency": "NGN",
+          "source": "caption",
+          "confidence": 1.0
+        },
+        "quantity_signal": {
+          "kind": "none",
+          "evidence": null
+        },
+        "negotiation_signal": "unknown",
+        "extraction_confidence": 1.0
+      }
+    ],
+    "signals": []
+  },
+  {
+    "post_id": "17958045885195473",
+    "permalink": "https://www.instagram.com/p/Dc7S1X7iFnN/",
+    "timestamp": "2026-09-06T00:53:30+0000",
+    "media_type": "CAROUSEL_ALBUM",
+    "media_product_type": "FEED",
+    "thumbnail_url": "https://scontent.cdninstagram.com/v/t51.82787-15/795182449_18104612740984202_6966711172632924758_n.jpg?stp=dst-jpg_e35_tt6&_nc_cat=110&ccb=7-5&_nc_sid=18de74&efg=eyJlZmdfdGFnIjoiQ0FST1VTRUxfSVRFTS5iZXN0X2ltYWdlX3VybGdlbi5DMyJ9&_nc_ohc=-Sk-t-qb_7sQ7kNvwEiemZh&_nc_oc=AdoWDYWoGJOOHt617SjdvmOL5QfdIIKK9cEU3o6N-mcVB6ryYZpBf7wy4W3iFO91lJc&_nc_zt=23&_nc_ht=scontent.cdninstagram.com&edm=ANQ71j8EAAAA&_nc_gid=I14Qq69wpy458-aiozPDig&_nc_tpa=Q5bMBQKV_Bn8RfygzIn_2JYcT-uU9IWnICrokNjdMKPvE04CcGbOIQ_zqOpbw25If6N-OrbNjO7jrV1RQA&oh=00_AQMzmCMNprK-vxvb_JDWhRcWA09KZOJ5GptLaerbGKxINw&oe=6AD698DF",
+    "post_type": "product_listing",
+    "triage_confidence": 0.96,
+    "triage_escalated": false,
+    "bucket": "auto_import",
+    "flags": [],
+    "failed_stages": [],
+    "products": [
+      {
+        "name": "Open box - Google pixel 9 pro 256GB",
+        "description": "Open box - Google pixel 9 pro 256GB",
+        "images": [],
+        "variants": [],
+        "price": {
+          "value": 790000,
+          "currency": "NGN",
+          "source": "caption",
+          "confidence": 1.0
+        },
+        "quantity_signal": {
+          "kind": "none",
+          "evidence": null
+        },
+        "negotiation_signal": "unknown",
+        "extraction_confidence": 1.0
+      }
+    ],
+    "signals": []
+  },
+  {
+    "post_id": "17953469082214541",
+    "permalink": "https://www.instagram.com/p/Dc7SQ1HiOE2/",
+    "timestamp": "2026-09-06T00:48:30+0000",
+    "media_type": "CAROUSEL_ALBUM",
+    "media_product_type": "FEED",
+    "thumbnail_url": "https://scontent.cdninstagram.com/v/t51.82787-15/798478561_18104611828984202_129284340121017528_n.jpg?stp=dst-jpg_e35_tt6&_nc_cat=109&ccb=7-5&_nc_sid=18de74&efg=eyJlZmdfdGFnIjoiQ0FST1VTRUxfSVRFTS5iZXN0X2ltYWdlX3VybGdlbi5DMyJ9&_nc_ohc=vpWWMlD6EVAQ7kNvwG-GOZ3&_nc_oc=Adr5x63pUBoKaHiUnWrsd3d_eskDXK-6jda_ongRSP-bhX4jGzIqSHLza0Tnj5DqFOY&_nc_zt=23&_nc_ht=scontent.cdninstagram.com&edm=ANQ71j8EAAAA&_nc_gid=Lde5ZYJgcOQzxupiiV2Kgw&_nc_tpa=Q5bMBQJ7DenZPoQsZMBoVe2vE6cZXMT4FnBqsI2mwi9Nl4Qm5TMn_XnXWcXqVRClt5NTNyWP0KAXVijx0g&oh=00_AQNqo8LmmWcYvSySzIxh6LO5SNBBdhbvYyG9QCnN-Y_joA&oe=6AD6A1B1",
+    "post_type": "product_listing",
+    "triage_confidence": 0.97,
+    "triage_escalated": false,
+    "bucket": "auto_import",
+    "flags": [],
+    "failed_stages": [],
+    "products": [
+      {
+        "name": "Premium UK used iPhone 14 128GB",
+        "description": "Premium Uk used iPhone 14 128GB (Physical + eSIM)",
+        "images": [],
+        "variants": [],
+        "price": {
+          "value": 445000,
+          "currency": "NGN",
+          "source": "caption",
+          "confidence": 1.0
+        },
+        "quantity_signal": {
+          "kind": "none",
+          "evidence": null
+        },
+        "negotiation_signal": "unknown",
+        "extraction_confidence": 1.0
+      },
+      {
+        "name": "Premium UK used iPhone 14 256GB",
+        "description": "Premium Uk used iPhone 14 256GB (Physical + eSIM)",
+        "images": [],
+        "variants": [],
+        "price": {
+          "value": 495000,
+          "currency": "NGN",
+          "source": "caption",
+          "confidence": 1.0
+        },
+        "quantity_signal": {
+          "kind": "none",
+          "evidence": null
+        },
+        "negotiation_signal": "unknown",
+        "extraction_confidence": 1.0
+      }
+    ],
+    "signals": []
+  },
+  {
+    "post_id": "18136320136714592",
+    "permalink": "https://www.instagram.com/p/Dc7R2xViAp6/",
+    "timestamp": "2026-09-06T00:44:57+0000",
+    "media_type": "IMAGE",
+    "media_product_type": "FEED",
+    "thumbnail_url": "https://scontent.cdninstagram.com/v/t51.82787-15/797938820_18104611411984202_5762141144301326214_n.jpg?stp=dst-jpg_e35_tt6&_nc_cat=111&ccb=7-5&_nc_sid=18de74&efg=eyJlZmdfdGFnIjoiRkVFRC5iZXN0X2ltYWdlX3VybGdlbi5DMyJ9&_nc_ohc=k4f2WhrqCiwQ7kNvwEKWgzE&_nc_oc=Ado7ifIKdTWj9deoZMOg9Ki05yQakgX665ejb69JFbB1YQjijY-4fdg1jL1jYeMxhnM&_nc_zt=23&_nc_ht=scontent.cdninstagram.com&edm=ANQ71j8EAAAA&_nc_gid=pBKgLEJMDMAtA_zjWKoDfQ&_nc_tpa=Q5bMBQKt9BlQ3k2sbrx6C8CwgcQR9gz1p2tCCi8ugykFRPI19Wee3yS3JiUYyMtUwqtIH5Oi4rw5CJFdnA&oh=00_AQO9bUe0H4uk-ZZD927x7HWedrFCXYCmQGCA06x0r7AG0A&oe=6AD6C047",
+    "post_type": "product_listing",
+    "triage_confidence": 0.94,
+    "triage_escalated": false,
+    "bucket": "auto_import",
+    "flags": [],
+    "failed_stages": [],
+    "products": [
+      {
+        "name": "iPhone 17PROMAX 256GB",
+        "description": "OPEN BOX iPhone 17PROMAX 256GB, Physical & ESIM, Battery Health:99%, Cycle count: 190",
+        "images": [],
+        "variants": [],
+        "price": {
+          "value": 1950000,
+          "currency": "NGN",
+          "source": "caption",
+          "confidence": 1.0
+        },
+        "quantity_signal": {
+          "kind": "none",
+          "evidence": null
+        },
+        "negotiation_signal": "unknown",
+        "extraction_confidence": 1.0
+      }
+    ],
+    "signals": []
+  },
+  {
+    "post_id": "18351809149247806",
+    "permalink": "https://www.instagram.com/p/Dc7RIwrCJl1/",
+    "timestamp": "2026-09-06T00:38:40+0000",
+    "media_type": "IMAGE",
+    "media_product_type": "FEED",
+    "thumbnail_url": "https://scontent.cdninstagram.com/v/t51.82787-15/798077666_18104610817984202_8730257196236055922_n.jpg?stp=dst-jpg_e35_tt6&_nc_cat=103&ccb=7-5&_nc_sid=18de74&efg=eyJlZmdfdGFnIjoiRkVFRC5iZXN0X2ltYWdlX3VybGdlbi5DMyJ9&_nc_ohc=5yfLDqRa2vMQ7kNvwFn6ZwB&_nc_oc=Adojxkt3G4eipxIp90sQEu7u9CmmzctzHNQd7FRk_su6Rq1-slM3HQnvaeGVvRQxATo&_nc_zt=23&_nc_ht=scontent.cdninstagram.com&edm=ANQ71j8EAAAA&_nc_gid=UqtI7HJcaFnGFF6-CqrUkw&_nc_tpa=Q5bMBQLXVtWp5p7il27NOI4Q2tuowT7ztK9zewHVSGK_HIFUdXhGVLLjgXz-Ol-vs9Ef7W9CNNBJ2MNq3Q&oh=00_AQOuXoWaW9WReDx0Hk9I2t9WoIp9jdwh43mj0vmi89Ta0Q&oe=6AD6B4F4",
+    "post_type": "product_listing",
+    "triage_confidence": 0.97,
+    "triage_escalated": true,
+    "bucket": "auto_import",
+    "flags": [],
+    "failed_stages": [],
+    "products": [
+      {
+        "name": "IPHONE 15 128GB",
+        "description": "IPHONE 15 128GB",
+        "images": [],
+        "variants": [],
+        "price": {
+          "value": 500000,
+          "currency": "NGN",
+          "source": "image",
+          "confidence": 0.95
+        },
+        "quantity_signal": {
+          "kind": "none",
+          "evidence": null
+        },
+        "negotiation_signal": "unknown",
+        "extraction_confidence": 0.9
+      }
+    ],
+    "signals": []
+  },
+  {
+    "post_id": "17868280992643734",
+    "permalink": "https://www.instagram.com/p/Dc7Q85-CPlx/",
+    "timestamp": "2026-09-06T00:37:03+0000",
+    "media_type": "CAROUSEL_ALBUM",
+    "media_product_type": "FEED",
+    "thumbnail_url": "https://scontent.cdninstagram.com/v/t51.82787-15/788285061_18104610709984202_6244402601203701717_n.jpg?stp=dst-jpg_e35_tt6&_nc_cat=107&ccb=7-5&_nc_sid=18de74&efg=eyJlZmdfdGFnIjoiQ0FST1VTRUxfSVRFTS5iZXN0X2ltYWdlX3VybGdlbi5DMyJ9&_nc_ohc=k-utHFnaCzkQ7kNvwGffRUg&_nc_oc=AdqimaIpNjgKNpE3eeH0-0P50YUK77LeukFrAaXhKM1XyHoMBHNH14UIq0erldiPRBg&_nc_zt=23&_nc_ht=scontent.cdninstagram.com&edm=ANQ71j8EAAAA&_nc_gid=fA7HPsHCiaSoSFAohwhvLQ&_nc_tpa=Q5bMBQLyjvvxEjtgn5ZgH7Qnz0rAuk31UA4KMS1X_1C4cufwFGD1WQ81rcmwal0nfEedNVZHTZjIFN1D7w&oh=00_AQOlB_I28FxAppjr3RqzCyU4-NX0UW0pofr5YJHXV06_lw&oe=6AD6B344",
+    "post_type": "product_listing",
+    "triage_confidence": 0.97,
+    "triage_escalated": false,
+    "bucket": "auto_import",
+    "flags": [],
+    "failed_stages": [],
+    "products": [
+      {
+        "name": "MacBook Pro M1 chip 13’inch 2020 Touch Bar 512GB/16GB",
+        "description": "MacBook Pro M1 chip 13’inch 2020 Touch Bar 512GB/16GB",
+        "images": [],
+        "variants": [],
+        "price": {
+          "value": 950000,
+          "currency": "NGN",
+          "source": "caption",
+          "confidence": 1.0
+        },
+        "quantity_signal": {
+          "kind": "none",
+          "evidence": null
+        },
+        "negotiation_signal": "unknown",
+        "extraction_confidence": 1.0
+      },
+      {
+        "name": "MacBook Pro M1 chip 13’inch 2020 Touch Bar 256gb/16GB",
+        "description": "MacBook Pro M1 chip 13’inch 2020 Touch Bar 256gb/16GB",
+        "images": [],
+        "variants": [],
+        "price": {
+          "value": 900000,
+          "currency": "NGN",
+          "source": "caption",
+          "confidence": 1.0
+        },
+        "quantity_signal": {
+          "kind": "none",
+          "evidence": null
+        },
+        "negotiation_signal": "unknown",
+        "extraction_confidence": 1.0
+      },
+      {
+        "name": "MacBook Pro 13’inch 2020 Touch Bar core i7 1TB/32gb",
+        "description": "MacBook Pro 13’inch 2020 Touch Bar core i7 1TB/32gb",
+        "images": [],
+        "variants": [],
+        "price": {
+          "value": 900000,
+          "currency": "NGN",
+          "source": "caption",
+          "confidence": 1.0
+        },
+        "quantity_signal": {
+          "kind": "none",
+          "evidence": null
+        },
+        "negotiation_signal": "unknown",
+        "extraction_confidence": 1.0
+      },
+      {
+        "name": "MacBook Pro 13’inch 2020 Touch Bar core i5 1TB/16gb",
+        "description": "MacBook Pro 13’inch 2020 Touch Bar core i5 1TB/16gb",
+        "images": [],
+        "variants": [],
+        "price": {
+          "value": 850000,
+          "currency": "NGN",
+          "source": "caption",
+          "confidence": 1.0
+        },
+        "quantity_signal": {
+          "kind": "none",
+          "evidence": null
+        },
+        "negotiation_signal": "unknown",
+        "extraction_confidence": 1.0
+      }
+    ],
+    "signals": []
+  },
+  {
+    "post_id": "18018200018873070",
+    "permalink": "https://www.instagram.com/p/Dc7PUU6CN0r/",
+    "timestamp": "2026-09-06T00:22:46+0000",
+    "media_type": "CAROUSEL_ALBUM",
+    "media_product_type": "FEED",
+    "thumbnail_url": "https://scontent.cdninstagram.com/v/t51.82787-15/797842031_18104608858984202_5383077125610388794_n.jpg?stp=dst-jpg_e35_tt6&_nc_cat=108&ccb=7-5&_nc_sid=18de74&efg=eyJlZmdfdGFnIjoiQ0FST1VTRUxfSVRFTS5iZXN0X2ltYWdlX3VybGdlbi5DMiJ9&_nc_ohc=rHI0Sb03iCoQ7kNvwEjqVIp&_nc_oc=AdoCHeY0lu9KgpqqBIb6Td0fREUCntDfkrSs_ZpA4APb9jLC0E0NWobuiWKfplkAa7Y&_nc_zt=23&_nc_ht=scontent.cdninstagram.com&edm=ANQ71j8EAAAA&_nc_gid=pQ6b-l8ub-1QHONTjC1CQQ&_nc_tpa=Q5bMBQKj8cmabOHPKoi7sC5QMRgltxMGQwnDMw3DLEJlr9Twg5NBxKUVR1qkgoQkmThTpjIOHuwhqS3r5g&oh=00_AQPcQtCMUugQJ1AmrfPMnLU90UkeNyf6PX-lbo8IGkbAFA&oe=6AD6BD3A",
+    "post_type": "product_listing",
+    "triage_confidence": 0.96,
+    "triage_escalated": false,
+    "bucket": "auto_import",
+    "flags": [],
+    "failed_stages": [],
+    "products": [
+      {
+        "name": "Uk used Dell Latitude 5300 2-in-1",
+        "description": "Uk used Dell Latitude 5300 2-in-1 Core i5 8th Gen 8GB RAM 256GB SSD Touchscreen Convertible Fingerprint Keyboard Light",
+        "images": [],
+        "variants": [],
+        "price": {
+          "value": 285000,
+          "currency": "NGN",
+          "source": "caption",
+          "confidence": 1.0
+        },
+        "quantity_signal": {
+          "kind": "none",
+          "evidence": null
+        },
+        "negotiation_signal": "unknown",
+        "extraction_confidence": 1.0
+      },
+      {
+        "name": "Dell Latitude 5300 Non-touch",
+        "description": "Dell Latitude 5300 Non-touch Core i7 8th Gen 8GB RAM 256GB SSD Keyboard Light",
+        "images": [],
+        "variants": [],
+        "price": {
+          "value": 280000,
+          "currency": "NGN",
+          "source": "caption",
+          "confidence": 1.0
+        },
+        "quantity_signal": {
+          "kind": "none",
+          "evidence": null
+        },
+        "negotiation_signal": "unknown",
+        "extraction_confidence": 1.0
+      },
+      {
+        "name": "Dell Latitude 5300 Non-touch",
+        "description": "Dell Latitude 5300 Non-touch Core i5 8th Gen 8GB RAM 256GB SSD Keyboard Light",
+        "images": [],
+        "variants": [],
+        "price": {
+          "value": 250000,
+          "currency": "NGN",
+          "source": "caption",
+          "confidence": 1.0
+        },
+        "quantity_signal": {
+          "kind": "none",
+          "evidence": null
+        },
+        "negotiation_signal": "unknown",
+        "extraction_confidence": 1.0
+      }
+    ],
+    "signals": []
+  },
+  {
+    "post_id": "18114879538989256",
+    "permalink": "https://www.instagram.com/p/Dc7OzuuiCru/",
+    "timestamp": "2026-09-06T00:18:19+0000",
+    "media_type": "IMAGE",
+    "media_product_type": "FEED",
+    "thumbnail_url": "https://scontent.cdninstagram.com/v/t51.82787-15/793122206_18104607913984202_2594090774230018518_n.jpg?stp=dst-jpg_e35_tt6&_nc_cat=103&ccb=7-5&_nc_sid=18de74&efg=eyJlZmdfdGFnIjoiRkVFRC5iZXN0X2ltYWdlX3VybGdlbi5DMyJ9&_nc_ohc=Jvoud2AnX6AQ7kNvwEknXCq&_nc_oc=Ado81kuzC1HVhHHRQiTfsHJStcPYidCo6rMMQ_HC5-T1FFBfbFjmmo27N8Gh1jd9vic&_nc_zt=23&_nc_ht=scontent.cdninstagram.com&edm=ANQ71j8EAAAA&_nc_gid=J6xnWpU8JD-gNzrJZu8M9Q&_nc_tpa=Q5bMBQI26qMhDLxwW4T4q9ero_xHZj_tUvPbKn_froLxmuUSWUA83Su1rAnbU9m0Et0K4_-Jh-X9vqZqJg&oh=00_AQM2DsbTM-0nlfpI6IKTldTDriLPybB1kl9zENu7dygV7Q&oe=6AD6BC87",
+    "post_type": "product_listing",
+    "triage_confidence": 0.83,
+    "triage_escalated": true,
+    "bucket": "auto_import",
+    "flags": [],
+    "failed_stages": [],
+    "products": [
+      {
+        "name": "Premium Uk used iPhone 17 256GB",
+        "description": "Premium Uk used iPhone 17 📱🔥 256GB",
+        "images": [],
+        "variants": [],
+        "price": {
+          "value": 1120000,
+          "currency": "NGN",
+          "source": "caption",
+          "confidence": 1.0
+        },
+        "quantity_signal": {
+          "kind": "none",
+          "evidence": null
+        },
+        "negotiation_signal": "unknown",
+        "extraction_confidence": 1.0
+      }
+    ],
+    "signals": []
+  },
+  {
+    "post_id": "17983272389889086",
+    "permalink": "https://www.instagram.com/p/Dc7OSaYCOGa/",
+    "timestamp": "2026-09-06T00:13:46+0000",
+    "media_type": "IMAGE",
+    "media_product_type": "FEED",
+    "thumbnail_url": "https://scontent.cdninstagram.com/v/t51.82787-15/793161146_18104606518984202_1389831590975156532_n.jpg?stp=dst-jpg_e35_tt6&_nc_cat=111&ccb=7-5&_nc_sid=18de74&efg=eyJlZmdfdGFnIjoiRkVFRC5iZXN0X2ltYWdlX3VybGdlbi5DMyJ9&_nc_ohc=rTs4DZ4m8q8Q7kNvwGPqaYJ&_nc_oc=AdrTqSkKXmju9WL5sXkTUszMmuhJ1kw6nmzC_9pZMl8Iml7-eljirh3XFHOj-DZkz5w&_nc_zt=23&_nc_ht=scontent.cdninstagram.com&edm=ANQ71j8EAAAA&_nc_gid=OU7J-UXzVgFpXfI4DxfZeg&_nc_tpa=Q5bMBQKQi6VPg2Hstt49GqHLsv6WJMXXNzqGWVJBVn3KN1ZOCR3YtJA0S2Q8AjUJC9xC8oBzFxpha41IbQ&oh=00_AQOl8sDidIewJ58TzLqMeoClWuUpj5sZgC_aITCYlc3NxQ&oe=6AD6C3C0",
+    "post_type": "product_listing",
+    "triage_confidence": 0.97,
+    "triage_escalated": false,
+    "bucket": "auto_import",
+    "flags": [],
+    "failed_stages": [],
+    "products": [
+      {
+        "name": "Premium UK used iPhone XR 64GB",
+        "description": "Premium Uk used iPhone XR 64GB",
+        "images": [],
+        "variants": [],
+        "price": {
+          "value": 205000,
+          "currency": "NGN",
+          "source": "caption",
+          "confidence": 1.0
+        },
+        "quantity_signal": {
+          "kind": "none",
+          "evidence": null
+        },
+        "negotiation_signal": "unknown",
+        "extraction_confidence": 1.0
+      },
+      {
+        "name": "Premium UK used iPhone XR 128GB",
+        "description": "Premium Uk used iPhone XR 128GB",
+        "images": [],
+        "variants": [],
+        "price": {
+          "value": 230000,
+          "currency": "NGN",
+          "source": "caption",
+          "confidence": 1.0
+        },
+        "quantity_signal": {
+          "kind": "none",
+          "evidence": null
+        },
+        "negotiation_signal": "unknown",
+        "extraction_confidence": 1.0
+      },
+      {
+        "name": "Premium UK used iPhone XR 256GB",
+        "description": "Premium Uk used iPhone XR 256GB",
+        "images": [],
+        "variants": [],
+        "price": {
+          "value": 255000,
+          "currency": "NGN",
+          "source": "caption",
+          "confidence": 1.0
+        },
+        "quantity_signal": {
+          "kind": "none",
+          "evidence": null
+        },
+        "negotiation_signal": "unknown",
+        "extraction_confidence": 1.0
+      }
+    ],
+    "signals": []
+  },
+  {
+    "post_id": "18130873003584392",
+    "permalink": "https://www.instagram.com/p/Dc6sI3NCNJO/",
+    "timestamp": "2026-09-05T19:15:22+0000",
+    "media_type": "IMAGE",
+    "media_product_type": "FEED",
+    "thumbnail_url": "https://scontent.cdninstagram.com/v/t51.82787-15/797888330_18104567938984202_8823364887475279360_n.jpg?stp=dst-jpg_e35_tt6&_nc_cat=100&ccb=7-5&_nc_sid=18de74&efg=eyJlZmdfdGFnIjoiRkVFRC5iZXN0X2ltYWdlX3VybGdlbi5DMyJ9&_nc_ohc=bp0bXP6bzTsQ7kNvwEhnb5n&_nc_oc=Ado3xPFGqpK4QzyJxWWWlwMtoquwbGx6zhQks1oIHwWIToDRbBWrxJU7X4Q3wMV_XmI&_nc_zt=23&_nc_ht=scontent.cdninstagram.com&edm=ANQ71j8EAAAA&_nc_gid=u5Glp7w7-JR1qqpQyYg1NQ&_nc_tpa=Q5bMBQJ-v8ee4wBujLU9KK_0pjSfP78bMMvlfQfUfMDmaQ4aiYzfJWeOO9jcw_Fftmk16ue8j4ZgwOsZoQ&oh=00_AQOv6dKMTWMs2KG3DJUobT_vdCnKke4xRaBaqbPjep4zOA&oe=6AD6995F",
+    "post_type": "product_listing",
+    "triage_confidence": 0.97,
+    "triage_escalated": false,
+    "bucket": "auto_import",
+    "flags": [],
+    "failed_stages": [],
+    "products": [
+      {
+        "name": "iPhone 12PRO 128GB",
+        "description": "OPEN BOX iPhone 12PRO 128GB Physical & ESIM Battery Health:97%",
+        "images": [],
+        "variants": [],
+        "price": {
+          "value": 365000,
+          "currency": "NGN",
+          "source": "caption",
+          "confidence": 1.0
+        },
+        "quantity_signal": {
+          "kind": "none",
+          "evidence": null
+        },
+        "negotiation_signal": "unknown",
+        "extraction_confidence": 1.0
+      }
+    ],
+    "signals": []
+  },
+  {
+    "post_id": "18093257891291658",
+    "permalink": "https://www.instagram.com/p/Dc6rt3sCIzy/",
+    "timestamp": "2026-09-05T19:11:41+0000",
+    "media_type": "IMAGE",
+    "media_product_type": "FEED",
+    "thumbnail_url": "https://scontent.cdninstagram.com/v/t51.82787-15/796460777_18104567458984202_69087553528050312_n.jpg?stp=dst-jpg_e35_tt6&_nc_cat=101&ccb=7-5&_nc_sid=18de74&efg=eyJlZmdfdGFnIjoiRkVFRC5iZXN0X2ltYWdlX3VybGdlbi5DMyJ9&_nc_ohc=XkDZgSpweHkQ7kNvwFGJI2w&_nc_oc=Adq_hd6_AqnAeYfDyF4HKSbvVYI4Phr1bHGBjlfoCj2IfGzxopNUKd5og9SOi9Prwpg&_nc_zt=23&_nc_ht=scontent.cdninstagram.com&edm=ANQ71j8EAAAA&_nc_gid=MKU7pcZiSnbJsrz2aAuA1w&_nc_tpa=Q5bMBQK6_CSXTp0LeZt9rdDXM3h_YV16v4xQYBf5q4Z4jiLbLYlJJqzYo9St9Oiuq0Go91KKSElxTjy1bg&oh=00_AQNO7kYmnqOoQWPtRQTrWaX4n2kfabJp3s2iK3juZdOerA&oe=6AD69D53",
+    "post_type": "product_listing",
+    "triage_confidence": 0.97,
+    "triage_escalated": false,
+    "bucket": "auto_import",
+    "flags": [],
+    "failed_stages": [],
+    "products": [
+      {
+        "name": "SE 2ND Gen 128GB",
+        "description": "SE 2ND Gen 128GB PREMIUM USED",
+        "images": [],
+        "variants": [],
+        "price": {
+          "value": 157000,
+          "currency": "NGN",
+          "source": "caption",
+          "confidence": 1.0
+        },
+        "quantity_signal": {
+          "kind": "restock",
+          "evidence": "RESTOCKED 📦"
+        },
+        "negotiation_signal": "unknown",
+        "extraction_confidence": 1.0
+      },
+      {
+        "name": "SE 2ND Gen 64GB",
+        "description": "SE 2ND Gen 64GB PREMIUM USED",
+        "images": [],
+        "variants": [],
+        "price": {
+          "value": 137000,
+          "currency": "NGN",
+          "source": "caption",
+          "confidence": 1.0
+        },
+        "quantity_signal": {
+          "kind": "restock",
+          "evidence": "RESTOCKED 📦"
+        },
+        "negotiation_signal": "unknown",
+        "extraction_confidence": 1.0
+      },
+      {
+        "name": "7 32GB",
+        "description": "7 32GB PREMIUM USED",
+        "images": [],
+        "variants": [],
+        "price": {
+          "value": 77000,
+          "currency": "NGN",
+          "source": "caption",
+          "confidence": 1.0
+        },
+        "quantity_signal": {
+          "kind": "restock",
+          "evidence": "RESTOCKED 📦"
+        },
+        "negotiation_signal": "unknown",
+        "extraction_confidence": 1.0
+      },
+      {
+        "name": "7 128GB",
+        "description": "7 128GB PREMIUM USED",
+        "images": [],
+        "variants": [],
+        "price": {
+          "value": 87000,
+          "currency": "NGN",
+          "source": "caption",
+          "confidence": 1.0
+        },
+        "quantity_signal": {
+          "kind": "restock",
+          "evidence": "RESTOCKED 📦"
+        },
+        "negotiation_signal": "unknown",
+        "extraction_confidence": 1.0
+      },
+      {
+        "name": "7PLUS 32GB",
+        "description": "7PLUS 32GB PREMIUM USED",
+        "images": [],
+        "variants": [],
+        "price": {
+          "value": 105000,
+          "currency": "NGN",
+          "source": "caption",
+          "confidence": 1.0
+        },
+        "quantity_signal": {
+          "kind": "restock",
+          "evidence": "RESTOCKED 📦"
+        },
+        "negotiation_signal": "unknown",
+        "extraction_confidence": 1.0
+      },
+      {
+        "name": "7PLUS 128GB",
+        "description": "7PLUS 128GB PREMIUM USED",
+        "images": [],
+        "variants": [],
+        "price": {
+          "value": 112000,
+          "currency": "NGN",
+          "source": "caption",
+          "confidence": 1.0
+        },
+        "quantity_signal": {
+          "kind": "restock",
+          "evidence": "RESTOCKED 📦"
+        },
+        "negotiation_signal": "unknown",
+        "extraction_confidence": 1.0
+      }
+    ],
+    "signals": []
+  },
+  {
+    "post_id": "18094596503428757",
+    "permalink": "https://www.instagram.com/p/Dc6n7RSiNGu/",
+    "timestamp": "2026-09-05T18:38:34+0000",
+    "media_type": "IMAGE",
+    "media_product_type": "FEED",
+    "thumbnail_url": "https://scontent.cdninstagram.com/v/t51.82787-15/797840321_18104561782984202_2459397179048609961_n.jpg?stp=dst-jpg_e35_tt6&_nc_cat=101&ccb=7-5&_nc_sid=18de74&efg=eyJlZmdfdGFnIjoiRkVFRC5iZXN0X2ltYWdlX3VybGdlbi5DMyJ9&_nc_ohc=GmLkfWAcwy0Q7kNvwE1FLRX&_nc_oc=AdowTiVmR_pzI7Nl--HVybZIFbIUPH_L56dkvft86WFgORsuBzIdnTjBv8THfyL-Kgc&_nc_zt=23&_nc_ht=scontent.cdninstagram.com&edm=ANQ71j8EAAAA&_nc_gid=22wjnwHAnvpl13s86uwYvg&_nc_tpa=Q5bMBQJZqyTQkMyBTgc07MwBYRwYPODNcqnbVvt2nu4pbEj2f5Vd2uFgPLViW5VsJ7qh1JsdMTQLBazZww&oh=00_AQNR9QnVbX2meaoKpLI73a_A_qfbDeCaWI39WEOsi30acw&oe=6AD6B382",
+    "post_type": "product_listing",
+    "triage_confidence": 0.94,
+    "triage_escalated": false,
+    "bucket": "auto_import",
+    "flags": [],
+    "failed_stages": [],
+    "products": [
+      {
+        "name": "STARLINK STANDARD X",
+        "description": "INTRODUCING THE LATEST STARLINK STANDARD X 5G super-fast speed and better coverage Works in rural and remote areas",
+        "images": [],
+        "variants": [],
+        "price": {
+          "value": 700000,
+          "currency": "NGN",
+          "source": "caption",
+          "confidence": 1.0
+        },
+        "quantity_signal": {
+          "kind": "none",
+          "evidence": null
+        },
+        "negotiation_signal": "unknown",
+        "extraction_confidence": 1.0
+      },
+      {
+        "name": "STANDARD STARLINK G3 V4",
+        "description": "STANDARD STARLINK G3 V4 5G Super fast Speed and better coverage Works in rural and remote areas",
+        "images": [],
+        "variants": [],
+        "price": {
+          "value": 680000,
+          "currency": "NGN",
+          "source": "caption",
+          "confidence": 1.0
+        },
+        "quantity_signal": {
+          "kind": "none",
+          "evidence": null
+        },
+        "negotiation_signal": "unknown",
+        "extraction_confidence": 1.0
+      },
+      {
+        "name": "STARLINK MINI",
+        "description": "STARLINK MINI Sharper Design Super fast Speed and better coverage Easy setup Works in rural and remote areas",
+        "images": [],
+        "variants": [],
+        "price": {
+          "value": 460000,
+          "currency": "NGN",
+          "source": "caption",
+          "confidence": 1.0
+        },
+        "quantity_signal": {
+          "kind": "none",
+          "evidence": null
+        },
+        "negotiation_signal": "unknown",
+        "extraction_confidence": 1.0
+      }
+    ],
+    "signals": []
+  },
+  {
+    "post_id": "17944115412074853",
+    "permalink": "https://www.instagram.com/reel/Dc6nD6ThLmU/",
+    "timestamp": "2026-09-05T18:31:11+0000",
+    "media_type": "VIDEO",
+    "media_product_type": "REELS",
+    "thumbnail_url": "https://scontent.cdninstagram.com/v/t51.82787-15/797840330_18104560609984202_4687939837010512143_n.jpg?stp=dst-jpg_e35_tt6&_nc_cat=100&ccb=7-5&_nc_sid=18de74&efg=eyJlZmdfdGFnIjoiQ0xJUFMuYmVzdF9pbWFnZV91cmxnZW4uQzMifQ%3D%3D&_nc_ohc=pBPN0ND0F48Q7kNvwEkV8WV&_nc_oc=AdpoiR9iSKOfxJ4tVmwBsIHoJVJVvBBXEn3r5MeeoDIqYSO-d-Ml7e5QT3LDUqaU-BA&_nc_zt=23&_nc_ht=scontent.cdninstagram.com&edm=ANQ71j8EAAAA&_nc_gid=FzBf3HryIwULZrYfHEdS5Q&_nc_tpa=Q5bMBQL2wiSDTWDqnMY8Xj63DEqwRHCYrNBQgf2Eql33uip4rBlFmi583r2-mUpdMPZympuR2ax00XyaSA&oh=00_AQMp4McIT41d9PdvYZBntchBPgEyaBUrN_U2LgGaji9nYQ&oe=6AD6AF58",
+    "post_type": "product_listing",
+    "triage_confidence": 0.93,
+    "triage_escalated": false,
+    "bucket": "auto_import",
+    "flags": [],
+    "failed_stages": [],
+    "products": [
+      {
+        "name": "JBL Boombox 4",
+        "description": "JBL Boombox 4",
+        "images": [],
+        "variants": [],
+        "price": {
+          "value": 640000,
+          "currency": "NGN",
+          "source": "caption",
+          "confidence": 1.0
+        },
+        "quantity_signal": {
+          "kind": "none",
+          "evidence": null
+        },
+        "negotiation_signal": "unknown",
+        "extraction_confidence": 1.0
+      },
+      {
+        "name": "JBL Xtreme 5",
+        "description": "JBL Xtreme 5",
+        "images": [],
+        "variants": [],
+        "price": {
+          "value": 410000,
+          "currency": "NGN",
+          "source": "caption",
+          "confidence": 1.0
+        },
+        "quantity_signal": {
+          "kind": "none",
+          "evidence": null
+        },
+        "negotiation_signal": "unknown",
+        "extraction_confidence": 1.0
+      },
+      {
+        "name": "JBL Xtreme 4",
+        "description": "JBL Xtreme 4",
+        "images": [],
+        "variants": [],
+        "price": {
+          "value": 335000,
+          "currency": "NGN",
+          "source": "caption",
+          "confidence": 1.0
+        },
+        "quantity_signal": {
+          "kind": "none",
+          "evidence": null
+        },
+        "negotiation_signal": "unknown",
+        "extraction_confidence": 1.0
+      },
+      {
+        "name": "JBL Charge6",
+        "description": "JBL Charge6",
+        "images": [],
+        "variants": [],
+        "price": {
+          "value": 180000,
+          "currency": "NGN",
+          "source": "caption",
+          "confidence": 1.0
+        },
+        "quantity_signal": {
+          "kind": "none",
+          "evidence": null
+        },
+        "negotiation_signal": "unknown",
+        "extraction_confidence": 1.0
+      },
+      {
+        "name": "JBL Flip 7",
+        "description": "JBL Flip 7",
+        "images": [],
+        "variants": [],
+        "price": {
+          "value": 130000,
+          "currency": "NGN",
+          "source": "caption",
+          "confidence": 1.0
+        },
+        "quantity_signal": {
+          "kind": "none",
+          "evidence": null
+        },
+        "negotiation_signal": "unknown",
+        "extraction_confidence": 1.0
+      },
+      {
+        "name": "JBL Clip 5",
+        "description": "JBL Clip 5",
+        "images": [],
+        "variants": [],
+        "price": {
+          "value": 70000,
+          "currency": "NGN",
+          "source": "caption",
+          "confidence": 1.0
+        },
+        "quantity_signal": {
+          "kind": "none",
+          "evidence": null
+        },
+        "negotiation_signal": "unknown",
+        "extraction_confidence": 1.0
+      },
+      {
+        "name": "JBL Tune 530BT",
+        "description": "JBL Tune 530BT",
+        "images": [],
+        "variants": [],
+        "price": {
+          "value": 65000,
+          "currency": "NGN",
+          "source": "caption",
+          "confidence": 1.0
+        },
+        "quantity_signal": {
+          "kind": "none",
+          "evidence": null
+        },
+        "negotiation_signal": "unknown",
+        "extraction_confidence": 1.0
+      },
+      {
+        "name": "JBL Tune 680",
+        "description": "JBL Tune 680 (Active Noise Cancellation)",
+        "images": [],
+        "variants": [],
+        "price": {
+          "value": 95000,
+          "currency": "NGN",
+          "source": "caption",
+          "confidence": 1.0
+        },
+        "quantity_signal": {
+          "kind": "none",
+          "evidence": null
+        },
+        "negotiation_signal": "unknown",
+        "extraction_confidence": 1.0
+      },
+      {
+        "name": "JBL Tune 770",
+        "description": "JBL Tune 770 (Active Noise Cancellation)",
+        "images": [],
+        "variants": [],
+        "price": {
+          "value": 110000,
+          "currency": "NGN",
+          "source": "caption",
+          "confidence": 1.0
+        },
+        "quantity_signal": {
+          "kind": "none",
+          "evidence": null
+        },
+        "negotiation_signal": "unknown",
+        "extraction_confidence": 1.0
+      }
+    ],
+    "signals": []
+  },
+  {
+    "post_id": "18103239884214338",
+    "permalink": "https://www.instagram.com/p/Dc6mglhiHoH/",
+    "timestamp": "2026-09-05T18:26:11+0000",
+    "media_type": "IMAGE",
+    "media_product_type": "FEED",
+    "thumbnail_url": "https://scontent.cdninstagram.com/v/t51.82787-15/796788264_18104559703984202_4544270248494805060_n.jpg?stp=dst-jpg_e35_tt6&_nc_cat=102&ccb=7-5&_nc_sid=18de74&efg=eyJlZmdfdGFnIjoiRkVFRC5iZXN0X2ltYWdlX3VybGdlbi5DMyJ9&_nc_ohc=_qpTxBMJJHkQ7kNvwGaePC-&_nc_oc=Adpe6F9XlVvb2mKTXUVySwvK1vAEEBds848k9RSn7Fq07Sp95r_y7f4YHgRVYwzpbtU&_nc_zt=23&_nc_ht=scontent.cdninstagram.com&edm=ANQ71j8EAAAA&_nc_gid=I5muW2wcHKppHxY2TlJJtQ&_nc_tpa=Q5bMBQIIgdALD7gCEeLn3PKPWcBJqnGXof_8ylo4zQ9ijIfK2ER_txzOOjfJSreO_GYUojIWEMcVUoJXOw&oh=00_AQM94I5adMBiunXL_YJmUGt-gTC1GQkanFZNXedSPnG3cQ&oe=6AD6AD4F",
+    "post_type": "product_listing",
+    "triage_confidence": 0.96,
+    "triage_escalated": false,
+    "bucket": "auto_import",
+    "flags": [],
+    "failed_stages": [],
+    "products": [
+      {
+        "name": "JBL Boombox 4",
+        "description": "JBL Boombox 4",
+        "images": [],
+        "variants": [],
+        "price": {
+          "value": 640000,
+          "currency": "NGN",
+          "source": "caption",
+          "confidence": 1.0
+        },
+        "quantity_signal": {
+          "kind": "restock",
+          "evidence": "RESTOCKED"
+        },
+        "negotiation_signal": "unknown",
+        "extraction_confidence": 1.0
+      },
+      {
+        "name": "JBL Extreme 4",
+        "description": "JBL Extreme 4",
+        "images": [],
+        "variants": [],
+        "price": {
+          "value": 340000,
+          "currency": "NGN",
+          "source": "caption",
+          "confidence": 1.0
+        },
+        "quantity_signal": {
+          "kind": "restock",
+          "evidence": "RESTOCKED"
+        },
+        "negotiation_signal": "unknown",
+        "extraction_confidence": 1.0
+      },
+      {
+        "name": "JBL Charge6",
+        "description": "JBL Charge6",
+        "images": [],
+        "variants": [],
+        "price": {
+          "value": 180000,
+          "currency": "NGN",
+          "source": "caption",
+          "confidence": 1.0
+        },
+        "quantity_signal": {
+          "kind": "restock",
+          "evidence": "RESTOCKED"
+        },
+        "negotiation_signal": "unknown",
+        "extraction_confidence": 1.0
+      },
+      {
+        "name": "JBL ONYX STUDIO 9",
+        "description": "JBL ONYX STUDIO 9",
+        "images": [],
+        "variants": [],
+        "price": {
+          "value": 280000,
+          "currency": "NGN",
+          "source": "caption",
+          "confidence": 1.0
+        },
+        "quantity_signal": {
+          "kind": "restock",
+          "evidence": "RESTOCKED"
+        },
+        "negotiation_signal": "unknown",
+        "extraction_confidence": 1.0
+      },
+      {
+        "name": "JBL Clip 5",
+        "description": "JBL Clip 5",
+        "images": [],
+        "variants": [],
+        "price": {
+          "value": 70000,
+          "currency": "NGN",
+          "source": "caption",
+          "confidence": 1.0
+        },
+        "quantity_signal": {
+          "kind": "restock",
+          "evidence": "RESTOCKED"
+        },
+        "negotiation_signal": "unknown",
+        "extraction_confidence": 1.0
+      },
+      {
+        "name": "JBL Flip 7",
+        "description": "JBL Flip 7",
+        "images": [],
+        "variants": [],
+        "price": {
+          "value": 130000,
+          "currency": "NGN",
+          "source": "caption",
+          "confidence": 1.0
+        },
+        "quantity_signal": {
+          "kind": "restock",
+          "evidence": "RESTOCKED"
+        },
+        "negotiation_signal": "unknown",
+        "extraction_confidence": 1.0
+      },
+      {
+        "name": "JBL Tune 530BT",
+        "description": "JBL Tune 530BT HEADSETS",
+        "images": [],
+        "variants": [],
+        "price": {
+          "value": 62000,
+          "currency": "NGN",
+          "source": "caption",
+          "confidence": 1.0
+        },
+        "quantity_signal": {
+          "kind": "restock",
+          "evidence": "RESTOCKED"
+        },
+        "negotiation_signal": "unknown",
+        "extraction_confidence": 1.0
+      },
+      {
+        "name": "JBL Tune 680 (Active Noise Cancellation)",
+        "description": "JBL Tune 680 (Active Noise Cancellation) HEADSETS",
+        "images": [],
+        "variants": [],
+        "price": {
+          "value": 92000,
+          "currency": "NGN",
+          "source": "caption",
+          "confidence": 1.0
+        },
+        "quantity_signal": {
+          "kind": "restock",
+          "evidence": "RESTOCKED"
+        },
+        "negotiation_signal": "unknown",
+        "extraction_confidence": 1.0
+      },
+      {
+        "name": "JBL Tune 770 (Active Noise Cancellation)",
+        "description": "JBL Tune 770 (Active Noise Cancellation) HEADSETS",
+        "images": [],
+        "variants": [],
+        "price": {
+          "value": 105000,
+          "currency": "NGN",
+          "source": "caption",
+          "confidence": 1.0
+        },
+        "quantity_signal": {
+          "kind": "restock",
+          "evidence": "RESTOCKED"
+        },
+        "negotiation_signal": "unknown",
+        "extraction_confidence": 1.0
+      }
+    ],
+    "signals": []
+  },
+  {
+    "post_id": "18056670212554989",
+    "permalink": "https://www.instagram.com/p/Dc6X2lXCCAm/",
+    "timestamp": "2026-09-05T16:18:07+0000",
+    "media_type": "IMAGE",
+    "media_product_type": "FEED",
+    "thumbnail_url": "https://scontent.cdninstagram.com/v/t51.82787-15/794903483_18104532469984202_2558502752432720760_n.jpg?stp=dst-jpg_e35_tt6&_nc_cat=100&ccb=7-5&_nc_sid=18de74&efg=eyJlZmdfdGFnIjoiRkVFRC5iZXN0X2ltYWdlX3VybGdlbi5DMyJ9&_nc_ohc=I4MKYdsc7_sQ7kNvwHij1d7&_nc_oc=AdqrHNeQyoPY3hS3HCvHgCFw6XIS8RD8C9R-dE-jy_JhgBZ9iswJgfzKnRxnlPt97Ao&_nc_zt=23&_nc_ht=scontent.cdninstagram.com&edm=ANQ71j8EAAAA&_nc_gid=KnfVOZYg6NIRF3Eur-8eWQ&_nc_tpa=Q5bMBQISTOAWqIYGjFoZVxlIH3wLqq64nipEWrDr33EpaFokENGlQ1cN0RSmC6bs3-6l4wvtkhI9lKbM2g&oh=00_AQM7cT4lpk0sQXAm1Ksadx1Prf8m7cNvJuRrnf4-wEWMfA&oe=6AD6922A",
+    "post_type": "product_listing",
+    "triage_confidence": 0.96,
+    "triage_escalated": false,
+    "bucket": "auto_import",
+    "flags": [],
+    "failed_stages": [],
+    "products": [
+      {
+        "name": "Zentality Super Fast Adapter",
+        "description": "Zentality Super Fast Adapter",
+        "images": [],
+        "variants": [],
+        "price": {
+          "value": 10000,
+          "currency": "NGN",
+          "source": "caption",
+          "confidence": 1.0
+        },
+        "quantity_signal": {
+          "kind": "none",
+          "evidence": null
+        },
+        "negotiation_signal": "unknown",
+        "extraction_confidence": 1.0
+      },
+      {
+        "name": "Power Bank 50,000mah",
+        "description": "POWER BANK 50,000mah",
+        "images": [],
+        "variants": [],
+        "price": {
+          "value": 35000,
+          "currency": "NGN",
+          "source": "caption",
+          "confidence": 1.0
+        },
+        "quantity_signal": {
+          "kind": "none",
+          "evidence": null
+        },
+        "negotiation_signal": "unknown",
+        "extraction_confidence": 1.0
+      },
+      {
+        "name": "Power Bank 30,000mah",
+        "description": "POWER BANK 30,000mah",
+        "images": [],
+        "variants": [],
+        "price": {
+          "value": 27000,
+          "currency": "NGN",
+          "source": "caption",
+          "confidence": 1.0
+        },
+        "quantity_signal": {
+          "kind": "none",
+          "evidence": null
+        },
+        "negotiation_signal": "unknown",
+        "extraction_confidence": 1.0
+      },
+      {
+        "name": "Power Bank 20,000mah",
+        "description": "POWER BANK 20,000mah",
+        "images": [],
+        "variants": [],
+        "price": {
+          "value": 17000,
+          "currency": "NGN",
+          "source": "caption",
+          "confidence": 1.0
+        },
+        "quantity_signal": {
+          "kind": "none",
+          "evidence": null
+        },
+        "negotiation_signal": "unknown",
+        "extraction_confidence": 1.0
+      },
+      {
+        "name": "Power Bank 1000wireless",
+        "description": "POWER BANK 1000wireless",
+        "images": [],
+        "variants": [],
+        "price": {
+          "value": 9000,
+          "currency": "NGN",
+          "source": "caption",
+          "confidence": 1.0
+        },
+        "quantity_signal": {
+          "kind": "none",
+          "evidence": null
+        },
+        "negotiation_signal": "unknown",
+        "extraction_confidence": 1.0
+      },
+      {
+        "name": "EarPods E26",
+        "description": "EarPods E26",
+        "images": [],
+        "variants": [],
+        "price": {
+          "value": 15000,
+          "currency": "NGN",
+          "source": "caption",
+          "confidence": 1.0
+        },
+        "quantity_signal": {
+          "kind": "none",
+          "evidence": null
+        },
+        "negotiation_signal": "unknown",
+        "extraction_confidence": 1.0
+      },
+      {
+        "name": "EarPods E29",
+        "description": "EarPods E29",
+        "images": [],
+        "variants": [],
+        "price": {
+          "value": 16000,
+          "currency": "NGN",
+          "source": "caption",
+          "confidence": 1.0
+        },
+        "quantity_signal": {
+          "kind": "none",
+          "evidence": null
+        },
+        "negotiation_signal": "unknown",
+        "extraction_confidence": 1.0
+      },
+      {
+        "name": "EarPods E33",
+        "description": "EarPods E33",
+        "images": [],
+        "variants": [],
+        "price": {
+          "value": 25000,
+          "currency": "NGN",
+          "source": "caption",
+          "confidence": 1.0
+        },
+        "quantity_signal": {
+          "kind": "none",
+          "evidence": null
+        },
+        "negotiation_signal": "unknown",
+        "extraction_confidence": 1.0
+      },
+      {
+        "name": "EarPods E37",
+        "description": "EarPods E37",
+        "images": [],
+        "variants": [],
+        "price": {
+          "value": 22000,
+          "currency": "NGN",
+          "source": "caption",
+          "confidence": 1.0
+        },
+        "quantity_signal": {
+          "kind": "none",
+          "evidence": null
+        },
+        "negotiation_signal": "unknown",
+        "extraction_confidence": 1.0
+      },
+      {
+        "name": "EarPods E39",
+        "description": "EarPods E39",
+        "images": [],
+        "variants": [],
+        "price": {
+          "value": 27000,
+          "currency": "NGN",
+          "source": "caption",
+          "confidence": 1.0
+        },
+        "quantity_signal": {
+          "kind": "none",
+          "evidence": null
+        },
+        "negotiation_signal": "unknown",
+        "extraction_confidence": 1.0
+      },
+      {
+        "name": "EarPods E23",
+        "description": "EarPods E23",
+        "images": [],
+        "variants": [],
+        "price": {
+          "value": 28000,
+          "currency": "NGN",
+          "source": "caption",
+          "confidence": 1.0
+        },
+        "quantity_signal": {
+          "kind": "none",
+          "evidence": null
+        },
+        "negotiation_signal": "unknown",
+        "extraction_confidence": 1.0
+      },
+      {
+        "name": "EarPods E35",
+        "description": "EarPods E35",
+        "images": [],
+        "variants": [],
+        "price": {
+          "value": 29000,
+          "currency": "NGN",
+          "source": "caption",
+          "confidence": 1.0
+        },
+        "quantity_signal": {
+          "kind": "none",
+          "evidence": null
+        },
+        "negotiation_signal": "unknown",
+        "extraction_confidence": 1.0
+      },
+      {
+        "name": "EarPods E35Ai",
+        "description": "EarPods E35Ai",
+        "images": [],
+        "variants": [],
+        "price": {
+          "value": 35000,
+          "currency": "NGN",
+          "source": "caption",
+          "confidence": 1.0
+        },
+        "quantity_signal": {
+          "kind": "none",
+          "evidence": null
+        },
+        "negotiation_signal": "unknown",
+        "extraction_confidence": 1.0
+      },
+      {
+        "name": "EarPods G03",
+        "description": "EarPods G03",
+        "images": [],
+        "variants": [],
+        "price": {
+          "value": 11000,
+          "currency": "NGN",
+          "source": "caption",
+          "confidence": 1.0
+        },
+        "quantity_signal": {
+          "kind": "none",
+          "evidence": null
+        },
+        "negotiation_signal": "unknown",
+        "extraction_confidence": 1.0
+      },
+      {
+        "name": "EarPods E005",
+        "description": "EarPods E005",
+        "images": [],
+        "variants": [],
+        "price": {
+          "value": 19000,
+          "currency": "NGN",
+          "source": "caption",
+          "confidence": 1.0
+        },
+        "quantity_signal": {
+          "kind": "none",
+          "evidence": null
+        },
+        "negotiation_signal": "unknown",
+        "extraction_confidence": 1.0
+      }
+    ],
+    "signals": []
+  },
+  {
+    "post_id": "18027958613896333",
+    "permalink": "https://www.instagram.com/p/Dc6XdSgCMhT/",
+    "timestamp": "2026-09-05T16:14:40+0000",
+    "media_type": "CAROUSEL_ALBUM",
+    "media_product_type": "FEED",
+    "thumbnail_url": "https://scontent.cdninstagram.com/v/t51.82787-15/796460782_18104531686984202_3986829866382848184_n.jpg?stp=dst-jpg_e35_tt6&_nc_cat=100&ccb=7-5&_nc_sid=18de74&efg=eyJlZmdfdGFnIjoiQ0FST1VTRUxfSVRFTS5iZXN0X2ltYWdlX3VybGdlbi5DMyJ9&_nc_ohc=dtT7r9yEbWwQ7kNvwE51N6A&_nc_oc=Ado4MzWsh72aCff2KCHzCFiyKZs0P6jqYWtA-xlhrTyamebOR-bvT_BTCk4yEikGo-Y&_nc_zt=23&_nc_ht=scontent.cdninstagram.com&edm=ANQ71j8EAAAA&_nc_gid=D4oTsKkbLBq-0zg8meSB5g&_nc_tpa=Q5bMBQJQ20T_ee6UnVLYuT64HOGevT4pwDsjLDN6xyAU13YFC9yKJfr9xaE_5oVnG2D17LrFG3unr3ac9A&oh=00_AQMs3FxgyKnN_WLBhyX0C0wAtKu4UqlZcpWmaMuqnnxhBQ&oe=6AD6C080",
+    "post_type": "product_listing",
+    "triage_confidence": 0.9,
+    "triage_escalated": false,
+    "bucket": "auto_import",
+    "flags": [],
+    "failed_stages": [],
+    "products": [
+      {
+        "name": "Galaxy Z-Fold 8",
+        "description": "Galaxy Z-Fold 8, 8/256GB (Dual Sim & Esim)",
+        "images": [],
+        "variants": [],
+        "price": {
+          "value": 1900000,
+          "currency": "NGN",
+          "source": "caption",
+          "confidence": 1.0
+        },
+        "quantity_signal": {
+          "kind": "none",
+          "evidence": null
+        },
+        "negotiation_signal": "unknown",
+        "extraction_confidence": 1.0
+      },
+      {
+        "name": "Samsung S26 Ultra",
+        "description": "Samsung S26 Ultra, 8/256GB",
+        "images": [],
+        "variants": [],
+        "price": {
+          "value": 1150000,
+          "currency": "NGN",
+          "source": "caption",
+          "confidence": 1.0
+        },
+        "quantity_signal": {
+          "kind": "none",
+          "evidence": null
+        },
+        "negotiation_signal": "unknown",
+        "extraction_confidence": 1.0
+      },
+      {
+        "name": "Samsung S26 Ultra",
+        "description": "Samsung S26 Ultra, 8/256GB",
+        "images": [],
+        "variants": [],
+        "price": {
+          "value": 1100000,
+          "currency": "NGN",
+          "source": "caption",
+          "confidence": 1.0
+        },
+        "quantity_signal": {
+          "kind": "none",
+          "evidence": null
+        },
+        "negotiation_signal": "unknown",
+        "extraction_confidence": 1.0
+      }
+    ],
+    "signals": []
+  },
+  {
+    "post_id": "18091786415437652",
+    "permalink": "https://www.instagram.com/p/Dc6V_XniDZf/",
+    "timestamp": "2026-09-05T16:01:50+0000",
+    "media_type": "IMAGE",
+    "media_product_type": "FEED",
+    "thumbnail_url": "https://scontent.cdninstagram.com/v/t51.82787-15/797840323_18104528944984202_8822017279213990278_n.jpg?stp=dst-jpg_e35_tt6&_nc_cat=107&ccb=7-5&_nc_sid=18de74&efg=eyJlZmdfdGFnIjoiRkVFRC5iZXN0X2ltYWdlX3VybGdlbi5DMyJ9&_nc_ohc=GT69qXis9kUQ7kNvwGOrmL6&_nc_oc=AdqDsyTONqBVH-QlMWGTmoybLMzoV0828mihM-PTz1P2mjf19XXC_WRcz8UWP52GJe8&_nc_zt=23&_nc_ht=scontent.cdninstagram.com&edm=ANQ71j8EAAAA&_nc_gid=rRgup_wqMsJ3I-CcMD1VuA&_nc_tpa=Q5bMBQImyCLXSloJ9gr4aCHgbSlnUFnk-988L6z0GGPTwRjL58QAtFxoNARwpo4MkIOjeuamekoXdl4XZA&oh=00_AQNUfgFQiQWAQ6nU6ahRwdlbL3CjhzKDTLewMdob6lxiJg&oe=6AD6A38F",
+    "post_type": "product_listing",
+    "triage_confidence": 0.85,
+    "triage_escalated": false,
+    "bucket": "auto_import",
+    "flags": [],
+    "failed_stages": [],
+    "products": [
+      {
+        "name": "17AIR 256GB BLACK",
+        "description": "NEW ACTIVE IPHONE 17AIR 256GB BLACK",
+        "images": [],
+        "variants": [],
+        "price": {
+          "value": 1280000,
+          "currency": "NGN",
+          "source": "caption",
+          "confidence": 1.0
+        },
+        "quantity_signal": {
+          "kind": "none",
+          "evidence": null
+        },
+        "negotiation_signal": "unknown",
+        "extraction_confidence": 0.95
+      },
+      {
+        "name": "17AIR 256GB OTHER COLORS",
+        "description": "NEW ACTIVE IPHONE 17AIR 256GB OTHER COLORS",
+        "images": [],
+        "variants": [],
+        "price": {
+          "value": 1295000,
+          "currency": "NGN",
+          "source": "caption",
+          "confidence": 1.0
+        },
+        "quantity_signal": {
+          "kind": "none",
+          "evidence": null
+        },
+        "negotiation_signal": "unknown",
+        "extraction_confidence": 0.95
+      },
+      {
+        "name": "17 PROMAX 256GB SILVER",
+        "description": "NEW ACTIVE IPHONE 17 PROMAX 256GB SILVER",
+        "images": [],
+        "variants": [],
+        "price": {
+          "value": 1700000,
+          "currency": "NGN",
+          "source": "caption",
+          "confidence": 1.0
+        },
+        "quantity_signal": {
+          "kind": "none",
+          "evidence": null
+        },
+        "negotiation_signal": "unknown",
+        "extraction_confidence": 0.95
+      },
+      {
+        "name": "17 PROMAX 256GB OTHER COLORS",
+        "description": "NEW ACTIVE IPHONE 17 PROMAX 256GB OTHER COLORS",
+        "images": [],
+        "variants": [],
+        "price": {
+          "value": 1680000,
+          "currency": "NGN",
+          "source": "caption",
+          "confidence": 1.0
+        },
+        "quantity_signal": {
+          "kind": "none",
+          "evidence": null
+        },
+        "negotiation_signal": "unknown",
+        "extraction_confidence": 0.95
+      }
+    ],
+    "signals": []
+  },
+  {
+    "post_id": "18173692510448068",
+    "permalink": "https://www.instagram.com/p/Dc6VscFiE3B/",
+    "timestamp": "2026-09-05T15:59:15+0000",
+    "media_type": "IMAGE",
+    "media_product_type": "FEED",
+    "thumbnail_url": "https://scontent.cdninstagram.com/v/t51.82787-15/797973099_18104528317984202_7247811793193019053_n.jpg?stp=dst-jpg_e35_tt6&_nc_cat=110&ccb=7-5&_nc_sid=18de74&efg=eyJlZmdfdGFnIjoiRkVFRC5iZXN0X2ltYWdlX3VybGdlbi5DMyJ9&_nc_ohc=8sDXN9gQpbMQ7kNvwGEC9Cx&_nc_oc=AdqCT-X0vizCC2SdPSHiviGE3i4wBZ7sT1QAh0TQaOcAFq4h2dCXpM5wVJFt3vTA7gk&_nc_zt=23&_nc_ht=scontent.cdninstagram.com&edm=ANQ71j8EAAAA&_nc_gid=UdJcfoXwSlsv8Fw44OVZOg&_nc_tpa=Q5bMBQJtuGRIvBYkF7_sv3D5xayrWylVlDKWP4BLsmOClSnJEtc3fzp6UGGl78td2J1k3o3cB_ccRMsZog&oh=00_AQPyjihfl7qoDtOv2y784-KqbuI0CC-4YYh_vNPyR57_Bg&oe=6AD6A843",
+    "post_type": "product_listing",
+    "triage_confidence": 0.95,
+    "triage_escalated": false,
+    "bucket": "auto_import",
+    "flags": [],
+    "failed_stages": [],
+    "products": [
+      {
+        "name": "BRAND NEW SONY PlayStation PS5 SLIM 1TB",
+        "description": "BRAND NEW SONY PlayStation PS5 SLIM 1TB",
+        "images": [],
+        "variants": [],
+        "price": {
+          "value": 1150000,
+          "currency": "NGN",
+          "source": "caption",
+          "confidence": 1.0
+        },
+        "quantity_signal": {
+          "kind": "none",
+          "evidence": null
+        },
+        "negotiation_signal": "unknown",
+        "extraction_confidence": 1.0
+      },
+      {
+        "name": "PS5 PAD",
+        "description": "PS5 PAD",
+        "images": [],
+        "variants": [],
+        "price": {
+          "value": 100000,
+          "currency": "NGN",
+          "source": "caption",
+          "confidence": 1.0
+        },
+        "quantity_signal": {
+          "kind": "none",
+          "evidence": null
+        },
+        "negotiation_signal": "unknown",
+        "extraction_confidence": 1.0
+      },
+      {
+        "name": "FIFA 26 ps5",
+        "description": "FIFA 26 ps5",
+        "images": [],
+        "variants": [],
+        "price": {
+          "value": 60000,
+          "currency": "NGN",
+          "source": "caption",
+          "confidence": 1.0
+        },
+        "quantity_signal": {
+          "kind": "none",
+          "evidence": null
+        },
+        "negotiation_signal": "unknown",
+        "extraction_confidence": 1.0
+      },
+      {
+        "name": "GTA PS5",
+        "description": "GTA PS5",
+        "images": [],
+        "variants": [],
+        "price": {
+          "value": 45000,
+          "currency": "NGN",
+          "source": "caption",
+          "confidence": 1.0
+        },
+        "quantity_signal": {
+          "kind": "none",
+          "evidence": null
+        },
+        "negotiation_signal": "unknown",
+        "extraction_confidence": 1.0
+      }
+    ],
+    "signals": []
+  },
+  {
+    "post_id": "18051806288800495",
+    "permalink": "https://www.instagram.com/p/Dc6VYBJCDUw/",
+    "timestamp": "2026-09-05T15:56:28+0000",
+    "media_type": "IMAGE",
+    "media_product_type": "FEED",
+    "thumbnail_url": "https://scontent.cdninstagram.com/v/t51.82787-15/797204835_18104527279984202_5890075481800458007_n.jpg?stp=dst-jpg_e35_tt6&_nc_cat=108&ccb=7-5&_nc_sid=18de74&efg=eyJlZmdfdGFnIjoiRkVFRC5iZXN0X2ltYWdlX3VybGdlbi5DMyJ9&_nc_ohc=GzxnP2sfFHkQ7kNvwHCa76H&_nc_oc=Adqn0ftHaboJla3dE-mCaEd3kW6wBGU9StEZG2MYsQngHqpaeIyLMzaf3mZHPK7n9CQ&_nc_zt=23&_nc_ht=scontent.cdninstagram.com&edm=ANQ71j8EAAAA&_nc_gid=YvjEJmbNVM7CHhFBC5uQVw&_nc_tpa=Q5bMBQL8LcHmvvw4MhnsYLfGSwuPBRy2MxnAIjPe_S-G4AC_youATouwLn9biZ4OmGub0j6nHkjTONLDXg&oh=00_AQOpLfc-T_Dk9roqYhswl7Vfw-r55L-Ft0V25M-Fpv8jyg&oe=6AD69BE1",
+    "post_type": "product_listing",
+    "triage_confidence": 0.88,
+    "triage_escalated": false,
+    "bucket": "auto_import",
+    "flags": [],
+    "failed_stages": [],
+    "products": [
+      {
+        "name": "APPLE iPad 11TH Gen (2025) 128GB WiFi",
+        "description": "APPLE iPad 11TH Gen (2025), Battery Health-100% (CC 64), First Use: JUNE 2026, 128GB WiFi",
+        "images": [],
+        "variants": [],
+        "price": {
+          "value": 650000,
+          "currency": "NGN",
+          "source": "caption",
+          "confidence": 1.0
+        },
+        "quantity_signal": {
+          "kind": "none",
+          "evidence": null
+        },
+        "negotiation_signal": "unknown",
+        "extraction_confidence": 1.0
+      }
+    ],
+    "signals": []
+  }
+]

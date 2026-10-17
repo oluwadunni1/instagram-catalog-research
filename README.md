@@ -76,18 +76,27 @@ There are two rounds, and their numbers are not interchangeable:
 | Missing-price recall 100% | 6/6, 6/6 | 6/6, 6/6 | met |
 | Stale/stock flag precision >= 75% | micro F1 88% / 77% | micro F1 87% / 77% | met |
 | Escalation below 40% | 1/30, 5/41 | 1/30, 5/41 (Stage 2) | met |
-| Attention <= 10 per 100 posts | 18% / 15% | not rerun | **missed** |
-| Full parse <= $0.15 / 100 posts | $0.17, projected | **$0.20 / $0.26**, from the log | **missed by Gemini** |
+| Attention <= 10 per 100 posts | 18% / 15% | 15% / 7%, chained ([r2_chain_best](experiments/r2_chain_best.md)) | **missed on autos** |
+| Full parse <= $0.15 / 100 posts | $0.17, projected | $0.20 / $0.26 all-Gemini; **$0.14 / $0.17** chained with Jev for Stage 2 | **met on autos, missed on gadgets** |
 | Sync on unchanged account ~ $0 | 45 no-ops, 0 AI calls ([r1](experiments/r1_stage6_sync.md)) | not rerun | met |
 | Change-classification precision >= 85% | 100%, n=23 changed posts | not rerun | met, **first measurement** |
 | Carousel classification >= 85% | not scored | not scored | **not measured** |
-| Wall-clock <= 10 min / 100 posts | not instrumented | 2.4 min / 30 autos posts | **not measured end to end** |
+| Wall-clock <= 10 min / 100 posts | not instrumented | ~6 / ~6.7 min per 100 posts, chained, Stages 2-5 | met |
 
-Autos / gadgets throughout. Round 2's cost excludes Stage 1, whose profiles were cached.
+Autos / gadgets throughout. Round 2's cost and time exclude Stages 0 and 1, whose outputs were
+cached. Per-stage rows are harness scores, which assume perfect upstream routing.
 
 ### Which model for which stage
 
 Round 2 is the current comparison; one run per vendor, so no noise floor yet.
+
+**Chained, the best pick per stage holds up** ([r2_chain_best](experiments/r2_chain_best.md)):
+Jev for Stage 2 and Gemini for Stages 3-4, with Stage 3 seeing only what Stage 2 passed on.
+Product vs not-product is 97% / 95% at 100% precision, and every post that reached Stage 3 was
+priced correctly. The only loss is 1 autos and 2 gadgets listings Jev routed away. Gadgets' gold
+is stale on 15 posts whose captions the Stage 6 test edited, so those are left out of the chained
+Stage 3 score.
+
 
 - **Stage 2, triage:** Jev now reads images. An all-Jev cascade (text, then Jev with the photo
   when unsure) scores 97% / 98% product vs not-product at 100% precision, about 15× cheaper than
@@ -112,6 +121,7 @@ model admits to.
 
 | Record | What it settled |
 |---|---|
+| [r2_chain_best](experiments/r2_chain_best.md) | the chained pipeline on round 2's picks: routing penalty, cost and time per 100 posts |
 | [r2_jev](experiments/r2_jev.md) | Jev with images replaces the Jev → OCR → Gemini hybrid for Stage 2 |
 | [r2_control_gemini](experiments/r2_control_gemini.md) | the round-2 baseline |
 | `r2_family_*` | Qwen, Qwen3.7 Flash, Nex, MiMo, GPT-4o Mini and Llama against the control |

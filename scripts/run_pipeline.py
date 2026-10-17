@@ -497,6 +497,10 @@ def run_pipeline(
     total = len(items)
     attention = buckets.get("needs_attention", 0)
     usage = read_run_usage(run_id)
+    # read_run_usage() names the log it read as a Path; catalog.json is JSON,
+    # and the posix form keeps the field identical on Windows and Linux.
+    if usage.get("log") is not None:
+        usage = {**usage, "log": Path(usage["log"]).as_posix()}
 
     catalog = {
         "account_label": account_label,
@@ -571,7 +575,7 @@ def print_summary(catalog: dict) -> None:
         f"({pct(s['posts_reaching_stage4'])})  - before its regex prefilter",
         f"    Stage 5 routing   : {s['posts']}/{s['posts']} (100%) - zero LLM calls",
         "",
-        "  Measured LLM usage (read back from report/token_log.csv, not counted in-process):",
+        "  Measured LLM usage (read back from the token log, not counted in-process):",
     ]
     if usage["calls"]:
         for stage, entry in sorted(usage["by_stage"].items()):

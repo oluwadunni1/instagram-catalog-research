@@ -205,3 +205,42 @@ def test_routing_distribution_comes_from_the_whole_catalog() -> None:
     assert score["routing"]["needs_attention"] == 2
     assert score["routing"]["total"] == 4
     assert score["routing"]["attention_rate"] == 0.5
+
+
+# --- binary Stage 2 and stale gold ------------------------------------------
+
+def test_a_binary_stage2_is_scored_on_product_vs_not() -> None:
+    """Jev answers only product or not. Its "not_product" can never equal a
+    gold "announcement", so the 5-class figure counts every correct exclusion
+    as a miss; the binary figure is the one that compares."""
+    golden = [_gold("a"), _gold("b", post_type="announcement", price_value=None)]
+    items = [_item("a"), _item("b", post_type="not_product", products=[])]
+
+    s2 = score_catalog.score_catalog(_catalog(items), golden)["stage2"]
+
+    assert (s2["correct"], s2["binary_correct"], s2["total"]) == (1, 2, 2)
+    assert s2["product_precision"] == 1.0
+
+
+def test_a_post_whose_caption_changed_is_left_out_of_stage3() -> None:
+    """The model read the edited caption's new price; gold still holds the old
+    one. Scoring it would charge the model for a stale label."""
+    golden = [{**_gold("edited"), "caption": "Phone 100k"}, {**_gold("same"), "caption": "Laptop"}]
+    items = [_item("edited", products=[{"name": "iPhone 12", "price": {"value": 120, "source": "caption"}}]),
+             _item("same")]
+
+    score = score_catalog.score_catalog(_catalog(items), golden,
+                                        captions={"edited": "Phone 120k", "same": "Laptop"})
+
+    assert score["stale_gold"] == {"count": 1, "post_ids": ["edited"]}
+    assert (score["stage3"]["price_correct"], score["stage3"]["price_total"]) == (1, 1)
+    assert score["stage2"]["total"] == 2
+
+
+def test_without_captions_nothing_is_treated_as_stale() -> None:
+    golden = [{**_gold("a"), "caption": "Phone 100k"}]
+
+    score = score_catalog.score_catalog(_catalog([_item("a")]), golden)
+
+    assert score["stale_gold"]["count"] == 0
+    assert score["stage3"]["price_total"] == 1
