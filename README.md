@@ -159,7 +159,7 @@ environment - see `CLAUDE.md`, which also lists every command.
 | Harness on the committed golden sets, text-only stages | a provider key in `.env` |
 | Pulling a new account (`make ingest`) | your own Meta app and an Instagram Professional account token |
 | Vision and OCR tiers | live image links - see below |
-| `report/` (predictions, token logs) and `data/snapshots/` | R2 credentials for `make data-pull`; the bucket is private |
+| `runs/` (raw dumps, catalogs, profiles, OCR cache), `report/` (predictions, token logs) and `data/snapshots/` | R2 credentials for `make data-pull`; the bucket is private |
 
 `make stage5` re-runs routing with zero LLM calls, but its inputs are the cached predictions in
 `report/`, which a clone does not have. Run the harness first, then point
@@ -186,7 +186,7 @@ pipeline/jev_client.py   TypeSafe Jev calls, text and images
 eval/harness.py    scores stages against the golden set
 eval/golden/       hand-labeled golden sets   (git)
 experiments/       one record per experiment  (git)
-runs/              raw dumps, profiles, catalogs (git)
+runs/              raw dumps, profiles, catalogs (DVC)
 report/            predictions + token logs   (DVC)
 data/snapshots/    Stage 6 baselines + history/ (DVC)
 scripts/           drivers and checks

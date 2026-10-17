@@ -208,13 +208,23 @@ def collect_images(post: Post) -> list[str]:
     return images
 
 
-def build_comments_list(post: Post, vendor_username: str | None) -> list[dict]:
+def build_comments_list(
+    post: Post, vendor_username: str | None, vendor_only: bool = False
+) -> list[dict]:
     """Structured {username, text, is_vendor_reply} per comment - not just
     bare text. The vendor's OWN reply ("sold", "gone") is a much stronger
     staleness/stock signal than the same word from a random commenter
     (brief section 4/section 7), so this flag matters downstream, not
-    just for display."""
-    return [
+    just for display.
+
+    vendor_only keeps only the vendor's own comments, and is what every
+    golden-set writer passes. eval/golden/ is committed to the public repo,
+    and docs/privacy.html promises other people's comment text never goes
+    there; since the Meta app went Live on 2026-10-17 a raw dump carries it.
+    The chained pipeline passes nothing, because Stage 4 has to read buyers'
+    comments. With no vendor_username nothing can be told apart, so
+    vendor_only returns no comments at all."""
+    rows = [
         {
             "username": c.get("username"),
             "text": c.get("text"),
@@ -222,6 +232,9 @@ def build_comments_list(post: Post, vendor_username: str | None) -> list[dict]:
         }
         for c in post.get("comments", [])
     ]
+    if vendor_only:
+        return [row for row in rows if row["is_vendor_reply"]]
+    return rows
 
 
 def latest_dump(account_label: str) -> Path:
@@ -260,7 +273,8 @@ def build_skeleton(account_label: str) -> None:
             "timestamp": post.get("timestamp"),
             "has_carousel_children": is_carousel,
             "comment_count": len(post.get("comments", [])),
-            "comments": build_comments_list(post, vendor_username),
+            # The vendor's own comments only - see build_comments_list().
+            "comments": build_comments_list(post, vendor_username, vendor_only=True),
 
             # --- fields YOU fill in by hand ---
             "post_type": None,

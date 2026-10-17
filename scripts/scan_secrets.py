@@ -12,19 +12,23 @@ catches for free:
   - Two live credentials have reached console logs (README.md,
     2026-09-08). Log leaks are transient; a committed one is permanent.
 
-It also refuses to let the two DVC-tracked data paths into git:
-data/snapshots/ and report/ belong in R2 behind a .dvc pointer, never in a
-git object - report/ because it is regenerated on every run and is the
-largest thing here, snapshots/ because it is binary embeddings.
+It also refuses to let the three DVC-tracked data paths into git, each of
+which belongs in R2 behind a .dvc pointer, never in a git object:
+report/ because it is regenerated on every run and is the largest thing
+here, data/snapshots/ because it is binary embeddings, and runs/ because
+everything a live pull produces can carry other people's comment text.
 
-eval/golden/ and runs/ used to be on that list and no longer are: they are
-committed on purpose so the experiment can be re-run from a clone. The
-committed dumps carry no third-party data - every one was pulled while the
-Meta app was in Development mode, so every comments array is empty - and the
-golden sets' comments are hand-authored with invented usernames. The app went
-Live on 2026-10-17, so a new dump carries real comment text: runs/*/raw/ has
-to move to DVC, and onto the list below, before one is committed (CLAUDE.md).
-The content scan below still runs over both.
+runs/ moved back onto that list on 2026-10-17. It had been committed so the
+experiment could be re-run from a clone, which was safe only while every dump
+was pulled with the Meta app in Development mode and every comments array
+was empty. Once the app went Live, a dump carries real comments, and Stage 4
+quotes them verbatim into catalogs and buckets; docs/privacy.html promises
+that text never reaches this public repo.
+
+eval/golden/ stays in git: its comments are hand-authored with invented
+usernames, and the golden-set writers copy only the vendor's own comments
+from a dump (eval/make_golden_skeleton.py::build_comments_list). The content
+scan below still runs over it.
 
 Usage:
     uv run scripts/scan_secrets.py            # staged changes (hook mode)
@@ -54,9 +58,9 @@ FORBIDDEN_PATHS = (".env", ".dvc/config.local")
 
 # DVC-tracked data: stored in Cloudflare R2 with a committed *.dvc pointer.
 # The *.dvc and .gitignore files inside them are the parts that DO belong in
-# git. eval/golden/ and runs/ are deliberately absent from this tuple - see
-# the module docstring.
-DATA_PREFIXES = ("data/snapshots/", "report/")
+# git. eval/golden/ is deliberately absent from this tuple - see the module
+# docstring.
+DATA_PREFIXES = ("data/snapshots/", "report/", "runs/")
 DATA_ALLOWED_SUFFIXES = (".dvc", ".gitignore")
 
 # Only text-ish files are worth scanning line by line.

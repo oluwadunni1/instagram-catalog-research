@@ -93,11 +93,12 @@ def cache_path(account_label: str, post_id: str) -> Path:
     oh=/oe= params and expire in days, so a URL-keyed cache would miss on every
     refresh. The post id is stable forever.
 
-    Cached under runs/, which is committed, so the text survives the CDN links
+    Cached under runs/, which DVC tracks, so the text survives the CDN links
     that produced it. That matters more than it sounds: the README records that
     third parties cannot refresh expired links and therefore cannot reproduce
-    any vision result. A committed OCR cache makes the caption-less posts
-    reproducible from a clone for the first time.
+    any vision result. The cache makes the caption-less posts reproducible for
+    anyone who can `make data-pull`; it was committed to git until runs/ moved
+    to DVC on 2026-10-17.
     """
     return Path("runs") / account_label / "ocr" / f"{post_id}.txt"
 

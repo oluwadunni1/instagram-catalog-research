@@ -61,7 +61,8 @@ def build_new_entry(post: Post, vendor_username: str | None) -> dict:
         "timestamp": post.get("timestamp"),
         "has_carousel_children": is_carousel,
         "comment_count": len(post.get("comments", [])),
-        "comments": build_comments_list(post, vendor_username),
+        # The vendor's own comments only - see build_comments_list().
+        "comments": build_comments_list(post, vendor_username, vendor_only=True),
         "post_type": None,
         "carousel_classification": None if is_carousel else "not_carousel",
         "expected_flag": None,

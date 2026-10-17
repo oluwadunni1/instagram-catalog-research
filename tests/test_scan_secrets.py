@@ -91,30 +91,30 @@ def test_env_file_is_rejected_outright() -> None:
 @pytest.mark.parametrize("path", [
     "data/snapshots/ayodele.akinbohun/posts.json",
     "report/token_log.csv",
+    "runs/vendor_autos_01/raw/dump_x.json",
+    "runs/vendor_autos_01/catalog.json",
 ])
 def test_dvc_tracked_data_is_rejected(path: str) -> None:
-    """The two paths still in DVC belong in R2 behind a .dvc pointer."""
+    """The three DVC paths belong in R2 behind a .dvc pointer. runs/ joined
+    them on 2026-10-17: since the Meta app went Live, a raw dump carries real
+    comment text, and Stage 4 quotes it into catalogs and buckets."""
     assert scan_secrets.check_path_rules(path)
 
 
 @pytest.mark.parametrize("path", [
     "eval/golden/vendor_autos_01.json",
-    "runs/vendor_autos_01/raw/dump_x.json",
 ])
 def test_reproduction_data_is_allowed(path: str) -> None:
-    """Golden sets and raw dumps are committed on purpose so the experiment
-    can be re-run from a clone. The committed dumps carry no third-party data
-    (all were pulled while the Meta app was in Development mode, so every
-    comments array is empty) and the golden sets' comments are hand-authored
-    with invented usernames. Since the app went Live, the raw-dump case here
-    flips when runs/*/raw/ moves to DVC (CLAUDE.md).
+    """Golden sets are committed on purpose so the experiment can be scored
+    from a clone. Their comments are hand-authored with invented usernames,
+    and the golden-set writers copy only the vendor's own from a dump.
 
-    The mirror of test_dvc_tracked_data_is_rejected: it fails if either path
-    is quietly put back on the blocklist, which would leave a clone unable to
-    score anything."""
+    The mirror of test_dvc_tracked_data_is_rejected: it fails if the path is
+    quietly put on the blocklist, which would leave a clone unable to score
+    anything."""
     assert scan_secrets.check_path_rules(path) == []
 
 
-@pytest.mark.parametrize("path", ["report.dvc", "data/snapshots.dvc", "data/.gitignore", "pipeline/settings.py"])
+@pytest.mark.parametrize("path", ["report.dvc", "data/snapshots.dvc", "runs.dvc", "data/.gitignore", "pipeline/settings.py"])
 def test_pointers_and_source_are_allowed(path: str) -> None:
     assert scan_secrets.check_path_rules(path) == []

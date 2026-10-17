@@ -38,14 +38,12 @@ Notes:
   - Respects the ~200 calls/user/hour business-use-case rate limit:
     backoff on 429/5xx and on network errors, and no comments request
     for a post whose comments_count is 0.
-  - Raw dumps under runs/ are committed to git (CLAUDE.md) so the
-    experiment re-runs from a clone. That was safe only because every
-    dump so far was pulled while the Meta app was in Development mode,
-    where /comments returns an empty list, so every `comments` array is
-    empty. The app went Live on 2026-10-17 and comment text now comes
-    back, so dumps carry real people's text (and sometimes handles), and
-    runs/*/raw/ must move out of git (to DVC, like report/) before the
-    next ingest is committed.
+  - Raw dumps under runs/ are DVC-tracked, not committed (CLAUDE.md).
+    They were in git until 2026-10-17, which was safe only while the
+    Meta app was in Development mode and /comments returned an empty
+    list. Since the app went Live, a dump carries real people's comment
+    text (and sometimes their handles), so `make data-push` after an
+    ingest, never `git add`.
 """
 
 import argparse

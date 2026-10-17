@@ -67,8 +67,9 @@ structurally cannot: credential handling (`test_credentials.py`), the harness's 
 error isolation and `load_stage_fn()`'s reserved-parameter tripwire (`test_harness.py`),
 Stage 0's network-error retry and `comments_count` skip (`test_ingest.py`),
 deterministic Stage 5 routing (`test_stage5_reconcile.py`), the token-log reader every cost
-figure and the run gate depend on (`test_token_log.py`, `test_verify_run.py`), and the
-pre-commit secret scanner (`test_scan_secrets.py`). No test may make a network call, read
+figure and the run gate depend on (`test_token_log.py`, `test_verify_run.py`), the
+pre-commit secret scanner (`test_scan_secrets.py`), and which comments a golden-set writer may
+copy out of a dump (`test_golden_skeleton.py`). No test may make a network call, read
 `.env`, or read a golden set.
 Adding a test that needs a model response is a sign it belongs in the harness instead.
 
@@ -169,11 +170,11 @@ defaults to `None`, so it is guarded by
 
 | Artifact | Path | Keyed by | Stored in |
 |---|---|---|---|
-| Raw dump | `runs/<account_label>/raw/dump_<ts>.json` | account_label | git |
-| Stage 1 profile cache | `runs/<account_label>/profile.json` | account_label | git |
+| Raw dump | `runs/<account_label>/raw/dump_<ts>.json` | account_label | DVC |
+| Stage 1 profile cache | `runs/<account_label>/profile.json` | account_label | DVC |
 | Golden set | `eval/golden/<account_label>.json` | account_label | git |
-| Chained catalog | `runs/<account_label>/catalog.json` | account_label | git |
-| Stage 5 bucket split | `runs/<account_label>/buckets/{auto_import,needs_attention,auto_exclude}.json` | account_label | git |
+| Chained catalog | `runs/<account_label>/catalog.json` | account_label | DVC |
+| Stage 5 bucket split | `runs/<account_label>/buckets/{auto_import,needs_attention,auto_exclude}.json` | account_label | DVC |
 | Harness predictions | `report/<vendor_id>/stage{2,3,4}_<model>_predictions.json` | vendor_id + model | DVC |
 | Token log v1 (frozen) | `report/token_log.csv` | read-only since 2026-10-15, has `vendor_id` column | DVC |
 | Token log v2 | `report/token_log_v2.csv` | append-only, adds `latency_ms` | DVC |
@@ -279,16 +280,19 @@ params that change on every fetch, which would make every post falsely "changed"
   record; the token logs (v1 `report/token_log.csv`, v2 `report/token_log_v2.csv`) are the
   primary evidence behind every figure.
 - **The data is split between git and DVC, and which is which is deliberate.**
-  `eval/golden/` and `runs/` are **committed to git** so the experiment can be re-run from a
-  clone. The committed dumps carry no third-party data: they were all pulled while the Meta app
-  was in Development mode, so every `comments` array is empty, and the golden sets' comments are
-  hand-authored with invented usernames (the real handles in them are the vendor's own and the
-  repo owner's). **That stops being true with the next ingest.** Since the app went Live on
-  2026-10-17, a fresh dump carries real comment text, and `docs/privacy.html` promises it never
-  reaches this public repo, so `runs/*/raw/` must move to DVC before a new dump is committed.
+  `eval/golden/` is **committed to git** so the experiment can be scored from a clone. Its
+  comments are hand-authored with invented usernames (the real handles in it are the vendor's
+  own and the repo owner's), and `make golden` / `make update-golden` copy only the vendor's own
+  comments from a dump (`build_comments_list(..., vendor_only=True)`), because
+  `docs/privacy.html` promises other people's comment text never reaches this public repo.
   **`eval/golden/` is irreplaceable** — the hand labels cannot be regenerated.
-  `data/snapshots/` and `report/` stay **DVC-tracked to Cloudflare R2** and gitignored, each
-  with a committed `.dvc` pointer so a commit pins the data it was produced against — `report/`
-  because it is regenerated every run and is the bulk of the size, `data/snapshots/` because it
-  is binary embeddings. `scripts/scan_secrets.py` enforces exactly this split and
-  `tests/test_scan_secrets.py` pins it in both directions.
+  `runs/`, `data/snapshots/` and `report/` are **DVC-tracked to Cloudflare R2** and gitignored,
+  each with a committed `.dvc` pointer so a commit pins the data it was produced against.
+  `runs/` because everything a live pull produces can carry comment text: since the Meta app
+  went Live on 2026-10-17 a raw dump carries it, and Stage 4 quotes it verbatim into catalogs
+  and buckets. It was in git until then, when every `comments` array was empty, so its history
+  holds dumps with no third-party data. `report/` because it is regenerated every run and is the
+  bulk of the size, `data/snapshots/` because it is binary embeddings. A clone therefore needs
+  R2 access (`make data-pull`) for anything that reads `runs/`: the chained pipeline,
+  `score_catalog.py`, cached profiles and the OCR cache. `scripts/scan_secrets.py` enforces
+  exactly this split and `tests/test_scan_secrets.py` pins it in both directions.

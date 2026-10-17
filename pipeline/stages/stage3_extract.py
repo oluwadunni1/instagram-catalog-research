@@ -75,7 +75,7 @@ PASS_B_SUFFIX = (
 # to guess. Ungrounded means voided and escalated to vision, which is the
 # behaviour that existed before OCR - the guard can cost a call, never a price.
 #
-# Checked against the five committed caches in runs/vendor_gadgets_01/ocr/
+# Checked against the five caches in runs/vendor_gadgets_01/ocr/
 # before this was wired: 5/5 grounded against their gold prices, and the IMEI
 # produced no candidate at all, because it carries no currency marker.
 
