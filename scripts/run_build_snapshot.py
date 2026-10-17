@@ -34,7 +34,11 @@ from make_golden_skeleton import latest_dump  # noqa: E402
 
 from pipeline.logging_config import configure_logging  # noqa: E402
 from pipeline.media_fingerprint import compute_caption_embedding, compute_image_phash  # noqa: E402
-from pipeline.stages.stage6_sync import compute_content_hash, compute_lifecycle_state  # noqa: E402
+from pipeline.stages.stage6_sync import (  # noqa: E402
+    compute_content_hash,
+    compute_lifecycle_state,
+    latest_comment_id,
+)
 from pipeline.types import vision_image_url  # noqa: E402
 
 logger = logging.getLogger(__name__)
@@ -92,8 +96,7 @@ def load_posts(dump_path: Path | None, golden_path: Path | None) -> tuple[list[d
 
 
 def _comment_cursor(post: dict) -> str | None:
-    comments = post.get("comments") or []
-    return comments[-1]["id"] if comments else None
+    return latest_comment_id(post.get("comments"))
 
 
 def build_snapshot_entry(

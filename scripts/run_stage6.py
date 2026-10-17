@@ -47,11 +47,13 @@ from pipeline.settings import (  # noqa: E402
     strip_url_credentials,
 )
 from pipeline.stages.stage6_sync import (  # noqa: E402
+    comments_oldest_first,
     compute_content_hash,
     compute_lifecycle_state,
     diff_posts,
     find_embedding_match,
     find_phash_match,
+    latest_comment_id,
 )
 from pipeline.types import vision_image_url  # noqa: E402
 
@@ -239,18 +241,22 @@ def _normalize_fresh_post(raw: dict) -> dict:
 
 
 def _comments_after_cursor(comments: list[dict], cursor: str | None) -> list[dict]:
-    """Comments strictly after the one with id == cursor - the per-post
-    high-water mark recorded at snapshot time. No cursor means every
-    current comment is new (first time this post has ever had one)."""
+    """Comments written after the one with id == cursor - the per-post
+    high-water mark recorded at snapshot time - oldest first. No cursor means
+    every current comment is new (first time this post has ever had one).
+
+    Sorted before slicing because the API returns comments newest-first; see
+    comments_oldest_first()."""
+    ordered = comments_oldest_first(comments)
     if cursor is None:
-        return comments
-    for idx, comment in enumerate(comments):
+        return ordered
+    for idx, comment in enumerate(ordered):
         if comment.get("id") == cursor:
-            return comments[idx + 1:]
+            return ordered[idx + 1:]
     logger.warning(
         "comment_cursor %r not found in fresh comment list - returning full list as a best effort", cursor
     )
-    return comments
+    return ordered
 
 
 def _matched_keyword(caption: str | None) -> str | None:
@@ -311,7 +317,7 @@ def _advance_snapshot(
             "media_url": fresh.get("media_url"),
             "content_hash": compute_content_hash(fresh),
             "image_phash": old_entry.get("image_phash"),
-            "comment_cursor": comments[-1]["id"] if comments else old_entry.get("comment_cursor"),
+            "comment_cursor": latest_comment_id(comments) or old_entry.get("comment_cursor"),
             "lifecycle_state": compute_lifecycle_state(old_entry.get("post_type"), comments, vendor_handle),
             "catalog_products": old_entry.get("catalog_products", []),
             "post_type": old_entry.get("post_type"),
@@ -353,7 +359,7 @@ def _advance_snapshot(
             "media_url": fresh.get("media_url"),
             "content_hash": compute_content_hash(fresh),
             "image_phash": phash_by_new_id.get(pid),
-            "comment_cursor": comments[-1]["id"] if comments else None,
+            "comment_cursor": latest_comment_id(comments),
             "lifecycle_state": None,
             "catalog_products": [],
             "post_type": None,
@@ -408,7 +414,7 @@ def _advance_snapshot(
             "media_url": fresh.get("media_url"),
             "content_hash": compute_content_hash(fresh),
             "image_phash": phash_by_new_id.get(new_pid),
-            "comment_cursor": comments[-1]["id"] if comments else None,
+            "comment_cursor": latest_comment_id(comments),
             "lifecycle_state": compute_lifecycle_state(old_entry.get("post_type"), comments, vendor_handle),
             "catalog_products": old_entry.get("catalog_products", []),
             "post_type": old_entry.get("post_type"),

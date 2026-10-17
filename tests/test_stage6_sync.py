@@ -10,7 +10,8 @@ input would not fail anything, just quietly move a number:
   - the content hash's inputs, which decide what counts as "unchanged";
   - the match thresholds' inclusive/exclusive boundaries;
   - the auto-merge rule, which is the one action Stage 6 takes without asking;
-  - that a dump-built baseline and a live fetch agree on comment_count.
+  - that a dump-built baseline and a live fetch agree on comment_count;
+  - that comment_cursor marks the newest comment whatever order the API uses.
 """
 
 from __future__ import annotations
@@ -26,17 +27,20 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO_ROOT))
 
 from pipeline.stages.stage6_sync import (  # noqa: E402
+    comments_oldest_first,
     compute_content_hash,
     compute_lifecycle_state,
     diff_posts,
     find_embedding_match,
     find_phash_match,
+    latest_comment_id,
 )
 from scripts.run_build_snapshot import normalize_dump_post  # noqa: E402
 from scripts.run_stage6 import (  # noqa: E402
     AUTO_MERGE_PHASH_MAX_DISTANCE,
     DEFAULT_EMBEDDING_THRESHOLD,
     DEFAULT_PHASH_THRESHOLD,
+    _comments_after_cursor,
     _normalize_fresh_post,
 )
 
@@ -114,6 +118,51 @@ def test_dump_without_comments_count_falls_back_to_zero():
     """A dump taken before ingest.py requested the field. Must not raise - the
     builder warns instead, because a silent 0 here poisons the first sync."""
     assert normalize_dump_post({"id": "p1", "caption": "hi"})["comment_count"] == 0
+
+
+# --- comment cursor -------------------------------------------------------
+
+
+def _comment(cid: str, timestamp: str) -> dict:
+    return {"id": cid, "timestamp": timestamp, "username": "buyer", "text": "how much?"}
+
+
+# The order the Graph API returns them: newest first.
+NEWEST_FIRST = [
+    _comment("3", "2026-10-17T09:00:00+0000"),
+    _comment("2", "2026-10-16T09:00:00+0000"),
+    _comment("1", "2026-10-15T09:00:00+0000"),
+]
+
+
+def test_the_cursor_is_the_newest_comment_not_the_last_returned():
+    """THE regression test for the comment-order bug. Storing comments[-1] off
+    a newest-first list made the OLDEST comment the high-water mark."""
+    assert latest_comment_id(NEWEST_FIRST) == "3"
+    assert latest_comment_id(list(reversed(NEWEST_FIRST))) == "3"
+    assert latest_comment_id([]) is None
+
+
+def test_comments_after_the_cursor_are_only_the_newer_ones():
+    # A sync recorded comment 2 as the mark; comment 3 arrived since.
+    assert [c["id"] for c in _comments_after_cursor(NEWEST_FIRST, "2")] == ["3"]
+    assert _comments_after_cursor(NEWEST_FIRST, "3") == []
+
+
+def test_no_cursor_returns_every_comment_oldest_first():
+    assert [c["id"] for c in _comments_after_cursor(NEWEST_FIRST, None)] == ["1", "2", "3"]
+
+
+def test_a_timestamp_tie_falls_back_to_the_numeric_id():
+    same = "2026-10-17T09:00:00+0000"
+    assert [c["id"] for c in comments_oldest_first([_comment("10", same), _comment("9", same)])] == ["9", "10"]
+
+
+def test_comments_with_no_timestamp_or_id_keep_their_order():
+    """Golden-set comments carry neither, and build their snapshot from them."""
+    bare = [{"text": "a"}, {"text": "b"}]
+    assert comments_oldest_first(bare) == bare
+    assert latest_comment_id(bare) is None
 
 
 # --- pHash ----------------------------------------------------------------

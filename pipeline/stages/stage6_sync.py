@@ -74,6 +74,34 @@ def find_embedding_match(
     return None
 
 
+def comments_oldest_first(comments: list[dict] | None) -> list[dict]:
+    """A post's comments in the order they were written.
+
+    The Graph API returns them newest-first (Meta's docs, for v3.2 and later,
+    and the live probe of post 18128205745669337 on 2026-10-17), but
+    comment_cursor is a high-water mark that only works oldest-first: the
+    cursor is the newest comment seen, and a sync's new comments are the ones
+    after it. Storing comments[-1] off the raw API order made the OLDEST
+    comment the mark, so every later sync returned the wrong slice. Nothing
+    caught it while the app was in Development mode, because every list was
+    empty.
+
+    Sorted by timestamp, so it holds whichever order the API uses. Ties, and
+    comments with no timestamp, fall back to the numeric id and then to input
+    order (sorted() is stable).
+    """
+    def key(comment: dict) -> tuple:
+        cid = str(comment.get("id") or "")
+        return (comment.get("timestamp") or "", len(cid), cid)
+    return sorted(comments or [], key=key)
+
+
+def latest_comment_id(comments: list[dict] | None) -> str | None:
+    """The comment_cursor for a post: the id of its newest comment."""
+    ordered = comments_oldest_first(comments)
+    return ordered[-1].get("id") if ordered else None
+
+
 def compute_lifecycle_state(post_type: str | None, comments: list[dict], vendor_handle: str) -> str | None:
     """Shared by run_build_snapshot.py (golden-set posts, post_type always
     known) and run_stage6.py (fresh/merged posts, where post_type is only
