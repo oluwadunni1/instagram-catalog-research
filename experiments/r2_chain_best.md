@@ -88,10 +88,10 @@ had paid for every call. Fixed, with a test.
 
 ## Caveats
 
-- **Stage 4's chained score isn't a model measurement.** Meta returns no comment text, so the
-  dump's comments are empty, while the golden sets carry hand-authored comments that some gold
-  signals come from. On autos, 7 of 11 missed signals are on posts with gold comments the run never
-  saw. Gadgets has 4 gold signal instances left once stale posts are out. Judge Stage 4 on the
+- **Stage 4's chained score isn't a model measurement.** The dumps were pulled while the Meta
+  app was in Development mode, which returns no comment text, so their comments are empty, while
+  the golden sets carry hand-authored comments that some gold signals come from. On autos, 7 of 11
+  missed signals are on posts with gold comments the run never saw. Gadgets has 4 gold signal instances left once stale posts are out. Judge Stage 4 on the
   harness's 87% / 77%.
 - **Stale-gold exclusion shrinks gadgets' Stage 3 set** from 31 priced posts to 16. The 15 left
   out are the ones the Stage 6 test edited, not a random sample.

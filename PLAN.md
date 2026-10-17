@@ -22,7 +22,8 @@ measurement:
 2. **A content-hash mismatch fires spurious `content_changed` on every live sync.**
    `stage6_sync.py:19` hashes `caption | comment_count | len(comments)`. The golden-derived
    baseline has hand-authored comments, so the third component is non-zero for 11 autos posts. A
-   live fetch always returns an **empty** comments array, so it is always 0. Every one of those
+   live fetch always returns an **empty** comments array (the Meta app was in Development mode,
+   found 2026-10-17), so it is always 0. Every one of those
    posts hashes differently and reports as changed. `simulate_stage6.py:55-68` documents this
    for the simulator; nobody noticed it fires for real.
 
@@ -160,7 +161,7 @@ and the time for each action** — that is the ground truth file.
 |---|---|---|---|
 | 1 | Edit a caption — change the **price** | `caption_edit` | should reach Stage 3 and produce a price change |
 | 2 | Edit a caption — cosmetic only (emoji/hashtag) | `caption_edit` | does a trivial edit cost a full reprocess? |
-| 3 | Comment once on a post, **from a different account** | `comment_delta` | the half-signal: count moves, text withheld |
+| 3 | Comment once on a post, **from a different account** | `comment_delta` | the half-signal: count moves, text empty (Development mode) |
 | 4 | Comment twice on another post | `comment_delta` | a delta of 2 |
 | 5 | **Delete post D** | `deleted` → `archived` | never executed in any run |
 | 6 | New post: product, price **in the caption** | `new_post` | the ordinary path |

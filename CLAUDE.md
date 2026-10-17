@@ -186,21 +186,30 @@ vendors into one accuracy number (tagging the token log `all_vendors`). Always p
 
 ## Traps that cost real debugging time
 
-**Comments always come back empty from the Graph API.** Every post, every account. This is
-not a bug and not fixable in code: `instagram_business_manage_comments` is at Standard Access
-while the Meta app is in Development mode, and comment text belongs to third-party users, so
-Meta withholds it until App Review grants Advanced Access.
+**Comment text was empty until 2026-10-17 because the Meta app was in Development mode.**
+Not App Review, not Advanced Access, not a missing permission — every one of those was the
+recorded explanation at some point, and every one was wrong. Meta's docs give Standard Access
+for accounts you own or manage, and both tokens already carried
+`instagram_business_manage_comments`. In Development mode `/comments` answered HTTP 200 with
+`{"data": []}` and no error, even for the account owner's own comment on its own post, while
+`comments_count` was real. Switching ICatalog-IG to Live (which needed the privacy, terms and
+data-deletion URLs now served from `docs/` on GitHub Pages) returned every comment's text on the
+next call, with no code change. If comments go empty again, check the App Mode toggle first.
 
-**Updated 2026-09-10: `comments_count` now returns a real number; only the text is still
-withheld.** Verified live on post `18128205745669337` — `comments_count: 2`, comments
-array empty. This is why Stage 6 detects a `comment_delta` at all: it diffs
-`comments_count`, not text. The consequence is a half-signal — sync can tell you
-comments arrived on a post, but Stage 4 gets a count with nothing to read, so it cannot
-say whether they mean "sold" or "how much?". Do not read a `comment_delta` as evidence
-Stage 4 acted on real comment content.
-Golden-set comments are therefore **hand-authored** (their IDs are a giveaway: a tidy
-`1785889326900001x` sequence), and `simulate_stage6.py` injects synthetic ones. This is the
-sanctioned workaround, not something to re-investigate — see `README.md`.
+What is still open after the switch:
+- **The commenter's `username` is sometimes missing.** The owner's own comments carry it; a test
+  comment from another account came back with text and no username. Stage 4's
+  `[VENDOR]`/`[BUYER]` labelling needs only the vendor's own handle, so a missing one reads as a
+  buyer.
+- **A comment from an account with no role on the app is not yet confirmed** to come back.
+- **These two accounts barely have comments** (3 on 40 autos posts, 1 on 45 gadgets posts at the
+  last dumps), so real comments add almost nothing for Stage 4 here.
+
+Every raw dump pulled before 2026-10-17 has empty `comments` arrays, every chained Stage 4
+score recorded so far ran on captions only, and every recorded Stage 6 `comment_delta` came
+from `comments_count` alone — none is evidence Stage 4 read a comment. Golden-set comments are **hand-authored** (their
+IDs are a giveaway: a tidy `1785889326900001x` sequence), and `simulate_stage6.py` injects
+synthetic ones; both stay, because the golden labels were written against them.
 
 **`media_url` is a video file for Reels.** A Reel is `media_type=VIDEO` with
 `media_product_type=REELS`; its `media_url` ends in `.mp4`. Never hand it to a vision model or
@@ -271,9 +280,12 @@ params that change on every fetch, which would make every post falsely "changed"
   primary evidence behind every figure.
 - **The data is split between git and DVC, and which is which is deliberate.**
   `eval/golden/` and `runs/` are **committed to git** so the experiment can be re-run from a
-  clone. They carry no third-party data: Meta withholds comment text, so every raw dump's
-  `comments` array is empty, and the golden sets' comments are hand-authored with invented
-  usernames (the real handles in them are the vendor's own and the repo owner's).
+  clone. The committed dumps carry no third-party data: they were all pulled while the Meta app
+  was in Development mode, so every `comments` array is empty, and the golden sets' comments are
+  hand-authored with invented usernames (the real handles in them are the vendor's own and the
+  repo owner's). **That stops being true with the next ingest.** Since the app went Live on
+  2026-10-17, a fresh dump carries real comment text, and `docs/privacy.html` promises it never
+  reaches this public repo, so `runs/*/raw/` must move to DVC before a new dump is committed.
   **`eval/golden/` is irreplaceable** — the hand labels cannot be regenerated.
   `data/snapshots/` and `report/` stay **DVC-tracked to Cloudflare R2** and gitignored, each
   with a committed `.dvc` pointer so a commit pins the data it was produced against — `report/`

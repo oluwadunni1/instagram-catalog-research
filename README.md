@@ -250,7 +250,8 @@ Every one of these was silent. The pipeline kept producing plausible output thro
 - **Only the first product per post was scored**, so under-extraction on multi-product posts
   scored 100% ([r1_stage3_all_products](experiments/r1_stage3_all_products.md)).
 - **The sync's content hash compared two sources that can never agree.** It included the length
-  of the comments array, which Meta always returns empty on a live fetch and which the
+  of the comments array, which a live fetch returned empty while the Meta app was in
+  Development mode, and which the
   golden-derived baseline filled by hand. Every affected post reported `content_changed` on every
   sync. It stayed hidden because the symptom - a sync finding changes - looks exactly like a sync
   working, and because the README had already explained it away as CDN churn.
@@ -260,6 +261,11 @@ Every one of these was silent. The pipeline kept producing plausible output thro
 - **Strict schema mode can run away.** Four round-2 models (Qwen 2.5 7B, Nex, MiMo, Llama 4
   Scout) wrote whitespace or digits until the output limit on at least one call; one such call
   was half a run's bill. No output-token limit caps Stage 2 or the vision passes yet.
+- **Two months of comments were blamed on the wrong gate.** Comment text came back empty, and
+  the recorded cause was App Review: that Meta withholds it until Advanced Access. That ruled out
+  re-investigating, so nobody did. The cause was the app's Development mode, where `/comments`
+  returns an empty list with no error even for the owner's own comment. Switching the app to
+  Live fixed it on 2026-10-17 with no code change.
 
 Each was caught by an artifact recording what happened, not what was configured to happen - or,
 in the Stage 6 cases, by going to look for the artifact and finding it empty.
@@ -291,8 +297,13 @@ in the Stage 6 cases, by going to look for the artifact and finding it empty.
 
 ## Known limits
 
-- **Comment text is withheld by Meta.** `comments_count` is real, the array is always empty.
-  Stage 6 diffs the count, so a `comment_delta` is not evidence Stage 4 read anything.
+- **No recorded result has read a real comment.** Until 2026-10-17 the Meta app was in
+  Development mode, where `/comments` returns an empty list with no error while
+  `comments_count` is real. Every dump, chained Stage 4 score and Stage 6 `comment_delta`
+  recorded so far comes from that period, and the golden sets' comments are hand-written. Live
+  mode returns comment text, but these two accounts have only 4 comments between them,
+  commenter usernames sometimes come back empty, and a comment from an account with no role on
+  the app is not yet confirmed.
 - **`estimated_cost_usd` is 0.0 on most v1 rows, and 0.0 does not mean free.** In round 1 only
   Jev had a rate in `MODEL_RATES`. Gemini's round-1 completion rate ($2.50/M) is recorded in
   [r1_model_comparison](experiments/r1_model_comparison.md), but its prompt rate was never

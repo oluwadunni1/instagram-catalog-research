@@ -291,8 +291,9 @@ def posts_needing_work(changes_path: Path) -> set[str]:
     is worth recording because the wrong explanation is what kept the real cause
     hidden: `compute_content_hash()` has always excluded `media_url` precisely
     so rotating oh=/oe= params cannot move it. The actual cause was the hash's
-    `len(comments)` component - a live fetch returns an empty comments array
-    while the golden-derived baseline had hand-authored ones - and that
+    `len(comments)` component - a live fetch returned an empty comments array
+    while the Meta app was in Development mode, and the golden-derived baseline
+    had hand-authored ones - and that
     component is gone. See README.md.
     """
     report = json.loads(changes_path.read_text(encoding="utf-8"))

@@ -131,8 +131,8 @@ lets `scripts/simulate_stage6.py` simulate any vendor rather than only the defau
 The README previously attributed them to rotating `oh=`/`oe=` params, which cannot be right -
 `compute_content_hash()` has always excluded `media_url` for exactly that reason. The real cause
 was the hash's third component, `len(comments)`: the baseline was built from a golden set whose
-comments are hand-authored, while a live fetch always returns an empty array (Meta withholds the
-text). Same post, different hash, on every sync forever. The component is gone as of
+comments are hand-authored, while a live fetch returned an empty array (the Meta app was in
+Development mode; corrected 2026-10-17, see the root README). Same post, different hash, on every sync forever. The component is gone as of
 `pipeline/stages/stage6_sync.py`, which **invalidates every `content_hash` written before it** -
 the stored snapshots have been rehashed in place and the pre-change copies kept under
 `data/snapshots/<handle>/history/pre-hash-change/`. Offline proof, via `make simulate-sync`

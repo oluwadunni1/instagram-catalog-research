@@ -37,7 +37,8 @@ bugs and must not be reported as new findings on every run:
 - Experiment configs labelled `model: dummy-heuristic` that still make live LLM calls.
 - `eval/harness.py` scoring each stage against **gold** labels rather than chaining stages.
 - `estimated_cost_usd` hardcoded to `0.0` in `pipeline/llm_client.py`.
-- Instagram comments always returning empty (the Meta Advanced Access gate).
+- Instagram comments returning empty, which is the Meta app being in Development mode, not
+  code (fixed 2026-10-17 by switching the app to Live).
 
 Raise one of these only if the behavior has actually **changed**, or a new call site was added
 that the documented rationale does not cover. Say explicitly which documented rationale you

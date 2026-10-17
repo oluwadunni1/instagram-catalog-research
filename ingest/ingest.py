@@ -39,12 +39,13 @@ Notes:
     backoff on 429/5xx and on network errors, and no comments request
     for a post whose comments_count is 0.
   - Raw dumps under runs/ are committed to git (CLAUDE.md) so the
-    experiment re-runs from a clone. That is safe only because Meta
-    withholds comment text while the app is in Development mode, so
-    every dump's `comments` arrays are empty. If App Review ever grants
-    Advanced Access, dumps will carry real people's handles and text,
-    and runs/*/raw/ must move out of git (to DVC, like report/) before
-    the next ingest is committed.
+    experiment re-runs from a clone. That was safe only because every
+    dump so far was pulled while the Meta app was in Development mode,
+    where /comments returns an empty list, so every `comments` array is
+    empty. The app went Live on 2026-10-17 and comment text now comes
+    back, so dumps carry real people's text (and sometimes handles), and
+    runs/*/raw/ must move out of git (to DVC, like report/) before the
+    next ingest is committed.
 """
 
 import argparse
@@ -124,11 +125,12 @@ def log_ingest_summary(media_list: list[dict], out_path: Path) -> None:
     logger.info("  Captions           : %d with text, %d blank", with_caption, total - with_caption)
     logger.info("  Comments retrieved : %d", comments)
     if total and comments == 0:
-        # Every post, every account - see CLAUDE.md. Saying so here means the
-        # zeros in the trace above are explained before anyone has to ask.
-        logger.info("    Comment TEXT is withheld by Meta until instagram_business_manage_comments")
-        logger.info("    clears App Review (the app is in Development mode). Counts are real, text")
-        logger.info("    is not available - so Stage 4 reads captions only on this account.")
+        # What every pull did while the Meta app was in Development mode - see
+        # CLAUDE.md. Saying so here explains the zeros in the trace above
+        # before anyone has to ask.
+        logger.info("    No comment text came back. If the posts above have comments, check that")
+        logger.info("    the Meta app is in Live mode: Development mode returns an empty list with")
+        logger.info("    no error. Stage 4 reads captions only on this account.")
     logger.info("  Raw dump           : %s", out_path)
     logger.info("")
 
@@ -208,10 +210,9 @@ def fetch_media_list(token: str) -> list[dict]:
     # (Reels included) - media_url there is the video file, not an image.
     # See pipeline/types.py::vision_image_url() for which field downstream
     # vision calls/pHash actually use.
-    # comments_count: a real number even though the comments *edge* comes back
-    # empty (Meta withholds third-party comment text until App Review grants
-    # Advanced Access - see CLAUDE.md). It is therefore a half-signal: a sync
-    # can tell that comments arrived, never what they say. It is requested here
+    # comments_count: a real number even when the comments *edge* comes back
+    # empty, as it did on every pull while the Meta app was in Development mode
+    # (see CLAUDE.md). It is requested here
     # because scripts/run_build_snapshot.py builds a baseline from this dump and
     # scripts/run_stage6.py reads comments_count off the live fetch - without it
     # the baseline records 0 for every post and the first sync fires a spurious
@@ -294,7 +295,7 @@ def ingest_account(account_label: str, token_env: str = "IG_ACCESS_TOKEN") -> Pa
     skipped = 0
     probed = False
     for i, post in enumerate(media_list, start=1):
-        # comments_count is real even while comment text is withheld (CLAUDE.md),
+        # comments_count is real whether or not comment text comes back (CLAUDE.md),
         # so a 0 means there is nothing to fetch: skip the request and its courtesy
         # sleep. On a 45-post account with one commented post, that was 44 requests
         # against the ~200/hour budget and ~90s of sleeping, all returning [].

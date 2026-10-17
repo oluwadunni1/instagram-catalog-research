@@ -19,10 +19,10 @@ def compute_content_hash(post: dict) -> str:
 
     It also excludes len(comments), which it used to include. That component
     is redundant with comment_count when both come from the same source, and
-    actively wrong when they do not - which is every live sync. Meta withholds
-    comment *text* (Standard Access, see CLAUDE.md), so a live fetch always
-    returns an empty comments array while comment_count is a real number; a
-    baseline carrying hand-authored golden comments therefore hashed
+    actively wrong when they do not - which was every live sync while the Meta
+    app was in Development mode (see CLAUDE.md): a live fetch returned an empty
+    comments array while comment_count was a real number, so a baseline
+    carrying hand-authored golden comments hashed
     differently from the identical live post and reported content_changed on
     every sync, forever.
 

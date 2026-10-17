@@ -63,8 +63,8 @@ def _with_distance(distance: int) -> tuple[str, str]:
 def test_content_hash_ignores_the_comments_array():
     """THE regression test for the live-sync hash bug.
 
-    Meta withholds comment text, so a live fetch always returns an empty
-    comments array while comment_count is a real number. A baseline built from
+    While the Meta app was in Development mode, a live fetch returned an empty
+    comments array while comment_count was a real number. A baseline built from
     a golden set carries hand-authored comment objects. Those two posts are the
     same post, and hashing len(comments) made them hash differently - so every
     such post reported content_changed on every sync, forever.

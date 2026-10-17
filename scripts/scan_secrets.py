@@ -18,11 +18,13 @@ git object - report/ because it is regenerated on every run and is the
 largest thing here, snapshots/ because it is binary embeddings.
 
 eval/golden/ and runs/ used to be on that list and no longer are: they are
-committed on purpose so the experiment can be re-run from a clone. That is
-safe because the raw dumps carry no third-party data - Meta withholds
-comment text, so every dump's comments array is empty - and the golden
-sets' comments are hand-authored with invented usernames. The content scan
-below still runs over both.
+committed on purpose so the experiment can be re-run from a clone. The
+committed dumps carry no third-party data - every one was pulled while the
+Meta app was in Development mode, so every comments array is empty - and the
+golden sets' comments are hand-authored with invented usernames. The app went
+Live on 2026-10-17, so a new dump carries real comment text: runs/*/raw/ has
+to move to DVC, and onto the list below, before one is committed (CLAUDE.md).
+The content scan below still runs over both.
 
 Usage:
     uv run scripts/scan_secrets.py            # staged changes (hook mode)

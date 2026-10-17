@@ -103,9 +103,11 @@ def test_dvc_tracked_data_is_rejected(path: str) -> None:
 ])
 def test_reproduction_data_is_allowed(path: str) -> None:
     """Golden sets and raw dumps are committed on purpose so the experiment
-    can be re-run from a clone. The dumps carry no third-party data (Meta
-    withholds comment text, so every comments array is empty) and the golden
-    sets' comments are hand-authored with invented usernames.
+    can be re-run from a clone. The committed dumps carry no third-party data
+    (all were pulled while the Meta app was in Development mode, so every
+    comments array is empty) and the golden sets' comments are hand-authored
+    with invented usernames. Since the app went Live, the raw-dump case here
+    flips when runs/*/raw/ moves to DVC (CLAUDE.md).
 
     The mirror of test_dvc_tracked_data_is_rejected: it fails if either path
     is quietly put back on the blocklist, which would leave a clone unable to
