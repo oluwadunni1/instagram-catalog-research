@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ICatalog-IG Privacy Policy</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main>
+<p class="eyebrow">ICatalog-IG</p>
+<h1>Privacy Policy</h1>
+<p class="meta">Effective 17 October 2026 · <a href="terms.html">Terms of Service</a></p>
+
+<p>ICatalog-IG is a non-commercial research proof of concept operated by Dunni Olu-Ajayi
+("we"). It turns the posts of an Instagram professional account into a structured product
+catalog: product names, prices, and signals such as "sold" or "out of stock". This policy
+explains what the app reads from Instagram, what it does with it, and how to have it deleted.</p>
+
+<h2>Who the app serves</h2>
+<p>The app is not offered to the public. It connects only to Instagram professional accounts
+that we own or manage, through Instagram Login, and each account owner authorises it
+explicitly. No one else can sign in to it.</p>
+
+<h2>What we read from Instagram</h2>
+<p>From each connected account, through Meta's Instagram API:</p>
+<ul>
+  <li><strong>Profile:</strong> account id, username, name, biography, account type and post count.</li>
+  <li><strong>Posts:</strong> captions, timestamps, media type, image and video links, thumbnails,
+    permalinks, carousel items and comment counts.</li>
+  <li><strong>Comments on those posts:</strong> comment id, text, the commenter's username, timestamp
+    and like count.</li>
+</ul>
+<p>The app does not read direct messages, publish or edit content, or read any account that has
+not authorised it. It reads comments only on the connected account's own posts.</p>
+
+<h2>How we use it</h2>
+<ul>
+  <li>To extract products, prices and availability signals from posts and their comments.</li>
+  <li>To detect which posts changed between two pulls, so unchanged posts are not processed again.</li>
+  <li>To measure how accurately the app does both, against labels we write by hand.</li>
+</ul>
+<p>We do not sell this information, use it for advertising, build profiles of commenters, or
+contact anyone based on it.</p>
+
+<h2>Services that process it for us</h2>
+<p>Captions, comments and post images are sent to these AI services to be read, and each processes
+them under its own terms:</p>
+<ul>
+  <li><strong>OpenRouter</strong>, which passes requests to Google's Gemini models.</li>
+  <li><strong>TypeSafe</strong>, which runs the Jev classification model.</li>
+  <li><strong>Google AI Studio</strong>, which turns captions into numeric embeddings used for change detection.</li>
+</ul>
+<p>Images are also downloaded to our own computer for text recognition and image fingerprinting,
+which run locally.</p>
+
+<h2>Where it is stored</h2>
+<ul>
+  <li>On our own computer, and in private cloud storage (Cloudflare R2) that only we can access.</li>
+  <li>The project's source code is public on GitHub, together with post captions and metadata from
+    our own connected accounts. <strong>Comment text and commenters' usernames are never published
+    there.</strong></li>
+</ul>
+
+<h2>How long we keep it</h2>
+<p>For as long as the research project runs. When it ends, we delete the Instagram data we hold.
+You can ask us to delete it sooner (see below).</p>
+
+<h2 id="data-deletion">Deleting your data</h2>
+<p><strong>If you own a connected account:</strong> remove the app in Instagram under
+<em>Settings → Apps and websites</em>, which stops all further access, and email us at
+dunnioluajayi@gmail.com with your username to have what we already hold deleted.</p>
+<p><strong>If you commented on a connected account's post:</strong> deleting the comment on
+Instagram stops us reading it again. To have a copy we already hold deleted, email dunnioluajayi@gmail.com
+with your username and the post's link.</p>
+<p>We delete the data within 30 days of a request and reply to confirm it.</p>
+
+<h2>Cookies and tracking</h2>
+<p>These pages and the app use no cookies, analytics or tracking.</p>
+
+<h2>Changes</h2>
+<p>If this policy changes, we will update this page and its effective date.</p>
+
+<h2>Contact</h2>
+<p>Dunni Olu-Ajayi · dunnioluajayi@gmail.com</p>
+</main>
+</body>
+</html>
